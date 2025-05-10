@@ -1,17 +1,22 @@
 <script>
-  export let entry;
-
-  import { deleteEntry } from '$lib/utils/entryHelpers.js';
   import { moodStore } from '$lib/stores/moodStore.js';
   import { get } from 'svelte/store';
+  import { createEventDispatcher } from 'svelte';
+  
+  export let entry;
+  const dispatch = createEventDispatcher();
 
   // Find the mood label and emoji
   const moodData = get(moodStore).find(m => m.value === entry.mood) || { label: entry.mood, emoji: '' };
 
   function handleDelete() {
     if (confirm('Burahin ang tsismis na ito?')) {
-      deleteEntry(entry.id);
+      dispatch("delete", entry);
     }
+  }
+
+  function handleEdit(entry) {
+    dispatch("edit", entry);
   }
 </script>
 
@@ -24,9 +29,8 @@
   <p class="entry-text">{entry.text}</p>
 
   <footer>
-    <!-- Placeholder for future edit -->
-    <!-- <button on:click={() => editEntry(entry.id)}>Edit</button> -->
-    <button class="delete" on:click={handleDelete}>Delete</button>
+    <button class="edit" on:click={() => handleEdit()}>Edit</button>
+    <button class="delete" on:click={() => handleDelete()}>Delete</button>
   </footer>
 </article>
 
@@ -71,5 +75,18 @@
 
   button.delete:hover {
     background: #ffcccc;
+  }
+
+  button.edit {
+    background: #d2ff8a;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  button.edit:hover {
+    background: #c9f360;
   }
 </style>

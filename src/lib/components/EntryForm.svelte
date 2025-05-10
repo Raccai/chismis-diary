@@ -2,18 +2,29 @@
 	import { entriesStore } from "$lib/stores/entriesStore.js";
     import { addEntry, updateEntry, deleteEntry } from "$lib/utils/entryHelpers.js";
     import { moodStore } from "$lib/stores/moodStore";
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
 
     const dispatch = createEventDispatcher();
+    export let selectedEntry = null;
 
     let text = "";
     let mood = "happy";
 
+    onMount(() => {
+        if (selectedEntry) {
+            text = selectedEntry.text;
+            mood = selectedEntry.mood;
+        }
+    });
+
     function saveEntry() {
         if(text.trim()) {
-            addEntry(text, mood);
-            dispatch(text, mood);
-            text = "";
+            if (selectedEntry) {
+                updateEntry(selectedEntry.id, text, mood);
+            } else {
+                addEntry(text, mood);
+            }
+            dispatch("save");
         }
     }
 </script>
@@ -26,4 +37,6 @@
         </option>
     {/each}
 </select>
-<button on:click={() => saveEntry()}>Save Chismis</button>
+<button on:click={() => saveEntry()}>
+    {selectedEntry ? "Update" : "Save"} Chismis
+</button>

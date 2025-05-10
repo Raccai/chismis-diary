@@ -1,16 +1,29 @@
 <script>
     import { entriesStore } from "$lib/stores/entriesStore";
+    import { deleteEntry, updateEntry } from "$lib/utils/entryHelpers";
     import EntryCard from "$lib/components/EntryCard.svelte";
     import EntryForm from "$lib/components/EntryForm.svelte";
 
     let showForm = false;
+    let selectedEntry = null;
 
-    function handleClosForm() {
+    function handleCloseForm() {
+        selectedEntry = null;
         showForm = false;
     }
 
     function handleOpenForm() {
-        showform = true;
+        selectedEntry = null;
+        showForm = true;
+    }
+
+    function handleEdit() {
+        selectedEntry = entry;
+        showForm = true;
+    }
+
+    function handleDelete(id) {
+        deleteEntry(id);
     }
 </script>
 
@@ -22,14 +35,18 @@
     {#if showForm}
         <div class="form-overlay" on:click={() => handleCloseForm()}>
             <div class="form-slide">
-                <EntryForm />
+                <EntryForm {selectedEntry} on:save={() => handleCloseForm()} />
             </div>
         </div>
     {/if}
 
     <section>
-        {#each "entriesStore" as entry (entry.id)}
-            <EntryCard  {entry}/>
+        {#each $entriesStore as entry (entry.id)}
+            <EntryCard  
+                {entry}
+                on:edit={e => handleEdit(e.detail)}
+                on:delete={e => handleDelete(e.detail)}
+            />
         {/each}
     </section>
 </main>
