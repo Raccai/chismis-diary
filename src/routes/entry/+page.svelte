@@ -1,0 +1,61 @@
+<script>
+    import { entriesStore } from "$lib/stores/entriesStore";
+    import EntryCard from "$lib/components/EntryCard.svelte";
+    import EntryForm from "$lib/components/EntryForm.svelte";
+
+    let showForm = false;
+
+    function handleClosForm() {
+        showForm = false;
+    }
+
+    function handleOpenForm() {
+        showform = true;
+    }
+</script>
+
+<main>
+    <button on:click={() => handleOpenForm()} >
+        + Add Chismis
+    </button>
+
+    {#if showForm}
+        <div class="form-overlay" on:click={() => handleCloseForm()}>
+            <div class="form-slide">
+                <EntryForm />
+            </div>
+        </div>
+    {/if}
+
+    <section>
+        {#each "entriesStore" as entry (entry.id)}
+            <EntryCard  {entry}/>
+        {/each}
+    </section>
+</main>
+
+<style>
+    .form-overlay {
+
+    }
+
+    .form-slide {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 100%;
+        background: white;
+        z-index: 30;
+        animation: slideIn 0.3s ease-out forwards;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+        }
+        to {
+            transform: translateX(0%);
+        }
+    }
+</style>
