@@ -11,11 +11,11 @@
 
   function handleDelete() {
     if (confirm('Burahin ang tsismis na ito?')) {
-      dispatch("delete", entry);
+      dispatch("delete", entry.id);
     }
   }
 
-  function handleEdit(entry) {
+  function handleEdit() {
     dispatch("edit", entry);
   }
 </script>
@@ -29,8 +29,8 @@
   <p class="entry-text">{entry.text}</p>
 
   <footer>
-    <button class="edit" on:click={() => handleEdit()}>Edit</button>
-    <button class="delete" on:click={() => handleDelete()}>Delete</button>
+    <button class="edit" on:click={handleEdit}>Edit</button>
+    <button class="delete" on:click={handleDelete}>Delete</button>
   </footer>
 </article>
 

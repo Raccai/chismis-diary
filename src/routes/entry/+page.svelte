@@ -17,7 +17,7 @@
         showForm = true;
     }
 
-    function handleEdit() {
+    function handleEdit(entry) {
         selectedEntry = entry;
         showForm = true;
     }
