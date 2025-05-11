@@ -1,78 +1,56 @@
 <script>
     import { entriesStore } from "$lib/stores/entriesStore";
-    import { deleteEntry, updateEntry } from "$lib/utils/entryHelpers";
-    import EntryCard from "$lib/components/EntryCard.svelte";
-    import EntryForm from "$lib/components/EntryForm.svelte";
+    import { deleteEntry } from "$lib/utils/entryHelpers"; 
+    import EntryCard from "$lib/components/Entries/EntryCard.svelte";
+    import { uiStore } from '$lib/stores/uiStore.js';
+    import { quintOut } from "svelte/easing";
+    import { fly } from "svelte/transition";
 
-    let showForm = false;
-    let selectedEntry = null;
-
-    function handleCloseForm() {
-        selectedEntry = null;
-        showForm = false;
+    function handleEdit(event) {
+      const entryToEdit = event.detail;
+      console.log("ROOT +page.svelte: handleEdit received, calling uiStore.showEntryForm with:", entryToEdit);
+      if (entryToEdit && typeof entryToEdit.id !== 'undefined') {
+        uiStore.showEntryForm(entryToEdit); // Use store to show form for editing
+      } else {
+        console.error("ROOT +page.svelte: handleEdit - Invalid event detail:", event.detail);
+      }
     }
 
-    function handleOpenForm() {
-        selectedEntry = null;
-        showForm = true;
-    }
-
-    function handleEdit(entry) {
-        selectedEntry = entry;
-        showForm = true;
-    }
-
-    function handleDelete(id) {
-        deleteEntry(id);
+    function handleDelete(event) {
+      const entryId = event.detail;
+      console.log("ROOT +page.svelte: handleDelete received ID:", entryId);
+      if (typeof entryId === 'string' || typeof entryId === 'number') {
+        deleteEntry(entryId);
+      } else {
+        console.error("ROOT +page.svelte: handleDelete - Invalid event detail (ID):", event.detail);
+      }
     }
 </script>
 
-<main>
-    <button on:click={() => handleOpenForm()} >
-        + Add Chismis
-    </button>
-
-    {#if showForm}
-        <div class="form-overlay" on:click={() => handleCloseForm()}>
-            <div class="form-slide">
-                <EntryForm {selectedEntry} on:save={() => handleCloseForm()} />
-            </div>
-        </div>
-    {/if}
-
-    <section>
-        {#each $entriesStore as entry (entry.id)}
-            <EntryCard  
-                {entry}
-                on:edit={e => handleEdit(e.detail)}
-                on:delete={e => handleDelete(e.detail)}
-            />
-        {/each}
-    </section>
-</main>
+<section
+    in:fly={{ y: 30, duration: 300, delay: 300, easing: quintOut }}
+    out:fly={{ y: 30, duration: 300, easing: quintOut }}  
+>
+  {#if $entriesStore.length === 0}
+    <p>No chismis yet. Add some!</p>
+  {:else}
+    {#each $entriesStore as entry (entry.id)}
+      <EntryCard
+        {entry}
+        on:edit={handleEdit}
+        on:delete={handleDelete}
+      />
+    {/each}
+  {/if}
+</section>
 
 <style>
-    .form-overlay {
-
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
     }
-
-    .form-slide {
-        position: fixed;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 100%;
-        background: white;
-        z-index: 30;
-        animation: slideIn 0.3s ease-out forwards;
+    to {
+      transform: translateX(0%);
     }
-
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-        }
-        to {
-            transform: translateX(0%);
-        }
-    }
+  }
 </style>
