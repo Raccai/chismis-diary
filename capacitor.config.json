@@ -1,0 +1,6 @@
+{
+  "appId": "com.raccai.chismisdiary",
+  "appName": "Chismis Diary",
+  "webDir": "build",
+  "bundledWebRuntime": false
+}
