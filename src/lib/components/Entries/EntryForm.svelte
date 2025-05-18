@@ -132,7 +132,7 @@
 
     .form-title {
         text-align: center;
-        color: #fd79a8; 
+        color: var(--text-primary); 
         font-size: 1.8rem;
         margin-bottom: 1.5rem;
         font-weight: bold;
@@ -147,25 +147,25 @@
         margin-bottom: 0.5rem;
         font-weight: 600;
         font-size: 0.95rem;
-        color: #57606f;
+        color: var(--text-secondary);
     }
 
     .form-field input[type="text"],
     .form-field textarea {
         width: 100%;
         padding: 0.75rem 1rem;
-        border: 1px solid #dcdde1;
+        border: 1px solid var(--border-secondary);
         border-radius: 8px;
         box-sizing: border-box;
         font-size: 1rem;
-        background-color: #f5f6fa; 
-        color: #2f3542;
+        background-color: var(--bg-primary); 
+        color: var(--text-secondary);
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .form-field input[type="text"]:focus,
     .form-field textarea:focus {
         outline: none;
-        border-color: #fd79a8; 
+        border-color: var(--primary); 
         box-shadow: 0 0 0 3px rgba(253, 121, 168, 0.2);
     }
     .form-field textarea {
@@ -176,13 +176,13 @@
     .form-section {
         margin-bottom: 1.5rem;
         padding: 1rem;
-        background-color: #fff0f5; 
+        background-color: var(--secondary); 
         border-radius: 8px;
     }
     .section-title {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #c23616;
+        color: var(--primary);
         margin-top: 0;
         margin-bottom: 0.75rem;
     }
@@ -215,7 +215,7 @@
     }
 
     .save-btn-cont {
-        background: white;
+        background: var(--bg-secondary);
         padding: 1.5rem;
         position: fixed;
         display: flex;
@@ -226,7 +226,7 @@
         width: 100%;
         height: 100px;
         box-shadow: 0 -4px -4px rgba(0, 0, 0, 0.4);
-        border-top: 1px solid #ff7eb3;
+        border-top: 1px solid var(--primary);
     }
     .save-button {
         display: flex; /* For icon and text alignment */
@@ -235,7 +235,7 @@
         width: 100%;
         padding: 0.8rem 1.5rem;
         background-image: linear-gradient(to right, #ff758c 0%, #ff7eb3 100%);
-        color: white;
+        color: var(--bg-secondary);
         border: none;
         border-radius: 25px; /* Pill shape */
         cursor: pointer;

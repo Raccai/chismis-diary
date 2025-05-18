@@ -10,6 +10,7 @@
   import { onDestroy } from 'svelte'; // Not strictly needed for this loader version anymore
   import { fly, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import "../app.css"
 
   // --- Form and Global Key Logic ---
   function handleFormSaveOrClose() {
@@ -106,15 +107,6 @@
 </div>
 
 <style>
-  :global(body) {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f0f2f5; /* Slightly different light gray for body */
-    color: #1a202c; /* Darker default text */
-    line-height: 1.6;
-    overscroll-behavior-y: contain; /* Prevent pull-to-refresh on mobile sometimes */
-  }
-
   .app-container {
     display: flex;
     flex-direction: column;
@@ -134,7 +126,7 @@
   .form-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5); /* Slightly darker overlay */
+    background: var(--overlay-color); /* Slightly darker overlay */
     z-index: 1050;
   }
 
@@ -147,7 +139,7 @@
     max-width: 400px;
     background: #ffffff; /* Form background */
     z-index: 1060;
-    box-shadow: -6px 0 16px rgba(0,0,0,0.15); /* Softer shadow */
+    box-shadow: -6px 0 16px var(--shadow-color); /* Softer shadow */
     box-sizing: border-box;
     overflow-y: hidden; /* Let internal wrapper scroll */
     display: flex; /* To use flex-direction */

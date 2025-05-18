@@ -1,3 +1,202 @@
-@import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
+/* Urbanist Font Faces */
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-Thin.ttf') format('truetype');
+  font-weight: 100; /* Thin */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-ExtraLight.ttf') format('truetype');
+  font-weight: 200; /* Extra Light */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-Light.ttf') format('truetype');
+  font-weight: 300; /* Light */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-Regular.ttf') format('truetype');
+  font-weight: 400; /* Regular */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-Medium.ttf') format('truetype');
+  font-weight: 500; /* Medium */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-SemiBold.ttf') format('truetype');
+  font-weight: 600; /* Semi Bold */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-Bold.ttf') format('truetype');
+  font-weight: 700; /* Bold */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-ExtraBold.ttf') format('truetype');
+  font-weight: 800; /* Extra Bold */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Urbanist';
+  src: url('/fonts/Urbanist-Black.ttf') format('truetype');
+  font-weight: 900; /* Black */
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* -------------------------------------- */
+/* THEME: Black & White with Pink Accents */
+/* -------------------------------------- */
+
+/* --- LIGHT MODE (DEFAULT) --- */
+:root {
+  font-family: 'Urbanist', sans-serif;
+
+  --main-bg: #ffffff;
+  --topbar-bg: #ffffff;
+  --navbar-bg: #ffffff;
+
+  --text-primary: #1c1c1c;
+  --text-secondary: #2c2c2c;
+  --text-tertiary: #8e8e8e;
+
+  --separator-primary: #dcdcdc;
+  --separator-secondary: #FFCCD5;
+
+  --primary: #FF758F;
+  --secondary: #FFB3C1;
+  --tertiary: #ffc7d1;
+
+  --primary-radial-gradient: radial-gradient(
+    circle at 50% 100%,
+    #FFB3C1,
+    #FF758F
+  );
+
+  --icon-bg: #C9184A;
+  --icon-bg-hovered: #FF4D6D;
+  --icon-text: #ffffff;
+
+  --menu-inactive: #464646;
+  --menu-active: #FF4D6D;
+
+  --card-outline: #e9e9e9;
+  --card-bg: #ffffff;
+
+  --delete: #e30000; 
+}
+
+/* --- DARK MODE for B&W&Pink Theme --- */
+body.dark { /* Toggled by themeStore.js */
+  --main-bg: #0F1011;
+  --topbar-bg: #17191A;
+  --navbar-bg: #17191A;
+
+  --text-primary: #ffffff;
+  --text-secondary: #dfdfdf;
+  --text-tertiary: #dfdfdf;
+
+  --separator-primary: #282828;
+  --separator-secondary: #FFCCD5;
+
+  --primary: #FF758F;
+  --secondary: #FFB3C1;
+  --tertiary: #27181b;
+
+  --primary-radial-gradient: radial-gradient(
+    circle at 50% 100%,
+    #FFB3C1,
+    #FF758F
+  );
+
+  --icon-bg: #C9184A;
+  --icon-bg-hovered: #FF4D6D;
+  --icon-text: #ffffff;
+
+  --menu-inactive: #dcdcdc;
+  --menu-active: #FF4D6D;
+
+  --card-outline: #262626;
+  --card-bg: #181A1B;
+
+  --delete: #e30000; 
+}
+
+
+/* Base Body Styling */
+body {
+  background-color: var(--main-bg);
+  color: var(--text-primary);
+  font-family: var(--app-font-family);
+  line-height: var(--app-line-height);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  margin: 0;
+  overscroll-behavior-y: contain;
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out; /* Smooth theme transition */
+}
+
+/* Global Button Reset */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  text-align: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+/* General focus style for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--bw-accent-pink);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+/* Hiding scrollbars */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

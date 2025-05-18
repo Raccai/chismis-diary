@@ -1,7 +1,13 @@
 <script>
   import { moodStore } from '$lib/stores/moodStore.js';
   import { get } from 'svelte/store';
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount, tick } from 'svelte';
+  import { quintOut } from 'svelte/easing';
+  import { tweened } from 'svelte/motion';
+
+  // SVGs for icons
+  const EditIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16.7574 2.99668L14.7574 4.99668L18.9997 9.23906L21.0004 7.23971C21.391 6.84918 21.391 6.21602 21.0004 5.82549L18.1742 2.99926C17.7837 2.60873 17.1505 2.60873 16.7574 2.99668ZM13.2426 6.51145L3 16.754V20.9965H7.24264L17.4859 10.7532L13.2426 6.51145Z"></path></svg>`;
+  const DeleteIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path></svg>`;
 
   export let entry;
   const dispatch = createEventDispatcher();
@@ -22,171 +28,130 @@
   function formatDate(dateInput) {
     if (!dateInput) return 'No date';
     const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    // More concise date format
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
+  $: displayTags = entry.tags && Array.isArray(entry.tags) ? entry.tags.slice(0, 3) : [];
+
+
+  // --- Sparkle Animation State for Buttons ---
+  let showEditSparkles = false;
+  let showDeleteSparkles = false;
+
+  function triggerSparkles(buttonType) {
+    if (buttonType === 'edit') {
+      showEditSparkles = true;
+      setTimeout(() => { showEditSparkles = false; }, 700);
+    } else if (buttonType === 'delete') {
+      showDeleteSparkles = true;
+      setTimeout(() => { showDeleteSparkles = false; }, 700);
+    }
+  }
+
+  // --- Button Click Handlers ---
   function handleDelete() {
     if (confirm('Burahin ang tsismis na ito?')) {
+      triggerSparkles('delete');
       dispatch("delete", entry.id);
     }
   }
 
   function handleEdit() {
+    triggerSparkles('edit');
     dispatch("edit", entry);
   }
-
-  $: displayTags = entry.tags && Array.isArray(entry.tags) ? entry.tags.slice(0, 3) : [];
 </script>
 
-<article class="entry-card">
-  <div class="card-header">
-    <div class="mood-chip-large">
-      <span class="emoji">{moodDetails.emoji}</span>
-      <span class="label">{moodDetails.label}</span>
-    </div>
-    <time class="date-display">{formatDate(entry.date)}</time>
+<article class="entry-card-vibe">
+  <h2 class="entry-title-vibe">{entry.title || "Chismis Update"}</h2>
+
+  <div class="date-display-vibe">{formatDate(entry.date)}</div>
+
+  <div class="mood-display-vibe">
+    <span class="mood-emoji-vibe">{moodDetails.emoji}</span>
+    <span class="mood-label-vibe">{moodDetails.label}</span>
   </div>
 
-  <h2 class="entry-title">{entry.title || "Untitled Chismis"}</h2>
-
-  {#if entry.text}
-    <p class="entry-text-body">{entry.text}</p>
-  {/if}
-
   {#if displayTags.length > 0}
-    <div class="tag-chips-container">
+    <div class="tag-chips-container-vibe">
       {#each displayTags as tag (tag)}
-        <span class="tag-chip">{tag}</span>
+        <span class="tag-chip-vibe">{tag}</span>
       {/each}
     </div>
   {/if}
-
-  <footer class="card-actions">
-    <button class="action-button edit" on:click={handleEdit}>Edit</button>
-    <button class="action-button delete" on:click={handleDelete}>Delete</button>
-  </footer>
 </article>
 
 <style>
-  .entry-card {
-    background: white; /* Cleaner background */
-    padding: 1.25rem; /* Slightly more padding */
+  .entry-card-vibe {
+    background: var(--card-bg);
+    padding: 1.25rem 1.5rem;
     margin: 1rem 0;
-    border-radius: 12px; /* More rounded corners */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, more modern shadow */
+    border-radius: 10px; /* Softer roundness */
+    box-shadow: 0 5px 15px var(--card-shadow, rgba(0,0,0,0.08));
     display: flex;
     flex-direction: column;
-    gap: 0.75rem; /* Space between elements */
-    border: 1px solid #e5e7eb; /* Subtle border */
+    gap: 0.75rem; /* Reduced spacing */
+    border: 1px solid var(--card-outline);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+  .entry-card-vibe:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px var(--card-shadow, rgba(0,0,0,0.1));
   }
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Vertically align mood and date */
-    margin-bottom: 0.25rem;
-  }
-
-  .mood-chip-large {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    background-color: #f3f4f6; /* Light gray */
-    border-radius: 20px; /* Pill shape */
-    font-weight: 500;
-    color: #374151; /* Darker gray text */
-  }
-  .mood-chip-large .emoji {
-    font-size: 1.5em; /* Larger emoji */
-    margin-right: 0.5rem;
-    line-height: 1;
-  }
-  .mood-chip-large .label {
-    font-size: 0.9rem;
-  }
-
-  .date-display {
-    font-size: 0.8rem;
-    color: #6b7280; /* Medium gray */
-    font-style: italic;
-  }
-
-  .entry-title {
-    font-size: 1.3rem; /* Larger title */
-    font-weight: 600; /* Bolder title */
-    color: #1f2937; /* Very dark gray / near black */
-    margin: 0; /* Remove default margin */
+  .entry-title-vibe {
+    font-size: 1.1rem; /* Reduced Title Size */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
     line-height: 1.3;
-
-    /* Truncation for title */
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap; /* Single line for title */
+    white-space: nowrap;
+    font-family: sans-serif;  /* Change font to something simpler */
   }
 
-  .entry-text-body {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #4b5563; /* Dark gray text */
-    margin: 0;
-
-    /* Multi-line truncation for body */
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3; /* Show 3 lines */
-    line-clamp: 3; /* Standard property */
-    -webkit-box-orient: vertical;
+  .date-display-vibe {
+    font-size: 0.8rem; /* Reduced date size */
+    color: var(--text-tertiary);   /* Dark gray */
   }
 
-  .tag-chips-container {
+  .mood-display-vibe {
     display: flex;
-    flex-wrap: wrap; /* Allow tags to wrap if many */
-    gap: 0.4rem; /* Space between tag chips */
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem; /* Smaller padding */
+    background-color: var(--tertiary); /* Example pinkish fallback */
+    border-radius: 8px;
+  }
+  .mood-emoji-vibe {
+    font-size: 1.4em;   /* Reduced emoji size */
+    line-height: 1.2;
+  }
+  .mood-label-vibe {
+    font-size: 0.8rem; /* Reduced label */
+    font-weight: 500;
+    color: var(--text-primary, #1c1c1e);
+  }
+
+  .tag-chips-container-vibe {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem; /* Reduced spacing between tags */
     margin-top: 0.25rem;
   }
 
-  .tag-chip {
+  .tag-chip-vibe {
     display: inline-block;
-    background-color: #e0e7ff; /* Lighter indigo */
-    color: #3730a3; /* Darker indigo */
-    padding: 0.25rem 0.6rem;
-    border-radius: 10px;
-    font-size: 0.75rem;
+    background-color: #FCE4EC; /* Secondary */
+    color: #E91E63;           /* Primary (pink) */
+    padding: 0.4rem 0.8rem; /* Adjusted Padding */
+    border-radius: 4px;   /* From the image! */
+    font-size: 0.8rem;    /* Further Reduced Size */
     font-weight: 500;
-  }
-
-  .card-actions {
-    margin-top: 0.5rem; /* Bring actions closer if content is short */
-    display: flex;
-    justify-content: flex-end; /* Align buttons to the right */
-    gap: 0.5rem; /* Space between buttons */
-  }
-
-  .action-button {
-    border: 1px solid transparent;
-    padding: 0.5rem 0.9rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-  }
-
-  .action-button.edit {
-    background-color: #e0f2fe; /* Light blue */
-    color: #0ea5e9; /* Blue text */
-    border-color: #bae6fd;
-  }
-  .action-button.edit:hover {
-    background-color: #bae6fd;
-  }
-
-  .action-button.delete {
-    background-color: #fee2e2; /* Light red */
-    color: #ef4444; /* Red text */
-    border-color: #fecaca;
-  }
-  .action-button.delete:hover {
-    background-color: #fecaca;
+    border: none;            /* Remove Border */
   }
 </style>

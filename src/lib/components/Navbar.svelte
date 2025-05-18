@@ -1,51 +1,81 @@
 <script>
   import { uiStore } from '$lib/stores/uiStore.js';
-  import { page } from '$app/stores'; 
+  import { page } from '$app/stores';
+  import { quintOut } from 'svelte/easing';
+  import { tweened } from 'svelte/motion';
+  import Button from '../components/Button.svelte';
 
   const navItems = [
-    // Assuming your main entries list is at '/' or '/entry'
-    { href: '/entry', text: 'Entries', icon: '📝', matchPaths: ['/entry'] },
-    { type: 'add_button', text: 'Add', icon: '+' },
-    // Replace 'Data' link with a menu button
-    { type: 'menu_button', text: 'Menu', icon: '☰' } // Hamburger icon for menu
+    { href: '/entry', text: 'Entries', icon: '📓', matchPaths: ['/entry', '/'] },
+    { type: 'add_button', text: 'Add', icon: '＋' },
+    { type: 'menu_button', text: 'Menu', icon: '☰' }
   ];
 
+  export const currentPath = '';
+
   function isActive(item) {
-    if (item.href && item.matchPaths) {
-      // Check if any of the matchPaths is a prefix of the current path
-      return item.matchPaths.some(path => $page.url.pathname === path || ($page.url.pathname.startsWith(path) && path !== '/'));
-    } else if (item.href) {
-      return $page.url.pathname === item.href;
+    if (!item.href) return false;
+    if (item.matchPaths) {
+      if (item.matchPaths.includes('/') && $page.url.pathname === '/') return true;
+      return item.matchPaths.some(path => path !== '/' && ($page.url.pathname === path || $page.url.pathname.startsWith(path + '/')));
     }
-    return false;
+    return $page.url.pathname === item.href;
   }
 
-  function handleAddItem() {
-    uiStore.showEntryForm();
+  const addButtonScale = tweened(1, { duration: 150, easing: quintOut });
+  function animateAddButtonPop() {
+    addButtonScale.set(0.9).then(() => {
+      addButtonScale.set(1);
+    });
   }
 
-  function openSideMenu() { 
-    uiStore.toggleSideMenu();
+  let showAddSparkles = false;
+  function triggerAddSparkles() {
+    showAddSparkles = true;
+    setTimeout(() => {
+      showAddSparkles = false;
+    }, 800);
+  }
+
+  function handleNavClick(item) {
+    if (item.type === 'add_button') {
+      uiStore.showEntryForm();
+      animateAddButtonPop();
+      triggerAddSparkles();
+    } else if (item.type === 'menu_button') {
+      if (uiStore && typeof uiStore.toggleSideMenu === 'function') {
+        uiStore.toggleSideMenu();
+      } else {
+        console.error("uiStore.toggleSideMenu is not a function.");
+      }
+    }
   }
 </script>
 
-<nav class="bottom-tab-bar">
+<nav class="bottom-nav-bwp">
   {#each navItems as item (item.text)}
     {#if item.type === 'add_button'}
-      <button class="tab-item add-button" on:click={handleAddItem} aria-label="Add New Entry">
-        <span class="icon add-icon">{item.icon}</span>
-      </button>
+      <Button 
+        type="primary"
+        text="+"
+        onClick={() => handleNavClick(item)}
+      />
     {:else if item.type === 'menu_button'}
-      <button class="tab-item menu-button" on:click={openSideMenu} aria-label="Open Menu">
+      <button
+        class="nav-item-bwp menu-button-bwp"
+        on:click={() => handleNavClick(item)}
+        aria-label={item.text}
+      >
         <span class="icon">{item.icon}</span>
         <span class="text">{item.text}</span>
       </button>
     {:else}
       <a
         href={item.href}
-        class="tab-item"
+        class="nav-item-bwp"
         class:active={isActive(item)}
         aria-label={item.text}
+        on:click={() => handleNavClick(item)}
       >
         <span class="icon">{item.icon}</span>
         <span class="text">{item.text}</span>
@@ -55,89 +85,69 @@
 </nav>
 
 <style>
-  .bottom-tab-bar {
-    background-color: #ffffff;
-    border-top: 1px solid #e0e0e0;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+  /* Base Bottom Nav Styling (using BWP theme variables) */
+  .bottom-nav-bwp {
+    background-color: var(--navbar-bg, #f7f8fa);
+    border-top: 1px solid var(--separator-primary, #e0e0e0);
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 60px; /* Standard mobile tab bar height */
+    height: var(--navbar-height, 65px);
     display: flex;
-    justify-content: space-around;
-    align-items: stretch; /* Make items fill height */
-    padding: 0 0.25rem; /* Slight horizontal padding */
+    align-items: center; /* For vertical centering of add button */
+    padding: 0 0.25rem;
     box-sizing: border-box;
     z-index: 990;
   }
 
-  .tab-item {
+  .nav-item-bwp {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: #757575; /* Default icon/text color */
+    color: var(--menu-inactive, var(--separator-primary));
     flex-grow: 1;
+    flex-basis: 0;
     height: 100%;
-    padding: 0.2rem 0;
+    padding: 0.1rem 0;
     background: none;
     border: none;
     cursor: pointer;
-    font-family: inherit;
-    transition: color 0.2s ease;
-    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
-  }
-
-  .tab-item:hover:not(.add-button) { /* Don't change color of add button on hover like this */
-    color: #38bdf8;
-  }
-
-  .tab-item.active {
-    color: #38bdf8; /* Active color */
-  }
-  /* The active class might not apply to the menu button in the same way
-     as a navigation link. The menu button is an action, not a destination.
-     You might choose to style it differently or not have an 'active' state.
-  */
-
-  .icon {
-    font-size: 1.4rem; /* Slightly smaller icons */
-    margin-bottom: 2px;
-    line-height: 1;
-  }
-
-  .text {
-    font-size: 0.65rem; /* Smaller text label */
-    line-height: 1;
-  }
-
-  /* Add button styling */
-  .add-button {
-    background-color: #38bdf8;
-    color: white;
-    border-radius: 50%;
-    width: 48px;   /* Slightly smaller */
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 0; /* Don't grow, keep its size */
-    padding: 0;
-    margin: 0 0.5rem; /* Add some margin around it */
-    /* Optional: elevate it slightly */
+    transition: color 0.2s ease, opacity 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
     position: relative;
-    /* top: -10px; */ /* If you want it to stick out a bit */
-    box-shadow: 0 2px 6px rgba(0,100,200,0.3);
   }
-  .add-button .icon {
-    font-size: 1.6rem;
-    font-weight:normal;
-    margin-bottom: 0;
+
+  .nav-item-bwp:not(.add-button-magical-pink):hover {
+    opacity: 0.7;
   }
-  .add-button:hover {
-    background-color: #0ea5e9;
-    color: white;
+
+  .nav-item-bwp.active .icon,
+  .nav-item-bwp.active .text {
+    color: var(--menu-active, var(--menu-active));
+  }
+  .nav-item-bwp.active .text {
+    font-weight: 500;
+  }
+
+  .nav-item-bwp .icon {
+    font-size: 1.7rem;
+    margin-bottom: 1px;
+    line-height: 1;
+  }
+
+  .nav-item-bwp .text {
+    font-size: 0.6rem;
+    line-height: 1;
+    color: var(--menu-inactive);
+  }
+
+  @keyframes sparkle-animation-pink {
+    0% { transform: scale(0) translateY(5px) rotate(0deg); opacity: 0.5; }
+    30% { opacity: 1; }
+    50% { transform: scale(1.8) translateY(-8px) rotate(180deg); opacity: 0.8; }
+    100% { transform: scale(0) translateY(-18px) rotate(360deg); opacity: 0; }
   }
 </style>
