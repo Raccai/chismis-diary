@@ -17,9 +17,15 @@
   class:selected={isSelected}
   on:click={handleClick}
   aria-pressed={isSelected}
+  style="background: {moodOption.colorLight};"
 >
   <span class="emoji">{moodOption.emoji}</span>
-  <span class="label">{moodOption.label}</span>
+  <span 
+    class="label" 
+    style="color: {moodOption.colorDark};"
+  >
+    {moodOption.label}
+  </span>
 </button>
 
 <style>
@@ -30,7 +36,6 @@
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
     border-radius: 16px;
-    border: 1px solid #ccc;
     background-color: #f9f9f9;
     cursor: pointer;
     font-size: 0.9rem;

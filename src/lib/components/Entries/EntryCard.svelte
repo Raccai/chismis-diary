@@ -19,7 +19,10 @@
     const item = storeData.find(m => m.value === currentMoodValue);
     return {
       label: item ? item.label : (currentMoodValue || 'Unknown'),
-      emoji: item ? item.emoji : '😐'
+      emoji: item ? item.emoji : '😐',
+      colorLight: item?.colorLight || '#f4f4f4',
+      colorMedium: item?.colorMedium || '#f4f4f4',
+      colorDark: item?.colorDark || '#f4f4f4',
     };
   }
 
@@ -63,20 +66,33 @@
   }
 </script>
 
-<article class="entry-card-vibe">
+<article class="entry-card-vibe" style="border-left: 6px solid {moodDetails.colorMedium} ;">
   <h2 class="entry-title-vibe">{entry.title || "Chismis Update"}</h2>
 
   <div class="date-display-vibe">{formatDate(entry.date)}</div>
 
-  <div class="mood-display-vibe">
+  <div class="mood-display-vibe" style="background: {moodDetails.colorMedium};">
     <span class="mood-emoji-vibe">{moodDetails.emoji}</span>
-    <span class="mood-label-vibe">{moodDetails.label}</span>
+    <span 
+      class="mood-label-vibe"
+      style="color: {moodDetails.colorDark};"
+    >
+      {moodDetails.label}
+    </span>
   </div>
 
   {#if displayTags.length > 0}
     <div class="tag-chips-container-vibe">
       {#each displayTags as tag (tag)}
-        <span class="tag-chip-vibe">{tag}</span>
+        <span 
+          class="tag-chip-vibe" 
+          style="
+            background: {moodDetails.colorMedium};
+            color: {moodDetails.colorDark};  
+          "
+        >
+          {tag}
+        </span>
       {/each}
     </div>
   {/if}
@@ -84,10 +100,9 @@
 
 <style>
   .entry-card-vibe {
-    background: var(--card-bg);
     padding: 1.25rem 1.5rem;
     margin: 1rem 0;
-    border-radius: 10px; /* Softer roundness */
+    border-radius: 0 10px 10px 0; /* Softer roundness */
     box-shadow: 0 5px 15px var(--card-shadow, rgba(0,0,0,0.08));
     display: flex;
     flex-direction: column;
@@ -133,7 +148,7 @@
   }
   .mood-label-vibe {
     font-size: 0.8rem; /* Reduced label */
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-primary, #1c1c1e);
   }
 

@@ -7,8 +7,10 @@
 
   const navItems = [
     { href: '/entry', text: 'Entries', icon: '📓', matchPaths: ['/entry', '/'] },
+    { href: '/data', text: 'Data', icon: '📈', matchPaths: ['/data'] },
     { type: 'add_button', text: 'Add', icon: '＋' },
-    { type: 'menu_button', text: 'Menu', icon: '☰' }
+    { href: '/achievements', text: 'Medals', icon: '🎖️', matchPaths: ['/achievements'] },
+    { href: '/settings', text: 'Settings', icon: '⚙️', matchPaths: ['/settings'] },
   ];
 
   export const currentPath = '';
@@ -78,7 +80,6 @@
         on:click={() => handleNavClick(item)}
       >
         <span class="icon">{item.icon}</span>
-        <span class="text">{item.text}</span>
       </a>
     {/if}
   {/each}
@@ -88,17 +89,17 @@
   /* Base Bottom Nav Styling (using BWP theme variables) */
   .bottom-nav-bwp {
     background-color: var(--navbar-bg, #f7f8fa);
-    border-top: 1px solid var(--separator-primary, #e0e0e0);
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: var(--navbar-height, 65px);
+    height: var(--navbar-height, 80px);
     display: flex;
     align-items: center; /* For vertical centering of add button */
     padding: 0 0.25rem;
     box-sizing: border-box;
     z-index: 990;
+    border-radius: 20px 20px 0 0;
   }
 
   .nav-item-bwp {
@@ -107,7 +108,7 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: var(--menu-inactive, var(--separator-primary));
+    color: var(--menu-inactive);
     flex-grow: 1;
     flex-basis: 0;
     height: 100%;

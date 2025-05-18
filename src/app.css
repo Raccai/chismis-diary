@@ -89,7 +89,7 @@
 
   --main-bg: #ffffff;
   --topbar-bg: #ffffff;
-  --navbar-bg: #ffffff;
+  --navbar-bg: #1c1c1c;
 
   --text-primary: #1c1c1c;
   --text-secondary: #2c2c2c;
@@ -112,7 +112,7 @@
   --icon-bg-hovered: #FF4D6D;
   --icon-text: #ffffff;
 
-  --menu-inactive: #464646;
+  --menu-inactive: #d1d1d1;
   --menu-active: #FF4D6D;
 
   --card-outline: #e9e9e9;
@@ -125,11 +125,11 @@
 body.dark { /* Toggled by themeStore.js */
   --main-bg: #0F1011;
   --topbar-bg: #17191A;
-  --navbar-bg: #17191A;
+  --navbar-bg: #1c1c1c;
 
-  --text-primary: #ffffff;
-  --text-secondary: #dfdfdf;
-  --text-tertiary: #dfdfdf;
+  --text-primary: #1c1c1c;
+  --text-secondary: #2c2c2c;
+  --text-tertiary: #8e8e8e;
 
   --separator-primary: #282828;
   --separator-secondary: #FFCCD5;

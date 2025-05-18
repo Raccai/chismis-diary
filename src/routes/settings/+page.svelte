@@ -1,9 +1,7 @@
 <script>
-  import ThemeToggle from '../../lib/components/Settings/ThemeToggle.svelte';
 </script>
 
 <header class="settings-cont">
-  <ThemeToggle />
 </header>
 
 <style>

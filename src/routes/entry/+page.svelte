@@ -185,7 +185,7 @@
   }
 
   .entries-list-section {
-    padding-top: 0.5rem; /* Space below sticky header before entries start */
+    padding-top: 48px; /* Space below sticky header before entries start */
     /* margin-top: 1rem; /* Removed, padding-top on this handles space */
   }
   .empty-state-message {

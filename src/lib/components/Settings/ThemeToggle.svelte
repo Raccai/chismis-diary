@@ -2,56 +2,86 @@
   import { theme, toggleTheme } from '$lib/stores/themeStore.js';
   import { onMount } from 'svelte';
 
+  $: isDark = $theme === 'dark';
+
   let mounted = false;
   onMount(() => {
     mounted = true; // Ensure we only render based on theme after mount to avoid SSR/CSR mismatch
   });
+
+  function toggleDark() {
+    toggleTheme();
+  }
 </script>
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 {#if mounted}
-  <div class="outline">
-    <div class="main">
-      <div class="toggle-cont">
-        <div class="toggle-main"></div>
-        <div class="toggle-top"></div>
-      </div>
-    </div>
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <div class="toggle">
+    <input type="checkbox" class="check" checked={isDark} on:click={toggleDark}>
+    <b class="b switch"></b>
+    <b class="b track"></b>
   </div>
-  <button on:click={toggleTheme} class="theme-toggle-button" aria-label="Toggle theme">
-    {#if $theme === 'light'}
-      <span>🌙</span> <!-- Moon for switching to dark -->
-    {:else}
-      <span>☀️</span> <!-- Sun for switching to light -->
-    {/if}
-  </button>
 {/if}
 
 <style>
-  .theme-toggle-button {
-    background: none;
-    border: none;
-    color: var(--text-secondary); /* Use themed text color */
-    cursor: pointer;
-    padding: 0.5rem;
-    font-size: 1.5rem; /* Adjust size as needed */
-    line-height: 1;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .toggle {
+    position: relative;
+    width: 50px;
+    height: 30px;
+    border-radius: 100px;
+    background-color: var(--separator-primary);
+    overflow: hidden;
+    box-shadow: inset 0 0 2px 1px rgba(0,0,0,.05);
   }
-  .theme-toggle-button:hover {
-    background-color: var(--bg-interactive-hover); /* Themed hover */
-    color: var(--text-primary);
-  }
-  .theme-toggle-button span {
+
+  .check {
+    position: absolute;
     display: block;
-    transition: transform 0.3s ease-out;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 6;
   }
-  /* Optional: subtle rotation on toggle */
-  /* .theme-toggle-button:active span {
-    transform: rotate(180deg);
-  } */
+
+  .check:checked ~ .track {
+    box-shadow: inset 0 0 0 20px var(--primary);
+  }
+
+  .check:checked ~ .switch {
+    right: 2px;
+    left: 22px;
+    transition: .35s cubic-bezier(0.785, 0.135, 0.150, 0.860);
+    transition-property: left, right;
+    transition-delay: .05s, 0s;
+  }
+
+  .switch {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    bottom: 2px;
+    right: 22px;
+    background-color: #ffffff;
+    border-radius: 36px;
+    z-index: 1;
+    transition: .35s cubic-bezier(0.785, 0.135, 0.150, 0.860);
+    transition-property: left, right;
+    transition-delay: 0s, .05s;
+    box-shadow: 0 1px 2px rgba(0,0,0,.2);
+  }
+
+  .track {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    transition: .35s cubic-bezier(0.785, 0.135, 0.150, 0.860);
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,.05);
+    border-radius: 40px;
+  }
 </style>

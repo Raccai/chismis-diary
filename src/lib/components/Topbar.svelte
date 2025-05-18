@@ -1,4 +1,5 @@
 <script>
+  import ThemeToggle from '../../lib/components/Settings/ThemeToggle.svelte';
 </script>
 
 <header class="top-bar-bwp">
@@ -7,12 +8,8 @@
     <!-- Or your actual app name: Note AI -->
   </div>
   <div class="top-bar-actions-bwp">
-    <!-- Example: Pro Button like in reference -->
     <button class="pro-button-bwp">✨ PRO</button>
-    <button class="profile-button-bwp" aria-label="Profile">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2.5a5.5 5.5 0 0 1 5.5 5.5c0 1.823-1.209 3.53-3.013 4.497L12 18.5l-2.487-5.003C7.71 11.53 6.5 9.823 6.5 8A5.5 5.5 0 0 1 12 2.5ZM12 4.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/></svg>
-    </button>
-    <!-- <ThemeToggle /> If you're keeping the light/dark toggle for this new B/W/Pink style -->
+    <ThemeToggle />
   </div>
 </header>
 
@@ -25,7 +22,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--separator-primary);
     position: sticky;
     top: 0;
     left: 0;
@@ -60,19 +56,5 @@
   }
   .pro-button-bwp:hover {
     background-color: var(--icon-bg-hovered);
-  }
-
-  .profile-button-bwp {
-    background-color: var(--bw-bg-tertiary);
-    color: var(--bw-text-secondary);
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .profile-button-bwp:hover {
-    background-color: #ddd;
   }
 </style>
