@@ -65,12 +65,8 @@
   }
 </script>
 
-<!-- LoadingIndicator's isLoading prop uses the reactive isNavigationInProgress -->
-<LoadingIndicator isLoading={isCurrentlyNavigating} />
-
 <div class="app-container">
   <Topbar />
-  <SideMenu isOpen={$uiStore.isSideMenuVisible} />
 
   <main class="content-area">
     <slot /> <!-- Standard slot for Svelte 4 / non-Runes Svelte 5 -->

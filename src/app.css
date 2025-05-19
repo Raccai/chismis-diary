@@ -71,6 +71,13 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Graffiti Urban';
+  src: url('/fonts/GraffitiUrban-Regular.otf') format('opentype');
+  font-style: normal;
+  font-display: normal;
+}
+
 *,
 *::before,
 *::after {
@@ -86,21 +93,26 @@
 /* --- LIGHT MODE (DEFAULT) --- */
 :root {
   font-family: 'Urbanist', sans-serif;
+  font-family: 'Graffiti Urban', sans-serif;
 
-  --main-bg: #ffffff;
-  --topbar-bg: #ffffff;
-  --navbar-bg: #1c1c1c;
+  --main-bg: #f7f7f7;
+  --topbar-bg: #f7f7f7;
+  --navbar-bg: #141414;
+  --filterbar-bg: #f7f7f7;
 
-  --text-primary: #1c1c1c;
+  --text-primary: #141414;
   --text-secondary: #2c2c2c;
   --text-tertiary: #8e8e8e;
 
   --separator-primary: #dcdcdc;
   --separator-secondary: #FFCCD5;
 
-  --primary: #FF758F;
-  --secondary: #FFB3C1;
-  --tertiary: #ffc7d1;
+  --primary: #141414;
+  --secondary: #8e8e8e;
+  --tertiary: #f7f7f7;
+
+  --add-btn-bg: #272727;
+  --add-btn-bottom: #0b0b0b;
 
   --primary-radial-gradient: radial-gradient(
     circle at 50% 100%,
@@ -115,7 +127,6 @@
   --menu-inactive: #d1d1d1;
   --menu-active: #FF4D6D;
 
-  --card-outline: #e9e9e9;
   --card-bg: #ffffff;
 
   --delete: #e30000; 
@@ -123,13 +134,14 @@
 
 /* --- DARK MODE for B&W&Pink Theme --- */
 body.dark { /* Toggled by themeStore.js */
-  --main-bg: #0F1011;
-  --topbar-bg: #17191A;
-  --navbar-bg: #1c1c1c;
+  --main-bg: #181818;
+  --topbar-bg: #141414;
+  --navbar-bg: #141414;
+  --filterbar-bg: #141414;
 
-  --text-primary: #1c1c1c;
+  --text-primary: #fffaf0;
   --text-secondary: #2c2c2c;
-  --text-tertiary: #8e8e8e;
+  --text-tertiary: #c3beb5;
 
   --separator-primary: #282828;
   --separator-secondary: #FFCCD5;
@@ -137,6 +149,9 @@ body.dark { /* Toggled by themeStore.js */
   --primary: #FF758F;
   --secondary: #FFB3C1;
   --tertiary: #27181b;
+
+  --add-btn-bg: #272727;
+  --add-btn-bottom: #0b0b0b;
 
   --primary-radial-gradient: radial-gradient(
     circle at 50% 100%,
@@ -152,7 +167,7 @@ body.dark { /* Toggled by themeStore.js */
   --menu-active: #FF4D6D;
 
   --card-outline: #262626;
-  --card-bg: #181A1B;
+  --card-bg: #141414;
 
   --delete: #e30000; 
 }
@@ -162,7 +177,6 @@ body.dark { /* Toggled by themeStore.js */
 body {
   background-color: var(--main-bg);
   color: var(--text-primary);
-  font-family: var(--app-font-family);
   line-height: var(--app-line-height);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

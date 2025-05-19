@@ -1,11 +1,17 @@
 <script>
+  import LogoLightMode from '$lib/icons/Logo-LightMode.svelte';
+  import LogoDarkMode from '$lib/icons/Logo-DarkMode.svelte';
   import ThemeToggle from '../../lib/components/Settings/ThemeToggle.svelte';
+  import { theme } from '$lib/stores/themeStore.js';
 </script>
 
 <header class="top-bar-bwp">
   <div class="logo-container-bwp">
-    <a href="/" class="logo-link-bwp">ChismisDiary</a>
-    <!-- Or your actual app name: Note AI -->
+    {#if $theme === "light"}
+      <LogoLightMode />
+    {:else if $theme === "dark"}
+      <LogoDarkMode />
+    {/if}
   </div>
   <div class="top-bar-actions-bwp">
     <button class="pro-button-bwp">✨ PRO</button>

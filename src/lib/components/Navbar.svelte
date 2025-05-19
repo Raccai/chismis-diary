@@ -1,16 +1,26 @@
 <script>
   import { uiStore } from '$lib/stores/uiStore.js';
   import { page } from '$app/stores';
+  import { fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
   import { tweened } from 'svelte/motion';
   import Button from '../components/Button.svelte';
 
+  import DataInactive from '$lib/icons/Data-Inactive.svelte';
+  import DataActive from '$lib/icons/Data-Active.svelte';
+  import NotesInactive from '$lib/icons/Notes-Inactive.svelte';
+  import NotesActive from '$lib/icons/Notes-Active.svelte';
+  import RewardsInactive from '$lib/icons/Rewards-Inactive.svelte';
+  import RewardsActive from '$lib/icons/Rewards-Active.svelte';
+  import SettingsInactive from '$lib/icons/Settings-Inactive.svelte';
+  import SettingsActive from '$lib/icons/Settings-Active.svelte';
+
   const navItems = [
-    { href: '/entry', text: 'Entries', icon: '📓', matchPaths: ['/entry', '/'] },
-    { href: '/data', text: 'Data', icon: '📈', matchPaths: ['/data'] },
-    { type: 'add_button', text: 'Add', icon: '＋' },
-    { href: '/achievements', text: 'Medals', icon: '🎖️', matchPaths: ['/achievements'] },
-    { href: '/settings', text: 'Settings', icon: '⚙️', matchPaths: ['/settings'] },
+    { href: '/entry', text: 'Entries', iconInactive: NotesInactive, iconActive: NotesActive, matchPaths: ['/entry', '/'] },
+    { href: '/data', text: 'Data', iconInactive: DataInactive, iconActive: DataActive, matchPaths: ['/data'] },
+    { type: 'add_button', text: 'Add'}, // Or a specific "add" icon component
+    { href: '/achievements', text: 'Medals', iconInactive: RewardsInactive, iconActive: RewardsActive, matchPaths: ['/achievements'] },
+    { href: '/settings', text: 'Settings', iconInactive: SettingsInactive, iconActive: SettingsActive, matchPaths: ['/settings'] },
   ];
 
   export const currentPath = '';
@@ -57,33 +67,40 @@
 <nav class="bottom-nav-bwp">
   {#each navItems as item (item.text)}
     {#if item.type === 'add_button'}
-      <Button 
+      <Button
         type="primary"
-        text="+"
+        addBtn={true}
+        ariaLabel="Add New Entry"
         onClick={() => handleNavClick(item)}
+        class="nav-add-button-override"
+        showSparkles={showAddSparkles}
+        scale={$addButtonScale}
       />
-    {:else if item.type === 'menu_button'}
-      <button
-        class="nav-item-bwp menu-button-bwp"
-        on:click={() => handleNavClick(item)}
-        aria-label={item.text}
-      >
-        <span class="icon">{item.icon}</span>
-        <span class="text">{item.text}</span>
-      </button>
-    {:else}
+    {:else} <!-- Handles regular nav links -->
+      {@const active = isActive(item)}
+      {@const iconToRender = active ? item.iconActive : item.iconInactive}
       <a
         href={item.href}
         class="nav-item-bwp"
-        class:active={isActive(item)}
+        class:active={active}
         aria-label={item.text}
         on:click={() => handleNavClick(item)}
       >
-        <span class="icon">{item.icon}</span>
+        <div class="icon-container-animated">
+          <!-- Keyed block for transitions -->
+          {#key iconToRender} <!-- When iconToRender changes, this block is destroyed and recreated -->
+            <div class="icon-wrapper"
+                 in:fade="{{ duration: 150, delay: active ? 100 : 0 }}"
+                 out:fade="{{ duration: 100 }}">
+              <svelte:component this={iconToRender} /> <!-- Renders the actual SVG component -->
+            </div>
+          {/key}
+        </div>
       </a>
     {/if}
   {/each}
 </nav>
+
 
 <style>
   /* Base Bottom Nav Styling (using BWP theme variables) */
@@ -108,47 +125,63 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: var(--menu-inactive);
     flex-grow: 1;
     flex-basis: 0;
     height: 100%;
-    padding: 0.1rem 0;
+    padding: 0.2rem 0.1rem;
     background: none;
     border: none;
     cursor: pointer;
-    transition: color 0.2s ease, opacity 0.2s ease;
+    transition: opacity 0.2s ease; /* For hover on non-active items */
     -webkit-tap-highlight-color: transparent;
     position: relative;
+    color: var(--bw-navbar-icon-inactive, #8e8e93); /* Default color for icon container to inherit */
   }
 
-  .nav-item-bwp:not(.add-button-magical-pink):hover {
+  .nav-item-bwp:not(.active):not(.nav-add-button-override):hover { /* Exclude add button from this hover */
     opacity: 0.7;
   }
 
-  .nav-item-bwp.active .icon,
-  .nav-item-bwp.active .text {
-    color: var(--menu-active, var(--menu-active));
-  }
-  .nav-item-bwp.active .text {
-    font-weight: 500;
+  /* Icon container for sizing and transition origin */
+  .icon-container-animated {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+    position: relative; /* Essential for the #key block's children */
+    /* Remove direct color transition here, as the SVGs handle their own appearance */
+    /* transition: color 0.2s ease; */
   }
 
-  .nav-item-bwp .icon {
-    font-size: 1.7rem;
-    margin-bottom: 1px;
+  .icon-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute; /* Ensures smooth overlay during transition */
+    top: 0;
+    left: 0;
+  }
+
+  .nav-item-bwp .text {
+    font-size: 1rem;
     line-height: 1;
+    color: var(--bw-navbar-text-inactive, #8e8e93);
+    transition: color 0.2s ease, font-weight 0.2s ease;
+    font-family: "Urbanist", sans-serif;
+  }
+
+  .nav-item-bwp.active .text {
+    color: var(--bw-navbar-text-active, #ff69b4);
+    font-weight: 600; /* Bolder active text */
   }
 
   .nav-item-bwp .text {
     font-size: 0.6rem;
     line-height: 1;
     color: var(--menu-inactive);
-  }
-
-  @keyframes sparkle-animation-pink {
-    0% { transform: scale(0) translateY(5px) rotate(0deg); opacity: 0.5; }
-    30% { opacity: 1; }
-    50% { transform: scale(1.8) translateY(-8px) rotate(180deg); opacity: 0.8; }
-    100% { transform: scale(0) translateY(-18px) rotate(360deg); opacity: 0; }
   }
 </style>

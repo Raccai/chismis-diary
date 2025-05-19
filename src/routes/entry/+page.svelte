@@ -4,36 +4,76 @@
     import EntryCard from "$lib/components/Entries/EntryCard.svelte";
     import { uiStore } from '$lib/stores/uiStore.js';
     import { quintOut } from "svelte/easing";
-    import { fly, slide } from "svelte/transition"; // Added slide transition
-    import MoodFilterBar from "$lib/components/Entries/MoodFilterBar.svelte";
-    import { tick } from 'svelte'; // For focusing input
+    import { fly, slide } from "svelte/transition";
+    import MoodFilterBar from "$lib/components/Entries/MoodFilterBar.svelte"; // Adjust path if needed
+    import { tick } from 'svelte';
 
     let selectedMoodFilter = null;
     let searchTerm = "";
     let showSearchBar = false;
-    let searchInputEl; // For binding to the input element to focus
+    let searchInputEl;
 
-    $: filteredEntries = $entriesStore.filter(entry => { // Renamed from filterEntries to filteredEntries for clarity
-      const moodMatch = !selectedMoodFilter || entry.mood === selectedMoodFilter;
-      const term = searchTerm.trim().toLowerCase();
-      const searchMatch = !term ||
-                          (entry.title && entry.title.toLowerCase().includes(term)) ||
-                          (entry.text && entry.text.toLowerCase().includes(term));
-      return moodMatch && searchMatch;
-    });
+    // --- State for Sorting ---
+    let currentSortKey = 'date_desc'; // Default sort order
 
+    // --- Event handler for sort changes from MoodFilterBar ---
+    // This function is called when MoodFilterBar dispatches the 'sort' event
+    function handleSortChange(event) {
+      currentSortKey = event.detail;
+      console.log("Page: Sort key changed to:", currentSortKey);
+    }
+
+    // --- Reactive Filtered AND Sorted Entries ---
+    $: filteredAndSortedEntries = (() => {
+        console.log("Recalculating filteredAndSortedEntries. Current sort:", currentSortKey, "Mood filter:", selectedMoodFilter, "Search:", searchTerm);
+        // Start with a shallow copy to avoid mutating the original store's array during sort
+        let processedEntries = [...$entriesStore];
+
+        // Apply filtering
+        processedEntries = processedEntries.filter(entry => {
+            const moodMatch = !selectedMoodFilter || entry.mood === selectedMoodFilter;
+            const term = searchTerm.trim().toLowerCase();
+            const searchMatch = !term ||
+                                (entry.title && entry.title.toLowerCase().includes(term)) ||
+                                (entry.text && entry.text.toLowerCase().includes(term));
+            return moodMatch && searchMatch;
+        });
+
+        // Apply sorting
+        if (currentSortKey === 'date_desc') {
+            processedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+        } else if (currentSortKey === 'date_asc') {
+            processedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } else if (currentSortKey === 'none') {
+            // 'none' means no specific sort, so it keeps the order after filtering.
+            // If $entriesStore is always appended to (newest at start),
+            // and you want 'none' to reflect that, you might not need special handling here,
+            // or you might explicitly sort by original index if you had one.
+            // For now, it means "don't apply additional date sorting".
+        }
+        // Add more sort cases here if needed:
+        // else if (currentSortKey === 'title_asc') {
+        //   processedEntries.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+        // }
+
+        console.log("Page: Processed entries count:", processedEntries.length);
+        return processedEntries; // <<<--- THIS RETURN WAS CRITICAL AND MISSING IN THE PASTED VERSION
+    })();
+
+
+    // --- Filtering Handlers ---
     function handleMoodFilterChange(e) {
       selectedMoodFilter = e.detail;
     }
 
-    async function handleToggleSearch() { // Made async for tick
+    async function handleToggleSearch() {
       showSearchBar = !showSearchBar;
       if (!showSearchBar) {
-        searchTerm = ""; // Clear search when hiding
+        searchTerm = "";
       } else {
-        await tick(); // Wait for DOM to update
+        await tick();
         if (searchInputEl) {
-            searchInputEl.focus(); // Focus input when shown
+            searchInputEl.focus();
         }
       }
     }
@@ -47,6 +87,7 @@
       }, 300);
     }
 
+    // --- Entry Actions ---
     function handleEdit(event) {
       const entryToEdit = event.detail;
       if (entryToEdit && typeof entryToEdit.id !== 'undefined') {
@@ -67,14 +108,9 @@
 
     function clearSearch() {
         searchTerm = "";
-        if(searchInputEl) searchInputEl.value = ""; // Also clear the input visually
+        if(searchInputEl) searchInputEl.value = "";
     }
 </script>
-
-<!-- The outer section for fly transition can be removed if filters are sticky,
-     as the content below will scroll, not the whole filter section.
-     Or, keep it if you want the whole page content to fly in.
-     For now, I'll assume sticky filters are primary. -->
 
 <div class="filters-and-content-wrapper">
   <div class="sticky-filters-header">
@@ -96,24 +132,25 @@
 
     <MoodFilterBar
       currentFilter={selectedMoodFilter}
+      currentSort={currentSortKey} 
       on:filter={handleMoodFilterChange}
       on:toggleSearch={handleToggleSearch}
+      on:sort={handleSortChange} 
     />
   </div>
 
-  <div 
-    class="entries-list-section"
-  >
-    {#if filteredEntries.length === 0}
+  <div class="entries-list-section">
+    <!-- Check if filteredAndSortedEntries is defined before accessing length -->
+    {#if filteredAndSortedEntries && filteredAndSortedEntries.length === 0}
       {#if $entriesStore.length === 0}
         <p class="empty-state-message">No chismis yet. Add some, besh!</p>
       {:else}
         <p class="empty-state-message">No chismis matches your filters huhu</p>
       {/if}
-    {:else}
-      {#each filteredEntries as entry (entry.id)}
+    {:else if filteredAndSortedEntries} <!-- Also check if it's defined before #each -->
+      {#each filteredAndSortedEntries as entry, i (entry.id)} <!-- Added index i -->
       <div
-        transition:fly="{{ y: 20, duration: 300, delay: entry.index * 50 || 0, easing: quintOut }}"
+        transition:fly="{{ y: 20, duration: 300, delay: i * 40, easing: quintOut }}" 
       >
         <EntryCard
           {entry}
@@ -126,54 +163,52 @@
   </div>
 </div>
 
+<!-- Styles remain the same as your previous full version -->
 <style>
   .sticky-filters-header {
     position: sticky;
-    /* Adjust top based on your Topbar's height + Navbar's height */
-    /* Example: if Topbar is 60px and Navbar is 50px, top = 110px */
-    background-color: var(--bg-primary); /* Match page background to avoid content showing through */
-    z-index: 900; /* Below Topbar/Navbar but above page content */
-    padding-bottom: 0.5rem; /* Space below the filter bar */
-    box-shadow: 0 2px 5px var(--shadow-color-transparent, rgba(0,0,0,0.05)); /* Subtle shadow when scrolled */
-    margin: 0 -1.5rem; /* Extend to edges if content-area in layout has padding */
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    top: var(--topbar-height, 60px); /* Define --topbar-height globally or in +layout */
+    background-color: var(--bw-bg-primary);
+    z-index: 900;
+    box-shadow: 0 2px 5px var(--bw-shadow-color-soft, rgba(0,0,0,0.05)); /* Use BWP variable */
+    /* Adjust margins and paddings if your layout has side padding for .content-area */
+    /* Example: if .content-area has padding: 0 1rem; */
+    margin-left: calc(-1 * var(--content-area-side-padding, 1rem)); /* Define this var in layout */
+    margin-right: calc(-1 * var(--content-area-side-padding, 1rem));
+    padding-left: var(--content-area-side-padding, 1rem);
+    padding-right: var(--content-area-side-padding, 1rem);
   }
 
   .search-bar-container {
     display: flex;
     align-items: center;
-    /* margin-bottom: 0.75rem; /* MoodFilterBar will have its own top margin */
-    padding: 0.75rem 0.25rem 0.25rem 0.25rem; /* Padding around search input */
-    /* background-color: var(--bg-secondary); /* Not needed if sticky header bg is set */
-    /* border-radius: 8px; */
-    /* box-shadow: 0 1px 3px var(--shadow-color); */
+    padding: 0.75rem 0.25rem 0.25rem 0.25rem;
   }
 
   .search-input {
     flex-grow: 1;
-    padding: 0.75rem 1rem; /* Increased padding for a more "premium" feel */
-    border: 1px solid var(--border-primary);
-    border-radius: 20px; /* Pill shape */
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--bw-border-primary);
+    border-radius: 20px;
     font-size: 1rem;
-    background-color: var(--bg-secondary); /* Slightly different from page for depth */
-    color: var(--text-primary);
+    background-color: var(--bw-bg-secondary);
+    color: var(--bw-text-primary);
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   .search-input::placeholder {
-    color: var(--text-secondary);
+    color: var(--bw-text-secondary);
     opacity: 0.8;
   }
   .search-input:focus {
     outline: none;
-    border-color: var(--text-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--text-accent) 30%, transparent); /* Outer glow */
+    border-color: var(--bw-accent-pink); /* Use BWP accent */
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--bw-accent-pink) 30%, transparent);
   }
 
   .clear-search-button {
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: var(--bw-text-secondary);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0 0.75rem;
@@ -181,17 +216,16 @@
     line-height: 1;
   }
   .clear-search-button:hover {
-    color: var(--text-primary);
+    color: var(--bw-text-primary);
   }
 
   .entries-list-section {
-    padding-top: 48px; /* Space below sticky header before entries start */
-    /* margin-top: 1rem; /* Removed, padding-top on this handles space */
+    padding-top: 60px; /* Adjusted space from sticky header */
   }
   .empty-state-message {
     text-align: center;
     padding: 3rem 1rem;
-    color: var(--text-secondary);
+    color: var(--bw-text-secondary);
     font-size: 1.1rem;
     opacity: 0.7;
   }

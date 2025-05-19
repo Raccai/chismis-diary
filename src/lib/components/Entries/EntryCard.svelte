@@ -109,6 +109,7 @@
     gap: 0.75rem; /* Reduced spacing */
     border: 1px solid var(--card-outline);
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    background-color: var(--card-bg);
   }
   .entry-card-vibe:hover {
     transform: translateY(-3px);
@@ -116,11 +117,11 @@
   }
 
   .entry-title-vibe {
-    font-size: 1.1rem; /* Reduced Title Size */
-    font-weight: 600;
+    font-size: 1.2rem; /* Reduced Title Size */
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 700;
     color: var(--text-primary);
     margin: 0;
-    line-height: 1.3;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -128,8 +129,10 @@
   }
 
   .date-display-vibe {
-    font-size: 0.8rem; /* Reduced date size */
+    font-size: 0.84rem; /* Reduced date size */
     color: var(--text-tertiary);   /* Dark gray */
+    font-family: 'Urbanist', sans-serif;
+
   }
 
   .mood-display-vibe {
@@ -148,8 +151,10 @@
   }
   .mood-label-vibe {
     font-size: 0.8rem; /* Reduced label */
-    font-weight: 600;
     color: var(--text-primary, #1c1c1e);
+    font-family: 'Graffiti Urban', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.04rem;
   }
 
   .tag-chips-container-vibe {
@@ -168,5 +173,6 @@
     font-size: 0.8rem;    /* Further Reduced Size */
     font-weight: 500;
     border: none;            /* Remove Border */
+    font-family: 'Urbanist', sans-serif;
   }
 </style>

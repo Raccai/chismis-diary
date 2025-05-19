@@ -17,7 +17,7 @@
   class:selected={isSelected}
   on:click={handleClick}
   aria-pressed={isSelected}
-  style="background: {moodOption.colorLight};"
+  style="background: {moodOption.colorLight}; border-bottom: 4px solid {moodOption.colorMedium};"
 >
   <span class="emoji">{moodOption.emoji}</span>
   <span 
@@ -41,6 +41,9 @@
     font-size: 0.9rem;
     transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     white-space: nowrap;
+    font-family: 'Graffiti Urban', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.04rem;
   }
   .mood-chip:hover {
     background-color: #efefef;
@@ -48,9 +51,8 @@
   }
   .mood-chip.selected {
     background-color: #e0f2fe;
-    border-color: #38bdf8;
+    border-color: #000000;
     color: #0c4a6e;
-    font-weight: bold;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   .mood-chip.selected:hover {
