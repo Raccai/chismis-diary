@@ -65,58 +65,70 @@
 </script>
 
 <nav class="bottom-nav-bwp">
-  {#each navItems as item (item.text)}
-    {#if item.type === 'add_button'}
-      <Button
-        type="primary"
-        addBtn={true}
-        ariaLabel="Add New Entry"
-        onClick={() => handleNavClick(item)}
-        class="nav-add-button-override"
-        showSparkles={showAddSparkles}
-        scale={$addButtonScale}
-      />
-    {:else} <!-- Handles regular nav links -->
-      {@const active = isActive(item)}
-      {@const iconToRender = active ? item.iconActive : item.iconInactive}
-      <a
-        href={item.href}
-        class="nav-item-bwp"
-        class:active={active}
-        aria-label={item.text}
-        on:click={() => handleNavClick(item)}
-      >
-        <div class="icon-container-animated">
-          <!-- Keyed block for transitions -->
-          {#key iconToRender} <!-- When iconToRender changes, this block is destroyed and recreated -->
-            <div class="icon-wrapper"
-                 in:fade="{{ duration: 150, delay: active ? 100 : 0 }}"
-                 out:fade="{{ duration: 100 }}">
-              <svelte:component this={iconToRender} /> <!-- Renders the actual SVG component -->
-            </div>
-          {/key}
-        </div>
-      </a>
-    {/if}
-  {/each}
+  <div class="main-nav">
+
+    {#each navItems as item (item.text)}
+      {#if item.type === 'add_button'}
+        <Button
+          type="primary"
+          addBtn={true}
+          ariaLabel="Add New Entry"
+          onClick={() => handleNavClick(item)}
+          class="nav-add-button-override"
+          showSparkles={showAddSparkles}
+          scale={$addButtonScale}
+        />
+      {:else} <!-- Handles regular nav links -->
+        {@const active = isActive(item)}
+        {@const iconToRender = active ? item.iconActive : item.iconInactive}
+        <a
+          href={item.href}
+          class="nav-item-bwp"
+          class:active={active}
+          aria-label={item.text}
+          on:click={() => handleNavClick(item)}
+        >
+          <div class="icon-container-animated">
+            <!-- Keyed block for transitions -->
+            {#key iconToRender} <!-- When iconToRender changes, this block is destroyed and recreated -->
+              <div class="icon-wrapper"
+                   in:fade="{{ duration: 150, delay: active ? 100 : 0 }}"
+                   out:fade="{{ duration: 100 }}">
+                <svelte:component this={iconToRender} /> <!-- Renders the actual SVG component -->
+              </div>
+            {/key}
+          </div>
+        </a>
+      {/if}
+    {/each}
+  </div>
 </nav>
 
 
 <style>
   /* Base Bottom Nav Styling (using BWP theme variables) */
   .bottom-nav-bwp {
-    background-color: var(--navbar-bg, #f7f8fa);
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: var(--navbar-height, 80px);
     display: flex;
     align-items: center; /* For vertical centering of add button */
-    padding: 0 0.25rem;
+    padding: 0.5rem 0.5rem;
     box-sizing: border-box;
     z-index: 990;
     border-radius: 20px 20px 0 0;
+  }
+  
+  .main-nav {
+    background-color: var(--navbar-bg, #f7f8fa);
+    height: var(--navbar-height, 72px);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    border-radius: 24px;
   }
 
   .nav-item-bwp {
@@ -164,6 +176,7 @@
     position: absolute; /* Ensures smooth overlay during transition */
     top: 0;
     left: 0;
+    transform: scale(1.1);
   }
 
   .nav-item-bwp .text {

@@ -1,28 +1,33 @@
 <script>
   import { moodStore } from '$lib/stores/moodStore.js';
   import { get } from 'svelte/store';
-  import { createEventDispatcher, onMount, tick } from 'svelte';
-  import { quintOut } from 'svelte/easing';
-  import { tweened } from 'svelte/motion';
-
-  // SVGs for icons
-  const EditIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16.7574 2.99668L14.7574 4.99668L18.9997 9.23906L21.0004 7.23971C21.391 6.84918 21.391 6.21602 21.0004 5.82549L18.1742 2.99926C17.7837 2.60873 17.1505 2.60873 16.7574 2.99668ZM13.2426 6.51145L3 16.754V20.9965H7.24264L17.4859 10.7532L13.2426 6.51145Z"></path></svg>`;
-  const DeleteIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path></svg>`;
+  import { createEventDispatcher, onMount, tick } from 'svelte'; // onMount, tick might not be used in this final version unless for future additions
 
   export let entry;
   const dispatch = createEventDispatcher();
 
+  // Default colors if not provided by moodStore item
+  const DEFAULT_COLOR_LIGHT = 'var(--bw-text-on-accent, #ffffff)'; // For text on dark mood bg
+  const DEFAULT_COLOR_MEDIUM = 'var(--bw-bg-tertiary, #eff1f3)';  // For tag background
+  const DEFAULT_COLOR_DARK = 'var(--bw-text-secondary, #5f6368)'; // Default mood bg, tag text/border
+
   function deriveMoodDetails(currentMoodValue, storeData) {
     if (!currentMoodValue || !storeData) {
-      return { label: currentMoodValue || 'Unknown', emoji: '😐' };
+      return {
+        label: currentMoodValue || 'Unknown',
+        emoji: '😐',
+        colorLight: DEFAULT_COLOR_LIGHT,
+        colorMedium: DEFAULT_COLOR_MEDIUM,
+        colorDark: DEFAULT_COLOR_DARK
+      };
     }
     const item = storeData.find(m => m.value === currentMoodValue);
     return {
       label: item ? item.label : (currentMoodValue || 'Unknown'),
       emoji: item ? item.emoji : '😐',
-      colorLight: item?.colorLight || '#f4f4f4',
-      colorMedium: item?.colorMedium || '#f4f4f4',
-      colorDark: item?.colorDark || '#f4f4f4',
+      colorLight: item?.colorLight || DEFAULT_COLOR_LIGHT,
+      colorMedium: item?.colorMedium || DEFAULT_COLOR_MEDIUM,
+      colorDark: item?.colorDark || DEFAULT_COLOR_DARK
     };
   }
 
@@ -31,64 +36,58 @@
   function formatDate(dateInput) {
     if (!dateInput) return 'No date';
     const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-    // More concise date format
     return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   $: displayTags = entry.tags && Array.isArray(entry.tags) ? entry.tags.slice(0, 3) : [];
 
-
-  // --- Sparkle Animation State for Buttons ---
-  let showEditSparkles = false;
-  let showDeleteSparkles = false;
-
-  function triggerSparkles(buttonType) {
-    if (buttonType === 'edit') {
-      showEditSparkles = true;
-      setTimeout(() => { showEditSparkles = false; }, 700);
-    } else if (buttonType === 'delete') {
-      showDeleteSparkles = true;
-      setTimeout(() => { showDeleteSparkles = false; }, 700);
-    }
-  }
-
-  // --- Button Click Handlers ---
-  function handleDelete() {
-    if (confirm('Burahin ang tsismis na ito?')) {
-      triggerSparkles('delete');
-      dispatch("delete", entry.id);
-    }
-  }
-
   function handleEdit() {
-    triggerSparkles('edit');
     dispatch("edit", entry);
   }
+
 </script>
 
-<article class="entry-card-vibe" style="border-left: 6px solid {moodDetails.colorMedium} ;">
-  <h2 class="entry-title-vibe">{entry.title || "Chismis Update"}</h2>
+<!-- Entire card is clickable for editing -->
+<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
+<article
+  class="entry-card graffiti-card"
+  on:click={handleEdit}
+  on:keydown={(e) => {if(e.key === 'Enter' || e.key === ' ') handleEdit()}}
+  tabindex="0"
+  role="button"
+  aria-label="View or edit chismis titled {entry.title || 'Chismis Update'}"
+>
+  <h2 class="entry-title">{entry.title || "Chismis Update"}</h2>
 
-  <div class="date-display-vibe">{formatDate(entry.date)}</div>
+  <div class="date-display">{formatDate(entry.date)}</div>
 
-  <div class="mood-display-vibe" style="background: {moodDetails.colorMedium};">
-    <span class="mood-emoji-vibe">{moodDetails.emoji}</span>
-    <span 
-      class="mood-label-vibe"
-      style="color: {moodDetails.colorDark};"
-    >
+  <div class="mood-display" style="background-color: {moodDetails.colorDark}; border-color: {moodDetails.colorDark};">
+    <span class="mood-emoji">{moodDetails.emoji}</span>
+    <span class="mood-label" style="color: {moodDetails.colorLight};">
       {moodDetails.label}
     </span>
+    <div class="drip-container"> 
+      <svg class="drip-svg drip-1" width="65" height="53" viewBox="0 0 65 53" xmlns="http://www.w3.org/2000/svg">
+        <path d="M64.7305 0.725586C59.2732 2.63174 48.3584 8.96226 48.3584 19.0352C49.5046 30.099 47.9167 52.2266 32.3945 52.2266C16.8724 52.2266 15.2845 30.099 16.4307 19.0352C16.4307 8.96226 5.51586 2.63174 0.0585938 0.725586H64.7305Z" fill={moodDetails.colorDark}/>
+      </svg>
+      <svg class="drip-svg drip-2" width="65" height="53" viewBox="0 0 65 53" xmlns="http://www.w3.org/2000/svg">
+        <path d="M64.7305 0.725586C59.2732 2.63174 48.3584 8.96226 48.3584 19.0352C49.5046 30.099 47.9167 52.2266 32.3945 52.2266C16.8724 52.2266 15.2845 30.099 16.4307 19.0352C16.4307 8.96226 5.51586 2.63174 0.0585938 0.725586H64.7305Z" fill={moodDetails.colorDark}/>
+      </svg>
+      <svg class="drip-svg drip-3" width="65" height="53" viewBox="0 0 65 53" xmlns="http://www.w3.org/2000/svg">
+        <path d="M64.7305 0.725586C59.2732 2.63174 48.3584 8.96226 48.3584 19.0352C49.5046 30.099 47.9167 52.2266 32.3945 52.2266C16.8724 52.2266 15.2845 30.099 16.4307 19.0352C16.4307 8.96226 5.51586 2.63174 0.0585938 0.725586H64.7305Z" fill={moodDetails.colorDark}/>
+      </svg>
+    </div>
   </div>
 
   {#if displayTags.length > 0}
-    <div class="tag-chips-container-vibe">
+    <div class="tag-chips-container">
       {#each displayTags as tag (tag)}
-        <span 
-          class="tag-chip-vibe" 
+        <span
+          class="tag-chip"
           style="
-            background: {moodDetails.colorMedium};
-            color: {moodDetails.colorDark};  
+            background-color: {moodDetails.colorMedium};
+            color: {moodDetails.colorDark};
+            border: 1px solid {moodDetails.colorDark};
           "
         >
           {tag}
@@ -99,80 +98,128 @@
 </article>
 
 <style>
-  .entry-card-vibe {
-    padding: 1.25rem 1.5rem;
-    margin: 1rem 0;
-    border-radius: 0 10px 10px 0; /* Softer roundness */
-    box-shadow: 0 5px 15px var(--card-shadow, rgba(0,0,0,0.08));
+  .entry-card {
+    padding: 1rem 1.25rem;
+    margin: 0.8rem 0;
+    border-radius: 18px;
+    border: 2px solid var(--card-border, #e0e0e0); /* Using CSS variable for border */
     display: flex;
     flex-direction: column;
-    gap: 0.75rem; /* Reduced spacing */
-    border: 1px solid var(--card-outline);
+    gap: 0.6rem;
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-    background-color: var(--card-bg);
+    background-color: var(--card-bg, #ffffff); /* Using CSS variable */
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 4px 10px var(--card-shadow, rgba(0,0,0,0.07)); /* Softer default shadow */
   }
-  .entry-card-vibe:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px var(--card-shadow, rgba(0,0,0,0.1));
+  .entry-card:hover {
+    transform: translateY(-4px) rotate(-0.5deg);
+    box-shadow: 0 10px 22px var(--card-shadow, rgba(0,0,0,0.12));
   }
-
-  .entry-title-vibe {
-    font-size: 1.2rem; /* Reduced Title Size */
-    font-family: 'Urbanist', sans-serif;
-    font-weight: 700;
-    color: var(--text-primary);
+  .entry-card:focus-visible {
+    outline: 2px solid var(--bw-accent-pink, #ff69b4); /* Using BWP variable */
+    outline-offset: 2px;
+  }
+  .entry-title {
+    font-family: 'Graffiti Urban', sans-serif; /* Ensure this font is loaded */
+    font-size: 1.8rem;
+    letter-spacing: 0.08rem;
+    color: var(--text-primary, #1c1c1e); /* Using CSS variable */
     margin: 0;
+    line-height: 1.2;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    font-family: sans-serif;  /* Change font to something simpler */
   }
 
-  .date-display-vibe {
-    font-size: 0.84rem; /* Reduced date size */
-    color: var(--text-tertiary);   /* Dark gray */
-    font-family: 'Urbanist', sans-serif;
-
+  .date-display {
+    font-size: 0.75rem;
+    color: var(--text-tertiary, #8e8e93); /* Using CSS variable */
+    font-family: 'Urbanist', sans-serif; /* Ensure this font is loaded */
+    font-weight: 500;
   }
 
-  .mood-display-vibe {
-    display: flex;
+  .mood-display {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: fit-content;
-    gap: 0.5rem;
-    padding: 0.4rem 0.8rem; /* Smaller padding */
-    background-color: var(--tertiary); /* Example pinkish fallback */
-    border-radius: 8px;
-  }
-  .mood-emoji-vibe {
-    font-size: 1.4em;   /* Reduced emoji size */
-    line-height: 1.2;
-  }
-  .mood-label-vibe {
-    font-size: 0.8rem; /* Reduced label */
-    color: var(--text-primary, #1c1c1e);
-    font-family: 'Graffiti Urban', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.04rem;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 20px; /* Pill shape */
+    position: relative; /* For drips */
+    z-index: 1; /* For stacking context with drips */
+    align-self: flex-start;
+    margin-top: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: var(--main-bg, #ffffff); /* Default text color for mood display if not overridden by .mood-label */
+    font-family: 'Graffiti Urban', sans-serif; /* Ensure this font is loaded */
+    font-weight: lighter;
+    letter-spacing: 0.08rem;
+    transform: rotate(-2deg);
   }
 
-  .tag-chips-container-vibe {
+  .drip-container { /* Renamed from .drip-fill for clarity */
+    position: absolute;
+    bottom: 0px; /* Align with the very bottom of .mood-display */
+    left: 0;
+    width: 100%;
+    height: 25px; /* Max visual height of drips from bottom of mood-display */
+    pointer-events: none;
+    z-index: 0; /* Behind mood-display text/emoji, but part of its visual block */
+  }
+
+  .drip-svg {
+    position: absolute;
+  }
+
+  .drip-1 {
+    bottom: -17px; 
+    left: 8%;
+    width: 22px; 
+    height: auto; 
+  }
+  .drip-2 {
+    bottom: -12px; 
+    left: 26%;
+    width: 14px;
+    height: auto;
+  }
+  .drip-3 {
+    bottom: -12px;
+    left: 72%;
+    width: 16px;
+    height: auto;
+  }
+
+  .mood-emoji {
+    font-size: 1.3em;
+    line-height: 1;
+  }
+  .mood-label {
+    /* color set inline via style prop based on moodDetails.colorLight */
+    font-family: 'Graffiti Urban', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.08rem;
+  }
+
+  .tag-chips-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.3rem; /* Reduced spacing between tags */
-    margin-top: 0.25rem;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
   }
 
-  .tag-chip-vibe {
+  .tag-chip {
     display: inline-block;
-    background-color: #FCE4EC; /* Secondary */
-    color: #E91E63;           /* Primary (pink) */
-    padding: 0.4rem 0.8rem; /* Adjusted Padding */
-    border-radius: 4px;   /* From the image! */
-    font-size: 0.8rem;    /* Further Reduced Size */
+    /* background-color and color set inline via style prop */
+    padding: 0.3rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
     font-weight: 500;
-    border: none;            /* Remove Border */
+    /* border set inline */
     font-family: 'Urbanist', sans-serif;
+    line-height: 1.2;
   }
 </style>

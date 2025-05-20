@@ -1,6 +1,5 @@
 <script>
-  import TakeNoteInactive from '$lib/icons/TakeNote-Inactive.svelte';
-  import TakeNoteActive from '$lib/icons/TakeNote-Active.svelte';
+  import TakeNote from '$lib/icons/TakeNote.svelte';
 
   export let type = "";
   export let text = "";
@@ -13,7 +12,7 @@
   <button class="primary" on:click={onClick}>
     {#if addBtn === true}
       <div class="add-svg">
-        <TakeNoteInactive />
+        <TakeNote />
       </div>
     {/if}
     {text}
@@ -36,7 +35,7 @@
 <style>
   /* Primary Button */
   .add-svg {
-    transform: scale(0.6);
+    transform: scale(0.8);
   }
 
   .primary {
@@ -44,11 +43,7 @@
     height: 50px;
     background-color: var(--add-btn-bg);
     border-radius: 12px;
-    border-bottom: 4px solid var(--add-btn-bottom);
     transition: all 150ms ease-in-out;
-    box-shadow: 
-      0 0 12px 12px rgba(255, 255, 255, 0.1),
-      0 0 4px 2px rgba(255, 255, 255, 0.2);
   }
 
   .primary:active {

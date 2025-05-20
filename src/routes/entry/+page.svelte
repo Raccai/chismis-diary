@@ -46,15 +46,7 @@
             processedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
         } else if (currentSortKey === 'none') {
             // 'none' means no specific sort, so it keeps the order after filtering.
-            // If $entriesStore is always appended to (newest at start),
-            // and you want 'none' to reflect that, you might not need special handling here,
-            // or you might explicitly sort by original index if you had one.
-            // For now, it means "don't apply additional date sorting".
         }
-        // Add more sort cases here if needed:
-        // else if (currentSortKey === 'title_asc') {
-        //   processedEntries.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-        // }
 
         console.log("Page: Processed entries count:", processedEntries.length);
         return processedEntries; // <<<--- THIS RETURN WAS CRITICAL AND MISSING IN THE PASTED VERSION
@@ -133,6 +125,7 @@
     <MoodFilterBar
       currentFilter={selectedMoodFilter}
       currentSort={currentSortKey} 
+      isSearchActive={showSearchBar}
       on:filter={handleMoodFilterChange}
       on:toggleSearch={handleToggleSearch}
       on:sort={handleSortChange} 
@@ -166,17 +159,12 @@
 <!-- Styles remain the same as your previous full version -->
 <style>
   .sticky-filters-header {
-    position: sticky;
-    top: var(--topbar-height, 60px); /* Define --topbar-height globally or in +layout */
-    background-color: var(--bw-bg-primary);
+    position: fixed;
+    top: var(--topbar-height); /* Define --topbar-height globally or in +layout */
+    background-color: var(--main-bg);
     z-index: 900;
-    box-shadow: 0 2px 5px var(--bw-shadow-color-soft, rgba(0,0,0,0.05)); /* Use BWP variable */
-    /* Adjust margins and paddings if your layout has side padding for .content-area */
-    /* Example: if .content-area has padding: 0 1rem; */
-    margin-left: calc(-1 * var(--content-area-side-padding, 1rem)); /* Define this var in layout */
-    margin-right: calc(-1 * var(--content-area-side-padding, 1rem));
-    padding-left: var(--content-area-side-padding, 1rem);
-    padding-right: var(--content-area-side-padding, 1rem);
+    width: 100%;
+    padding: 0 20px;
   }
 
   .search-bar-container {
@@ -184,11 +172,11 @@
     align-items: center;
     padding: 0.75rem 0.25rem 0.25rem 0.25rem;
   }
-
+  
   .search-input {
+    border: 2px solid var(--card-border);
     flex-grow: 1;
     padding: 0.75rem 1rem;
-    border: 1px solid var(--bw-border-primary);
     border-radius: 20px;
     font-size: 1rem;
     background-color: var(--bw-bg-secondary);
@@ -220,7 +208,7 @@
   }
 
   .entries-list-section {
-    padding-top: 60px; /* Adjusted space from sticky header */
+    padding: 60px 20px 80px 20px;
   }
   .empty-state-message {
     text-align: center;

@@ -113,7 +113,6 @@
     flex-grow: 1;
     width: 100%;
     box-sizing: border-box;
-    padding: 0 20px 70px 20px;
     position: relative; /* For potential absolute positioned elements within pages */
     overflow-x: hidden; /* Prevent horizontal scroll from page transitions */
   }

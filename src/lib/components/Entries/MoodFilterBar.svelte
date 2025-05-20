@@ -1,114 +1,224 @@
 <script>
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { slide, fade } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
   import { moodStore } from '$lib/stores/moodStore.js';
-  import { createEventDispatcher } from 'svelte';
-  import MoodChip from '$lib/components/MoodChip.svelte';
 
-  export let currentFilter = null; // The currently active mood filter value
+  // Import the new dropdown components
+  import MoodSelectDropdown from './MoodSelectDropdown.svelte';
+  import SortOptionsDropdown from './SortOptionsDropdown.svelte';
+
+  export let currentMoodFilter = null;
+  export let currentSortKey = 'date_desc';
+  export let isSearchActive = false;
 
   const dispatch = createEventDispatcher();
-  let showSortSheet = false;
 
-  function handleMoodSelect(moodValue) {
-    if (currentFilter === moodValue) {
-      dispatch('filter', null); // Deselect if already selected
-    } else {
-      dispatch('filter', moodValue);
+  let showMoodDropdown = false;
+  let showSortDropdown = false;
+
+  // DOM element references for positioning dropdowns
+  let moodTriggerButton;
+  let sortTriggerButton;
+
+  function toggleMoodDropdown() {
+    showSortDropdown = false; // Close other dropdown
+    if (isSearchActive && !showMoodDropdown) {
+      dispatch('toggleSearch');
+    }
+    showMoodDropdown = !showMoodDropdown;
+  }
+
+  function toggleSortDropdown() {
+    showMoodDropdown = false; 
+    if (isSearchActive && !showSortDropdown) {
+        dispatch('toggleSearch'); 
+    }
+    showSortDropdown = !showSortDropdown;
+  }
+
+  function toggleSearchInterface() {
+    showMoodDropdown = false;
+    showSortDropdown = false;
+    dispatch('toggleSearch'); // Parent page handles actual search bar
+  }
+
+  function handleMoodSelected(event) {
+    dispatch('filter', event.detail.value); // event.detail should be the mood value
+    showMoodDropdown = false;
+  }
+
+  function handleSortSelected(event) {
+    dispatch('sort', event.detail.value); // event.detail should be the sort key
+    showSortDropdown = false;
+  }
+
+  // Close dropdowns if clicked outside
+  function handleClickOutside(event) {
+    if (showMoodDropdown && moodTriggerButton && !moodTriggerButton.contains(event.target)) {
+        // Check if click is also outside the dropdown content itself
+        const moodDropdownElement = document.querySelector('.mood-dropdown-positioner .custom-dropdown-content');
+        if (moodDropdownElement && !moodDropdownElement.contains(event.target)) {
+            showMoodDropdown = false;
+        }
+    }
+    if (showSortDropdown && sortTriggerButton && !sortTriggerButton.contains(event.target)) {
+        const sortDropdownElement = document.querySelector('.sort-dropdown-positioner .custom-dropdown-content');
+        if (sortDropdownElement && !sortDropdownElement.contains(event.target)) {
+            showSortDropdown = false;
+        }
     }
   }
 
-  function toggleSortSheet() {
-    showSortSheet = !showSortSheet;
-  }
+  onMount(() => {
+    document.addEventListener('click', handleClickOutside, true); // Use capture phase
+  });
+  onDestroy(() => {
+    document.removeEventListener('click', handleClickOutside, true);
+  });
 
-  function handleSortChange(event) {
-    const newSortValue = event.detail;
-    // currentSort = newSortValue; // Parent will manage this prop
-    dispatch('sort', newSortValue);
-    showSortSheet = false; // Close sheet after selection
-  }
+
+  $: moodFilterText = currentMoodFilter ? ($moodStore.find(m=>m.value === currentMoodFilter)?.label || 'Filtered') : 'Filter Mood';
+  $: sortText = currentSortKey === 'date_desc' ? 'Newest' : (currentSortKey === 'date_asc' ? 'Oldest' : (currentSortKey === 'none' ? 'Default Order' : 'Sort By'));
+
 </script>
 
-<div class="filter-bar-container">
-  <div class="mood-chips-scroll-wrapper">
-    <!-- "All" Chip -->
+<div class="filter-trigger-bar">
+  <div class="trigger-button-wrapper" bind:this={moodTriggerButton}>
     <button
-      class="chip all-chip"
-      class:active={currentFilter === null}
-      on:click={() => handleMoodSelect(null)}
-      aria-pressed={currentFilter === null}
+      class="filter-trigger-button mood-trigger"
+      class:active={showMoodDropdown || currentMoodFilter}
+      on:click={toggleMoodDropdown}
+      aria-expanded={showMoodDropdown}
+      aria-haspopup="listbox"
+      aria-controls="mood-dropdown-list"
     >
-      All Moods
+      <span class="button-icon">🎨</span>
+      <span class="button-text">{moodFilterText}</span>
+      <span class="dropdown-arrow">{showMoodDropdown ? '▲' : '▼'}</span>
     </button>
-
-    {#each $moodStore as moodOption (moodOption.value)}
-      <MoodChip
-        {moodOption}
-        isSelected={moodOption.value === currentFilter}
-        on:select={() => handleMoodSelect(moodOption.value)}
-      />
-    {/each}
+    {#if showMoodDropdown}
+      <div class="dropdown-positioner mood-dropdown-positioner"
+           in:fade="{{duration:100}}" out:fade="{{duration:100}}">
+        <MoodSelectDropdown
+          currentMood={currentMoodFilter}
+          on:select={handleMoodSelected}
+          on:close={toggleMoodDropdown}
+          id="mood-dropdown-list"
+        />
+      </div>
+    {/if}
   </div>
+
+  <div class="trigger-button-wrapper" bind:this={sortTriggerButton}>
+    <button
+      class="filter-trigger-button sort-trigger"
+      class:active={showSortDropdown}
+      on:click={toggleSortDropdown}
+      aria-expanded={showSortDropdown}
+      aria-haspopup="listbox"
+      aria-controls="sort-dropdown-list"
+    >
+      <span class="button-icon">⇅</span>
+      <span class="button-text">{sortText}</span>
+      <span class="dropdown-arrow">{showSortDropdown ? '▲' : '▼'}</span>
+    </button>
+    {#if showSortDropdown}
+      <div class="dropdown-positioner sort-dropdown-positioner"
+            in:fade="{{duration:100}}" out:fade="{{duration:100}}">
+        <SortOptionsDropdown
+          currentSort={currentSortKey}
+          on:select={handleSortSelected}
+          on:close={toggleSortDropdown}
+          id="sort-dropdown-list"
+        />
+      </div>
+    {/if}
+  </div>
+
+  <button
+    class="filter-trigger-button search-trigger"
+    class:active={isSearchActive}
+    on:click={toggleSearchInterface}
+    aria-expanded={isSearchActive}
+  >
+    <span class="button-icon">🔍</span>
+  </button>
 </div>
 
 <style>
-  .filter-bar-container {
-    height: 60px;
-    position: fixed;
+  .filter-trigger-bar {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
     width: 100%;
-    margin-left: -20px;
-    display: flex;
     align-items: center;
-    gap: 0.75rem; /* Spacing between chip scroll area and sort button */
-    padding: 0.75rem 1rem; /* More balanced padding */
-    background-color: var(--filterbar-bg); /* Slightly different from sheet for contrast if needed */
-    /* border-bottom: 1px solid var(--border-secondary, #333); */ /* Subtle separator */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  }
-  
-  .mood-chips-scroll-wrapper {
-    margin-left: -1rem;
-    margin-right: -1rem;
-    padding-left: 1rem;
-    flex-grow: 1;
-    display: flex;
-    overflow-x: auto;
-    /* padding: 0.5rem 0.1rem; */ /* Removed, handled by container */
-    gap: 0.2rem; /* Spacing between chips */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    scrollbar-width: none; /* Firefox */
-  }
-  .mood-chips-scroll-wrapper::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
+    position: relative; /* For dropdown positioning context if needed */
+    border-bottom: 4px solid var(--card-border);
   }
 
-  /* Style for the "All" chip and general chip baseline if MoodChip doesn't fully cover */
-  .chip {
-    display: inline-flex;
+  .trigger-button-wrapper {
+    position: relative; /* Each button wrapper is a positioning context for its dropdown */
+    flex: 1; /* Make them take equal space */
+  }
+
+  .filter-trigger-button {
+    width: 100%; /* Make button fill its wrapper */
+    display: flex;
     align-items: center;
-    padding: 0.4rem 0.8rem;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: 16px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
+    justify-content: flex-start; /* Align content to start */
+    padding: 0.6rem 0.8rem;
+    background-color: var(--card-border, #f7f8fa);
+    color: var(--card-bg, #5f6368);
+    border-radius: 20px;
+    font-family: 'Urbanist', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08rem;
     cursor: pointer;
-    color: var(--text-primary);
-    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    text-align: left;
     white-space: nowrap;
-    font-family: 'Graffiti Urban', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.04rem;
   }
-  .chip:hover {
-    border-color: var(--text-accent-hover, #d6d6d6);
-    background-color: var(--bg-interactive-hover, #444);
+
+  .filter-trigger-button:hover {
+    border-color: var(--bw-accent-pink, #ff69b4);
+    color: var(--bw-text-primary, #1c1c1e);
   }
-  .chip:active { /* Pressed state */
-    transform: scale(0.97);
+
+  .filter-trigger-button.active {
+    background-color: var(--bw-accent-pink-subtle-bg, rgba(255,105,180,0.1));
+    color: var(--bw-accent-pink, #ff69b4);
+    border-color: var(--bw-accent-pink-subtle-border, rgba(255,105,180,0.3));
   }
-  .chip.active {
-    background-color: var(--text-primary, var(--primary));
-    color: var(--text-on-accent, #fff);
-    border-color: var(--text-primary);
+
+  .button-icon { margin-right: 0.4rem; font-size: 0.9rem; }
+  .button-text { flex-grow: 1; overflow: hidden; text-overflow: ellipsis;}
+  .dropdown-arrow { margin-left: auto; font-size: 0.7rem; padding-left: 0.4rem; }
+
+
+  /* Dropdown Positioning */
+  .dropdown-positioner {
+    position: absolute;
+    top: calc(100% + 4px); /* Position below the trigger button with a small gap */
+    left: 0;
+    z-index: 1000; /* Ensure dropdowns are above other content */
+    min-width: 100%; /* At least as wide as the button */
+    /* For centering dropdown if it's wider or narrower than button:
+       left: 50%;
+       transform: translateX(-50%);
+    */
+  }
+  .sort-dropdown-positioner {
+      /* If sort dropdown needs to align right, for example */
+      /* left: auto; right: 0; */
+  }
+
+  .search-trigger {
+    display: flex;
+    justify-content: center;
+  }
+
+  .search-trigger span {
+    margin-right: -0.02rem;
   }
 </style>
