@@ -118,7 +118,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem; /* Adjust spacing between components */
-    padding-top: 1rem; /* Add some space from navbar if needed */
+    padding: 20px 20px 100px 20px;
   }
 
   .no-data-message {
