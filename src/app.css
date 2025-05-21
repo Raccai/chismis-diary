@@ -96,13 +96,19 @@
   font-family: 'Graffiti Urban', sans-serif;
 
   --main-bg: #FBF7EC;
-  --topbar-bg: #FBF7EC;
+  --topbar-bg: #1B1A11;
   --navbar-bg: #1B1A11;
   --filterbar-bg: #FBF7EC;
 
   --text-primary: #1B1A11;
   --text-secondary: #2c2c2c;
   --text-tertiary: #8e8e8e;
+  --title-color: #FBF7EC;
+
+  --dropdown-text-color: #FBF7EC;
+  --dropdown-border-color: #FBF7EC;
+  --dropdown-bg-color: #1B1A11;
+  --dropdown-select-color: #2c2c2c;
 
   --separator-primary: #dcdcdc;
   --separator-secondary: #FFCCD5;
@@ -128,6 +134,8 @@
 
   --card-bg: #FBF7EC;
   --card-border: #1B1A11;
+  --card-select-text: #2c2c2c;
+  --card-select-bg: #d2d2d2;
 
   --delete: #e30000; 
 }
@@ -142,6 +150,11 @@ body.dark { /* Toggled by themeStore.js */
   --text-primary: #fffaf0;
   --text-secondary: #2c2c2c;
   --text-tertiary: #c3beb5;
+  --title-color: #FBF7EC;
+
+  --dropdown-text-color: #FBF7EC;
+  --dropdown-bg-color: #1B1A11;
+  --dropdown-select-color: #2c2c2c;
 
   --separator-primary: #282828;
   --separator-secondary: #FFCCD5;
@@ -168,6 +181,8 @@ body.dark { /* Toggled by themeStore.js */
 
   --card-bg: #1B1A11;
   --card-border: #1B1A11;
+  --card-select-text: #2c2c2c;
+  --card-select-bg: #878787;
 
   --delete: #e30000; 
 }

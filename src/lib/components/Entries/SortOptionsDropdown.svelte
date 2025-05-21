@@ -51,13 +51,12 @@
 <style>
   /* Re-use styles from MoodSelectDropdown or define them here if they differ significantly */
   .custom-dropdown-content {
-    background-color: var(--bw-bg-primary, #ffffff);
-    border: 1px solid var(--bw-border-primary, #d1d5db);
-    border-radius: 12px;
-    box-shadow: 0 5px 15px var(--bw-shadow-color-medium, rgba(0,0,0,0.1));
-    padding: 0.5rem 0;
-    min-width: 220px; /* Wider for sort options */
-    max-height: 250px;
+    background-color: var(--dropdown-bg-color);
+    border: 2px solid var(--dropdown-border-color);
+    border-radius: 12px; /* Rounded corners for dropdown */
+    box-shadow: 0 4px 4px var(--bw-shadow-color-medium, rgba(0,0,0,0.4));
+    min-width: 160px; /* Ensure it's not too narrow */
+    max-height: 180px; /* Allow scrolling for many moods */
     overflow-y: auto;
   }
 
@@ -65,24 +64,23 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1rem; /* Padding for each option */
     text-align: left;
     background-color: transparent;
     border: none;
-    color: var(--bw-text-primary, #1c1c1e);
-    font-size: 0.9rem;
+    color: var(--main-bg);
     cursor: pointer;
     transition: background-color 0.15s ease;
+    font-family: 'Graffiti Urban', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.08rem;
   }
   .dropdown-option:hover {
-    background-color: var(--bw-bg-tertiary, #eff1f3);
+    background-color: var(--dropdown-select-color);
   }
   .dropdown-option.active {
-    color: var(--bw-accent-pink, #ff69b4);
+    background-color: var(--dropdown-select-color);
     font-weight: 500;
-  }
-  .dropdown-option.active .option-icon {
-    /* color: var(--bw-accent-pink, #ff69b4); */ /* Emoji color doesn't easily change */
   }
 
   .option-icon {
@@ -95,7 +93,7 @@
     flex-grow: 1;
   }
   .checkmark {
-    color: var(--bw-accent-pink, #ff69b4);
+    background-color: var(--dropdown-select-color);
     margin-left: 0.5rem;
     font-size: 1rem;
     font-weight: bold;

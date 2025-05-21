@@ -58,11 +58,10 @@
 
 <style>
   .custom-dropdown-content {
-    background-color: var(--text-primary, #ffffff);
-    border: 1px solid var(--bw-border-primary, #d1d5db);
+    background-color: var(--dropdown-bg-color);
+    border: 2px solid var(--dropdown-border-color);
     border-radius: 12px; /* Rounded corners for dropdown */
-    box-shadow: 0 5px 15px var(--bw-shadow-color-medium, rgba(0,0,0,0.1));
-    padding: 0.5rem 0; /* Vertical padding, items will have horizontal */
+    box-shadow: 0 4px 4px var(--bw-shadow-color-medium, rgba(0,0,0,0.4));
     min-width: 200px; /* Ensure it's not too narrow */
     max-height: 250px; /* Allow scrolling for many moods */
     overflow-y: auto;
@@ -84,14 +83,11 @@
     letter-spacing: 0.08rem;
   }
   .dropdown-option:hover {
-    background-color: var(--bw-bg-tertiary, #eff1f3);
+    background-color: var(--dropdown-select-color);
   }
   .dropdown-option.active {
-    color: var(--bw-accent-pink, #ff69b4);
+    background-color: var(--dropdown-select-color);
     font-weight: 500;
-  }
-  .dropdown-option.active .option-icon {
-     /* Optionally change icon color too if not emoji-based */
   }
 
   .option-icon {
@@ -104,7 +100,7 @@
     flex-grow: 1;
   }
   .checkmark {
-    color: var(--bw-accent-pink, #ff69b4);
+    background-color: var(--dropdown-select-color);
     margin-left: 0.5rem;
     font-size: 1rem;
     font-weight: bold;

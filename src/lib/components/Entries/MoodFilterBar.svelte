@@ -181,14 +181,14 @@
   }
 
   .filter-trigger-button:hover {
-    border-color: var(--bw-accent-pink, #ff69b4);
-    color: var(--bw-text-primary, #1c1c1e);
+    border-color: var(--card-select-color);
+    color: var(--dropdown-text-color);
   }
 
   .filter-trigger-button.active {
-    background-color: var(--bw-accent-pink-subtle-bg, rgba(255,105,180,0.1));
-    color: var(--bw-accent-pink, #ff69b4);
-    border-color: var(--bw-accent-pink-subtle-border, rgba(255,105,180,0.3));
+    background-color: var(--card-select-bg);
+    color: var(--card-select-text);
+    border-color: var(--card-select-text);
   }
 
   .button-icon { margin-right: 0.4rem; font-size: 0.9rem; }

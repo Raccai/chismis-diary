@@ -1,57 +1,82 @@
 <script>
-	import { entriesStore } from "$lib/stores/entriesStore.js";
-    import { addEntry, updateEntry } from "$lib/utils/entryHelpers.js";
-    import { moodStore } from "$lib/stores/moodStore";
-    import { createEventDispatcher, onMount } from "svelte"; // onMount for potential autofocus
-    import MoodChip from '../MoodChip.svelte';
+  import { entriesStore } from "$lib/stores/entriesStore.js";
+  import { addEntry, updateEntry } from "$lib/utils/entryHelpers.js";
+  import { moodStore } from "$lib/stores/moodStore.js";
+  import { createEventDispatcher, onMount, onDestroy, tick } from "svelte";
 
-    const dispatch = createEventDispatcher();
-    export let selectedEntry = null;
+  const dispatch = createEventDispatcher();
+  export let selectedEntry = null;
 
-    let title = "";
-    let text = "";
-    let currentMood = ($moodStore && $moodStore[0]?.value) || "happy";
-    let tagInput = "";
-    let tags = [];
-    let _loadedEntryId = null;
+  let title = "";
+  let text = "";
+  let currentMood = ($moodStore && $moodStore[0]?.value) || "happy";
+  let tagInput = "";
+  let tags = [];
+  let _loadedEntryId = null;
 
-    // Autofocus the title field when the form opens for a new entry
-    let titleInputRef;
-    onMount(() => {
-        if (!selectedEntry && titleInputRef) {
-            titleInputRef.focus();
-        }
-    });
+  let descriptionTextareaRef; // For autofocus on text area
 
-    $: {
-        if (selectedEntry && selectedEntry.id !== _loadedEntryId) {
-            title = selectedEntry.title || "";
-            text = selectedEntry.text || "";
-            currentMood = selectedEntry.mood || (($moodStore && $moodStore[0]?.value) || "happy");
-            tags = selectedEntry.tags ? [...selectedEntry.tags] : [];
-            tagInput = tags.map(t => t.startsWith('#') ? t.substring(1) : t).join(', ');
-            _loadedEntryId = selectedEntry.id;
-        }
-        else if (selectedEntry === null && _loadedEntryId !== null) {
-            title = "";
-            text = "";
-            currentMood = ($moodStore && $moodStore[0]?.value) || "happy";
-            tags = [];
-            tagInput = "";
-            _loadedEntryId = null;
-            if (titleInputRef) { // Autofocus when creating new after editing
-                setTimeout(() => titleInputRef.focus(), 0); // Timeout for DOM update
-            }
+  // --- State for Mood Dropdown ---
+  let showMoodDropdown = false;
+  let moodDropdownButtonRef; // To help with click outside logic
+
+  onMount(async () => {
+    // Autofocus logic
+    if (!selectedEntry && descriptionTextareaRef) { // Focus description for new entry
+      await tick(); // Ensure element is in DOM
+      descriptionTextareaRef.focus();
+    }
+    document.addEventListener('click', handleClickOutsideDropdown, true);
+  });
+
+  onDestroy(() => {
+      document.removeEventListener('click', handleClickOutsideDropdown, true);
+  });
+
+
+  $: {
+    if (selectedEntry && selectedEntry.id !== _loadedEntryId) {
+      title = selectedEntry.title || "";
+      text = selectedEntry.text || "";
+      currentMood = selectedEntry.mood || (($moodStore && $moodStore[0]?.value) || "happy");
+      tags = selectedEntry.tags ? [...selectedEntry.tags] : [];
+      tagInput = tags.map(t => t.startsWith('#') ? t.substring(1) : t).join(', ');
+      _loadedEntryId = selectedEntry.id;
+    } else if (selectedEntry === null && _loadedEntryId !== null) { // Resetting for new entry
+      title = "";
+      text = "";
+      currentMood = ($moodStore && $moodStore[0]?.value) || "happy";
+      tags = [];
+      tagInput = "";
+      _loadedEntryId = null;
+      if (descriptionTextareaRef) { // Autofocus for new after editing
+        setTimeout(() => descriptionTextareaRef.focus(), 0);
+      }
+    }
+  }
+
+  function toggleMoodDropdown() {
+    showMoodDropdown = !showMoodDropdown;
+  }
+
+  function selectMood(moodValue) {
+    currentMood = moodValue;
+    showMoodDropdown = false; // Close dropdown after selection
+  }
+
+  function handleClickOutsideDropdown(event) {
+    if (showMoodDropdown && moodDropdownButtonRef && !moodDropdownButtonRef.contains(event.target)) {
+        // Check if click is also outside the dropdown content itself
+        const moodDropdownContent = document.querySelector('.mood-dropdown-options');
+        if (moodDropdownContent && !moodDropdownContent.contains(event.target)) {
+            showMoodDropdown = false;
         }
     }
+  }
 
-    function handleMoodSelect(event) {
-        currentMood = event.detail;
-    }
-
-    function processTags() {
-        tags = tagInput.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0).map(tag => tag.startsWith('#') ? tag : `#${tag}`);
-    }
+  function processTags() {
+    tags = tagInput.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0).map(tag => tag.startsWith('#') ? tag : `#${tag}`);
+  }
 
     function saveEntry() {
         if(text.trim() || title.trim()) {
@@ -67,198 +92,277 @@
             alert("Chismis needs a title or some text!");
         }
     }
+
+  function handleBack() {
+      dispatch('save'); // Using 'save' event to trigger close in layout, as it does the same thing
+      // Or dispatch a new 'close' event if you want different logic: dispatch('close');
+  }
 </script>
 
-<div class="entry-form-container">
-  <form on:submit|preventDefault={saveEntry}>
-    <div class="scrollable-form-content"> 
-      <h2 class="form-title">{selectedEntry ? "Edit Chismis" : "Spill the Tea!"}</h2>
+<div class="entry-form-bwp">
+  <div class="form-header-bwp">
+    <input
+      type="text"
+      class="form-title-input-bwp"
+      bind:value={title}
+      placeholder="Catchy Headline (Optional)"
+    />
+    <!-- Maybe a subtle separator line here -->
+  </div>
 
-      <div class="form-field">
-          <label for="title">Headline</label>
-          <input type="text" id="title" bind:this={titleInputRef} bind:value={title} placeholder="What's the juicy title?" />
-      </div>
+  <div class="form-content-area-bwp">
+    <textarea
+      class="description-textarea-bwp"
+      bind:this={descriptionTextareaRef}
+      bind:value={text}
+      placeholder="What's the latest chismis, besh? Spill it all here..."
+      rows="10"
+    ></textarea>
 
-      <div class="form-field">
-          <label for="description">The Deets</label>
-          <textarea id="description" bind:value={text} placeholder="Tell me everything, besh..." rows="5"></textarea>
-      </div>
-
-      <div class="form-section mood-section">
-          <h3 class="section-title">How's the Vibe?</h3>
-          <div class="mood-chips-container">
-              {#each $moodStore as moodOption (moodOption.value)}
-                  <MoodChip {moodOption} isSelected={moodOption.value === currentMood} on:select={handleMoodSelect} />
-              {/each}
-          </div>
-      </div>
-
-      <div class="form-field">
-          <label for="tags">Tag It (comma-separated)</label>
-          <input type="text" id="tags" bind:value={tagInput} on:blur={processTags} placeholder="e.g., #Scandal, #Funny, #OMG" />
-      </div>
-    </div> <!-- END OF .scrollable-form-content -->
-
-    <div class="save-btn-cont"> <!-- Now part of the form, will be at the bottom of .scrollable-form-content -->
-        <button type="submit" class="save-button">
-            <span class="button-icon"> 😂 </span>
-            {selectedEntry ? "Update Story" : "Save Chismis"}
+    <div class="meta-controls-bwp">
+      <div class="mood-selector-bwp">
+        <button
+          type="button"
+          class="mood-dropdown-trigger"
+          on:click={toggleMoodDropdown}
+          aria-haspopup="listbox"
+          aria-expanded={showMoodDropdown}
+          bind:this={moodDropdownButtonRef}
+        >
+          <span class="selected-mood-emoji">{$moodStore.find(m => m.value === currentMood)?.emoji || '😐'}</span>
+          <span class="selected-mood-label">{$moodStore.find(m => m.value === currentMood)?.label || 'Mood'}</span>
+          <span class="dropdown-arrow">{showMoodDropdown ? '▲' : '▼'}</span>
         </button>
+        {#if showMoodDropdown}
+          <ul class="mood-dropdown-options" role="listbox">
+            {#each $moodStore as moodOption (moodOption.value)}
+              <li
+                role="option"
+                aria-selected={currentMood === moodOption.value}
+                class:active={currentMood === moodOption.value}
+                on:click={() => selectMood(moodOption.value)}
+                on:keydown={(e) => { if(e.key === 'Enter' || e.key === ' ') selectMood(moodOption.value)}}
+                tabindex="0"
+              >
+                <span class="option-emoji">{moodOption.emoji}</span>
+                {moodOption.label}
+              </li>
+            {/each}
+          </ul>
+        {/if}
+      </div>
+
+      <div class="tags-input-field-bwp">
+        <input
+          type="text"
+          bind:value={tagInput}
+          on:blur={processTags}
+          placeholder="#tags"
+        />
+      </div>
     </div>
-  </form>
+  </div>
+
+  <div class="form-actions-bwp">
+    <button type="button" class="action-button-bwp back-button" on:click={handleBack}>
+      Discard <!-- Or "Back" or an Icon -->
+    </button>
+    <button type="submit" class="action-button-bwp save-button" on:click={saveEntry}>
+      {selectedEntry ? "Update Story" : "Save Chismis"}
+    </button>
+  </div>
 </div>
 
 <style>
-    .entry-form-container {
-        display: flex; 
-        flex-direction: column;
-        height: 100%; 
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+  .entry-form-bwp {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Fill the .form-slide from layout */
+    background-color: var(--bw-bg-primary, #ffffff);
+    color: var(--bw-text-primary, #1c1c1e);
+    font-family: 'Urbanist', sans-serif; /* Clean sans-serif */
+  }
 
-    .entry-form-container form {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1; /* Make form take available space */
-        height: 100%; /* Ensure form itself also tries to fill height */
-    }
+  .form-header-bwp {
+    padding: 1rem 1.25rem 0.75rem 1.25rem;
+    /* border-bottom: 1px solid var(--bw-border-secondary, #e5e7eb); */
+  }
 
-    .scrollable-form-content {
-        flex-grow: 1; /* This part will take up space and scroll */
-        overflow-y: auto;
-        padding: 1.5rem; /* Your original form padding */
-        padding-bottom: 8rem; /* Reduce bottom padding as button is separate */
-    }
+  .form-title-input-bwp {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Graffiti Urban', sans-serif; /* Graffiti font for title */
+    font-size: 1.8rem; /* Large title */
+    font-weight: bold;
+    color: var(--bw-text-primary, #1c1c1e);
+    padding: 0.5rem 0;
+    outline: none;
+    text-align: left; /* Or center */
+  }
+  .form-title-input-bwp::placeholder {
+    color: var(--bw-text-tertiary, #8e8e93);
+    font-weight: normal;
+  }
 
-    .form-title {
-        text-align: center;
-        color: var(--text-primary); 
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-        font-weight: bold;
-    }
+  .form-content-area-bwp {
+    flex-grow: 1; /* This area takes up most space */
+    padding: 0 1.25rem 1.25rem 1.25rem;
+    overflow-y: auto; /* Scroll only this area if content overflows */
+    display: flex;
+    flex-direction: column;
+  }
 
-    .form-field {
-        margin-bottom: 1.25rem;
-    }
+  .description-textarea-bwp {
+    flex-grow: 1; /* Textarea takes up available vertical space */
+    width: 100%;
+    border: none; /* No border for a cleaner look */
+    padding: 0.5rem 0; /* Minimal padding */
+    font-size: 1.1rem; /* Larger text for readability */
+    line-height: 1.7;
+    background-color: transparent;
+    color: var(--bw-text-primary, #1c1c1e);
+    resize: none; /* Disable manual resize */
+    outline: none;
+    margin-bottom: 1rem; /* Space before mood/tags */
+  }
+  .description-textarea-bwp::placeholder {
+    color: var(--bw-text-tertiary, #8e8e93);
+  }
 
-    .form-field label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        font-size: 0.95rem;
-        color: var(--text-secondary);
-    }
+  .meta-controls-bwp {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch; /* Make items same height */
+    margin-bottom: 1rem; /* Space before potential bottom bar */
+  }
 
-    .form-field input[type="text"],
-    .form-field textarea {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-secondary);
-        border-radius: 8px;
-        box-sizing: border-box;
-        font-size: 1rem;
-        background-color: var(--bg-primary); 
-        color: var(--text-secondary);
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    .form-field input[type="text"]:focus,
-    .form-field textarea:focus {
-        outline: none;
-        border-color: var(--primary); 
-        box-shadow: 0 0 0 3px rgba(253, 121, 168, 0.2);
-    }
-    .form-field textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
+  .mood-selector-bwp {
+    position: relative; /* For dropdown positioning */
+    flex-basis: 60%; /* Mood dropdown takes more space */
+  }
 
-    .form-section {
-        margin-bottom: 1.5rem;
-        padding: 1rem;
-        background-color: var(--secondary); 
-        border-radius: 8px;
-    }
-    .section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--primary);
-        margin-top: 0;
-        margin-bottom: 0.75rem;
-    }
+  .mood-dropdown-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: var(--bw-bg-tertiary, #eff1f3);
+    border: 1px solid var(--bw-border-primary, #d1d5db);
+    border-radius: 20px; /* Pill shape */
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+    color: var(--bw-text-secondary, #5f6368);
+    text-align: left;
+    cursor: pointer;
+  }
+  .mood-dropdown-trigger:focus-visible {
+      border-color: var(--bw-accent-pink);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--bw-accent-pink) 20%, transparent);
+  }
+  .selected-mood-emoji { font-size: 1.1em; margin-right: 0.4rem; }
+  .selected-mood-label { flex-grow: 1; }
+  .dropdown-arrow { margin-left: 0.5rem; font-size: 0.7rem; }
 
-    .mood-chips-container {
-        display: flex;
-        overflow-x: auto;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
-        margin-left: -1rem;
-        margin-right: -1rem;
-    }
-    .mood-chips-container::before,
-    .mood-chips-container::after {
-        content: '';
-        display: inline-block;
-        min-width: 1rem;
-    }
-    .mood-chips-container::-webkit-scrollbar { display: none; }
-    .mood-chips-container { -ms-overflow-style: none; scrollbar-width: none; }
+  .mood-dropdown-options {
+    position: absolute;
+    bottom: calc(100% + 4px); /* Position above the trigger */
+    left: 0;
+    width: 100%;
+    background-color: var(--bw-bg-primary, #ffffff);
+    border: 1px solid var(--bw-border-primary, #d1d5db);
+    border-radius: 12px;
+    box-shadow: 0 -4px 15px var(--bw-shadow-color-medium, rgba(0,0,0,0.1));
+    z-index: 10; /* Above other form content */
+    padding: 0.5rem 0;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+  }
+  .mood-dropdown-options li {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .mood-dropdown-options li:hover {
+    background-color: var(--bw-bg-tertiary, #eff1f3);
+  }
+  .mood-dropdown-options li.active {
+    color: var(--bw-accent-pink, #ff69b4);
+    font-weight: 500;
+  }
+  .mood-dropdown-options .option-emoji {
+    margin-right: 0.6rem;
+    font-size: 1.1em;
+  }
 
-    :global(.entry-form-container .mood-chip) { 
-        padding: 0.3rem 0.7rem;
-        font-size: 0.85rem;
-    }
-    :global(.entry-form-container .mood-chip .emoji) {
-        font-size: 1em;
-    }
 
-    .save-btn-cont {
-        background: var(--bg-secondary);
-        padding: 1.5rem;
-        position: fixed;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 100px;
-        box-shadow: 0 -4px -4px rgba(0, 0, 0, 0.4);
-        border-top: 1px solid var(--primary);
-    }
-    .save-button {
-        display: flex; /* For icon and text alignment */
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        padding: 0.8rem 1.5rem;
-        background-image: linear-gradient(to right, #ff758c 0%, #ff7eb3 100%);
-        color: var(--bg-secondary);
-        border: none;
-        border-radius: 25px; /* Pill shape */
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 1.1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 10px rgba(255, 121, 168, 0.4);
-        transition: all 0.3s ease;
-    }
-    .save-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(255, 121, 168, 0.5);
-    }
-    .save-button .button-icon {
-        margin-right: 0.5rem;
-        font-family: 'Material Symbols Outlined'; 
-        font-size: 1.3em;
-    }
+  .tags-input-field-bwp {
+    flex-basis: 40%; /* Tag input takes less space */
+  }
+  .tags-input-field-bwp input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background-color: var(--bw-bg-tertiary, #eff1f3);
+    border: 1px solid var(--bw-border-primary, #d1d5db);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: var(--bw-text-primary, #1c1c1e);
+    outline: none;
+  }
+  .tags-input-field-bwp input::placeholder { color: var(--bw-text-tertiary, #8e8e93); }
+  .tags-input-field-bwp input:focus {
+      border-color: var(--bw-accent-pink);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--bw-accent-pink) 20%, transparent);
+  }
 
-    .entry-form-container form {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1; 
-    }
+  /* Fixed Bottom Action Bar */
+  .form-actions-bwp {
+    display: flex;
+    justify-content: space-between; /* Space out back and save */
+    align-items: center;
+    padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom)); /* Bottom padding for safe area */
+    background-color: var(--bw-bg-primary, #ffffff); /* Match form bg */
+    border-top: 1px solid var(--bw-border-secondary, #e5e7eb);
+    width: 100%; /* Ensure it spans full width of form-slide */
+    box-sizing: border-box;
+    /* No position:fixed, it's part of the flex column now */
+  }
+
+  .action-button-bwp {
+    padding: 0.75rem 1.25rem;
+    border-radius: 20px; /* Pill shape */
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.15s;
+    flex-grow: 1; /* Let buttons share space */
+    margin: 0 0.5rem; /* Add some margin between buttons */
+  }
+  .action-button-bwp:first-child { margin-left: 0; }
+  .action-button-bwp:last-child { margin-right: 0; }
+
+
+  .back-button {
+    background-color: var(--bw-bg-tertiary, #eff1f3);
+    color: var(--bw-text-secondary, #5f6368);
+    border: 1px solid var(--bw-border-primary, #d1d5db);
+  }
+  .back-button:hover {
+    background-color: #e0e0e0; /* Darker tertiary */
+  }
+
+  .save-button {
+    background-color: var(--bw-accent-pink, #ff69b4);
+    color: var(--bw-text-on-accent, #ffffff);
+    border: 1px solid var(--bw-accent-pink, #ff69b4);
+  }
+  .save-button:hover {
+    background-color: var(--bw-accent-pink-dark, #f953a4);
+    border-color: var(--bw-accent-pink-dark, #f953a4);
+  }
+  .action-button-bwp:active {
+      transform: scale(0.97);
+  }
 </style>

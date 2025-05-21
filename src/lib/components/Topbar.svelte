@@ -1,20 +1,21 @@
 <script>
-  import LogoLightMode from '$lib/icons/Logo-LightMode.svelte';
-  import LogoDarkMode from '$lib/icons/Logo-DarkMode.svelte';
+  import TakeNoteTopbar from '$lib/icons/TakeNoteTopbar.svelte';
   import ThemeToggle from '../../lib/components/Settings/ThemeToggle.svelte';
   import { theme } from '$lib/stores/themeStore.js';
 </script>
 
 <header class="top-bar-bwp">
   <div class="logo-container-bwp">
-    {#if $theme === "light"}
-      <LogoLightMode />
-    {:else if $theme === "dark"}
-      <LogoDarkMode />
-    {/if}
+    <div class="logo">
+      <TakeNoteTopbar />
+    </div>
+    <span>
+      CD
+    </span>
   </div>
+
   <div class="top-bar-actions-bwp">
-    <button class="pro-button-bwp">✨ PRO</button>
+    <!-- <button class="pro-button-bwp">✨ PRO</button> -->
     <ThemeToggle />
   </div>
 </header>
@@ -22,7 +23,7 @@
 <style>
   .top-bar-bwp {
     background-color: var(--topbar-bg);
-    color: var(--text-primary);
+    color: var(--title-color);
     height: 60px; /* Consistent height */
     padding: 0 1rem; /* Consistent padding */
     display: flex;
@@ -35,11 +36,19 @@
     z-index: 1000;
   }
 
-  .logo-link-bwp {
-    font-size: 1.5rem; /* Or larger like "Note AI" */
-    font-weight: 700; /* Bolder */
-    color: var(--text-primary);
-    text-decoration: none;
+  .logo-container-bwp {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .logo-container-bwp span {
+    font-size: 3rem;
+    letter-spacing: 0.16rem;
+  }
+
+  .logo-container-bwp .logo {
+    transform: scale(0.9);
   }
 
   .top-bar-actions-bwp {

@@ -1,5 +1,4 @@
 <script>
-  import '../app.css';
   import Topbar from '$lib/components/Topbar.svelte';
   import SideMenu from '$lib/components/SideMenu.svelte';
   import EntryForm from '$lib/components/Entries/EntryForm.svelte';
@@ -10,7 +9,13 @@
   import { onDestroy } from 'svelte'; // Not strictly needed for this loader version anymore
   import { fly, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
-  import "../app.css"
+  import "../app.css";
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+
+  onMount(() => {
+    goto('/entry');
+  });
 
   // --- Form and Global Key Logic ---
   function handleFormSaveOrClose() {
