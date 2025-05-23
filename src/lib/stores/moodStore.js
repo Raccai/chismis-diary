@@ -19,24 +19,8 @@ export const moodStore = readable([
     colorDark: '#2C4B84'
   },
   {
-    value: 'angry',
-    label: 'Angry',
-    emoji: '😠',
-    colorLight: '#FDE2E1',
-    colorMedium: '#F7A1A1',
-    colorDark: '#8B1C1C'
-  },
-  {
-    value: 'shookt',
-    label: 'Shookt',
-    emoji: '😳',
-    colorLight: '#FFF3D1',
-    colorMedium: '#FAD97F',
-    colorDark: '#7A5612'
-  },
-  {
-    value: 'tea',
-    label: 'Spill the Tea',
+    value: 'chismis',
+    label: 'Chismis',
     emoji: '🍵',
     colorLight: '#D9FBE4',
     colorMedium: '#96E6B9',

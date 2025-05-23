@@ -95,96 +95,92 @@
   font-family: 'Urbanist', sans-serif;
   font-family: 'Graffiti Urban', sans-serif;
 
-  --main-bg: #FBF7EC;
-  --topbar-bg: #1B1A11;
-  --navbar-bg: #1B1A11;
+  --main-black: #1d1c19;
+  --main-white: #FBF7EC;  
+  --main-dark-white: #f3e4c1;  
+  --main-grey: #8e8e8e;
+  --main-dark-grey: #2c2c2c;
+  --main-placeholder: #c3beb5;
+  
+  --navbar-bg: var(--main-black);
+  --navbar-text: var(--main-white);
+  --navbar-height: 80px;
+  --topbar-bg: var(--main-black);
+  --topbar-text: var(--main-white);
+  --topbar-height: 60px;
+
+  --card-bg: var(--main-white);
+  --card-border: var(--main-black);
+  --card-title-text: var(--main-black);
+  --card-date-text: var(--main-grey);
+  --card-mood-text: var(--main-white);
+  --card-shadow: 0 4px 10px rgba(0,0,0,0.07);
+  --mood-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  --takeNote-btn-bg: var(--main-white);
+  --separator-primary: var(--main-black);
+
+  --main-bg: var(--main-white);
   --filterbar-bg: #FBF7EC;
 
-  --text-primary: #1B1A11;
-  --text-secondary: #2c2c2c;
-  --text-tertiary: #8e8e8e;
-  --title-color: #FBF7EC;
+  --dropdown-text-color: var(--main-white);
+  --dropdown-border-color: var(--main-white);
+  --dropdown-bg-color: var(--main-black);
+  --dropdown-select-color: var(--main-dark-grey);
+  --dropdown-shadow: 0 4px 4px rgba(0,0,0,0.4);
+  --filter-button-bg: var(--main-black);
+  --filter-button-border: var(--main-white);
+  --filter-button-text: var(--main-white);
+  --filter-button-focus: var(--main-grey); 
 
-  --dropdown-text-color: #FBF7EC;
-  --dropdown-border-color: #FBF7EC;
-  --dropdown-bg-color: #1B1A11;
-  --dropdown-select-color: #2c2c2c;
-
-  --separator-primary: #dcdcdc;
-  --separator-secondary: #FFCCD5;
-
-  --primary: #1B1A11;
-  --secondary: #8e8e8e;
-  --tertiary: #FBF7EC;
-
-  --add-btn-bg: #FBF7EC;
-
-  --primary-radial-gradient: radial-gradient(
-    circle at 50% 100%,
-    #FFB3C1,
-    #FF758F
-  );
-
-  --icon-bg: #C9184A;
-  --icon-bg-hovered: #FF4D6D;
-  --icon-text: #FBF7EC;
-
-  --menu-inactive: #d1d1d1;
-  --menu-active: #FF4D6D;
-
-  --card-bg: #FBF7EC;
-  --card-border: #1B1A11;
-  --card-select-text: #2c2c2c;
-  --card-select-bg: #d2d2d2;
-
-  --delete: #e30000; 
+  --entry-form-title: var(--main-black);
+  --entry-form-content: var(--main-black);
+  --entry-form-placeholder: var(--main-placeholder);
 }
 
 /* --- DARK MODE for B&W&Pink Theme --- */
 body.dark { /* Toggled by themeStore.js */
-  --main-bg: #181818;
-  --topbar-bg: #1B1A11;
-  --navbar-bg: #1B1A11;
-  --filterbar-bg: #1B1A11;
+  --main-black: #1d1c19;
+  --main-white: #FBF7EC; 
+  --main-dark-white: #f3e4c1;  
+  --main-grey: #8e8e8e;
+  --main-dark-grey: #2c2c2c;
+  --main-placeholder: #545454;
+  
+  --navbar-bg: var(--main-black);
+  --navbar-text: var(--main-white);
+  --navbar-height: 80px;
+  --topbar-bg: var(--main-black);
+  --topbar-text: var(--main-white);
+  --topbar-height: 60px;
 
-  --text-primary: #fffaf0;
-  --text-secondary: #2c2c2c;
-  --text-tertiary: #c3beb5;
-  --title-color: #FBF7EC;
+  --card-bg: var(--main-white);
+  --card-border: var(--main-black);
+  --card-title-text: var(--main-black);
+  --card-date-text: var(--main-grey);
+  --card-mood-text: var(--main-white);
+  --card-shadow: 0 4px 10px rgba(0,0,0,0.07);
+  --mood-shadow: 0 2px 4px rgba(0,0,0,0.1);
 
-  --dropdown-text-color: #FBF7EC;
-  --dropdown-bg-color: #1B1A11;
-  --dropdown-select-color: #2c2c2c;
+  --takeNote-btn-bg: var(--main-white);
+  --separator-primary: var(--main-white);
 
-  --separator-primary: #282828;
-  --separator-secondary: #FFCCD5;
+  --main-bg: #11100b;
+  --filterbar-bg: #1d1c19;
 
-  --primary: #FF758F;
-  --secondary: #FFB3C1;
-  --tertiary: #27181b;
+  --dropdown-text-color: var(--main-black);
+  --dropdown-border-color: var(--main-black);
+  --dropdown-bg-color: var(--main-white);
+  --dropdown-select-color: var(--main-dark-white);
+  --dropdown-shadow: 0 4px 4px rgba(0,0,0,0.4);
+  --filter-button-bg: var(--main-white);
+  --filter-button-border: var(--main-black);
+  --filter-button-text: var(--main-black); 
+  --filter-button-focus: var(--main-dark-white); 
 
-  --add-btn-bg: #272727;
-  --add-btn-bottom: #0b0b0b;
-
-  --primary-radial-gradient: radial-gradient(
-    circle at 50% 100%,
-    #FFB3C1,
-    #FF758F
-  );
-
-  --icon-bg: #C9184A;
-  --icon-bg-hovered: #FF4D6D;
-  --icon-text: #ffffff;
-
-  --menu-inactive: #dcdcdc;
-  --menu-active: #FF4D6D;
-
-  --card-bg: #1B1A11;
-  --card-border: #1B1A11;
-  --card-select-text: #2c2c2c;
-  --card-select-bg: #878787;
-
-  --delete: #e30000; 
+  --entry-form-title: var(--main-white);
+  --entry-form-content: var(--main-white);
+  --entry-form-placeholder: var(--main-placeholder);
 }
 
 

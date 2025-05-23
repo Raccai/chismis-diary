@@ -154,7 +154,7 @@
     width: 100%;
     align-items: center;
     position: relative; /* For dropdown positioning context if needed */
-    border-bottom: 4px solid var(--card-border);
+    border-bottom: 4px solid var(--separator-primary);
   }
 
   .trigger-button-wrapper {
@@ -168,8 +168,8 @@
     align-items: center;
     justify-content: flex-start; /* Align content to start */
     padding: 0.6rem 0.8rem;
-    background-color: var(--card-border, #f7f8fa);
-    color: var(--card-bg, #5f6368);
+    background-color: var(--filter-button-bg);
+    color: var(--filter-button-text);
     border-radius: 20px;
     font-family: 'Urbanist', sans-serif;
     font-size: 0.8rem;
@@ -180,15 +180,10 @@
     white-space: nowrap;
   }
 
-  .filter-trigger-button:hover {
-    border-color: var(--card-select-color);
-    color: var(--dropdown-text-color);
-  }
-
   .filter-trigger-button.active {
-    background-color: var(--card-select-bg);
-    color: var(--card-select-text);
-    border-color: var(--card-select-text);
+    background-color: var(--filter-button-focus);
+    color: var(--filter-button-text);
+    border-color: var(--filter-button-border);
   }
 
   .button-icon { margin-right: 0.4rem; font-size: 0.9rem; }

@@ -61,7 +61,7 @@
     background-color: var(--dropdown-bg-color);
     border: 2px solid var(--dropdown-border-color);
     border-radius: 12px; /* Rounded corners for dropdown */
-    box-shadow: 0 4px 4px var(--bw-shadow-color-medium, rgba(0,0,0,0.4));
+    box-shadow: 0 4px 4px var(--dropdown-shadow, rgba(0,0,0,0.4));
     min-width: 200px; /* Ensure it's not too narrow */
     max-height: 250px; /* Allow scrolling for many moods */
     overflow-y: auto;

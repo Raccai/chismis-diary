@@ -121,8 +121,8 @@
   }
   
   .main-nav {
-    background-color: var(--navbar-bg, #f7f8fa);
-    height: var(--navbar-height, 72px);
+    background-color: var(--navbar-bg);
+    height: var(--navbar-height);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -147,7 +147,6 @@
     transition: opacity 0.2s ease; /* For hover on non-active items */
     -webkit-tap-highlight-color: transparent;
     position: relative;
-    color: var(--bw-navbar-icon-inactive, #8e8e93); /* Default color for icon container to inherit */
   }
 
   .nav-item-bwp:not(.active):not(.nav-add-button-override):hover { /* Exclude add button from this hover */
@@ -179,7 +178,7 @@
     transform: scale(1.1);
   }
 
-  .nav-item-bwp .text {
+  /* .nav-item-bwp .text {
     font-size: 1rem;
     line-height: 1;
     color: var(--bw-navbar-text-inactive, #8e8e93);
@@ -189,12 +188,12 @@
 
   .nav-item-bwp.active .text {
     color: var(--bw-navbar-text-active, #ff69b4);
-    font-weight: 600; /* Bolder active text */
+    font-weight: 600; 
   }
 
   .nav-item-bwp .text {
     font-size: 0.6rem;
     line-height: 1;
     color: var(--menu-inactive);
-  }
+  } */
 </style>

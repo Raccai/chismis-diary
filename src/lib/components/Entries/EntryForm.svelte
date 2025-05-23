@@ -178,8 +178,8 @@
     display: flex;
     flex-direction: column;
     height: 100%; /* Fill the .form-slide from layout */
-    background-color: var(--bw-bg-primary, #ffffff);
-    color: var(--bw-text-primary, #1c1c1e);
+    background-color: var(--main-bg);
+    color: var(--entry-form-content);
     font-family: 'Urbanist', sans-serif; /* Clean sans-serif */
   }
 
@@ -194,14 +194,13 @@
     background: transparent;
     font-family: 'Graffiti Urban', sans-serif; /* Graffiti font for title */
     font-size: 1.8rem; /* Large title */
-    font-weight: bold;
-    color: var(--bw-text-primary, #1c1c1e);
+    color: var(--entry-form-title);
     padding: 0.5rem 0;
     outline: none;
     text-align: left; /* Or center */
   }
   .form-title-input-bwp::placeholder {
-    color: var(--bw-text-tertiary, #8e8e93);
+    color: var(--entry-form-placeholder);
     font-weight: normal;
   }
 
@@ -221,13 +220,14 @@
     font-size: 1.1rem; /* Larger text for readability */
     line-height: 1.7;
     background-color: transparent;
-    color: var(--bw-text-primary, #1c1c1e);
+    color: var(--text-primary);
     resize: none; /* Disable manual resize */
     outline: none;
     margin-bottom: 1rem; /* Space before mood/tags */
+    font-family: 'Urbanist', sans-serif;
   }
   .description-textarea-bwp::placeholder {
-    color: var(--bw-text-tertiary, #8e8e93);
+    color: var(--entry-form-placeholder);
   }
 
   .meta-controls-bwp {
@@ -246,18 +246,18 @@
     width: 100%;
     display: flex;
     align-items: center;
-    background-color: var(--bw-bg-tertiary, #eff1f3);
-    border: 1px solid var(--bw-border-primary, #d1d5db);
+    background-color: var(--dropdown-bg-color);
+    border: 1px solid var(--dropdown-border-color);
     border-radius: 20px; /* Pill shape */
     padding: 0.6rem 0.8rem;
     font-size: 0.9rem;
-    color: var(--bw-text-secondary, #5f6368);
+    color: var(--dropdown-text-color);
     text-align: left;
     cursor: pointer;
   }
   .mood-dropdown-trigger:focus-visible {
-      border-color: var(--bw-accent-pink);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--bw-accent-pink) 20%, transparent);
+    border-color: var(--dropdown-select-color);
+    box-shadow: 0 4px 4px var(--bw-shadow-color-medium, rgba(0,0,0,0.4));
   }
   .selected-mood-emoji { font-size: 1.1em; margin-right: 0.4rem; }
   .selected-mood-label { flex-grow: 1; }
@@ -268,10 +268,11 @@
     bottom: calc(100% + 4px); /* Position above the trigger */
     left: 0;
     width: 100%;
-    background-color: var(--bw-bg-primary, #ffffff);
-    border: 1px solid var(--bw-border-primary, #d1d5db);
+    background-color: var(--dropdown-bg-color);
+    border: 1px solid var(--dropdown-text-color);
+    color: var(--dropdown-text-color);
+    box-shadow: 0 4px 4px var(--bw-shadow-color-medium, rgba(0,0,0,0.4));
     border-radius: 12px;
-    box-shadow: 0 -4px 15px var(--bw-shadow-color-medium, rgba(0,0,0,0.1));
     z-index: 10; /* Above other form content */
     padding: 0.5rem 0;
     max-height: 200px;
@@ -286,10 +287,11 @@
     font-size: 0.9rem;
   }
   .mood-dropdown-options li:hover {
-    background-color: var(--bw-bg-tertiary, #eff1f3);
+    background-color: var(--dropdown-select-color);
   }
   .mood-dropdown-options li.active {
-    color: var(--bw-accent-pink, #ff69b4);
+    background-color: var(--dropdown-select-color);
+    color: var(--dropdown-text-color);
     font-weight: 500;
   }
   .mood-dropdown-options .option-emoji {
@@ -300,21 +302,21 @@
 
   .tags-input-field-bwp {
     flex-basis: 40%; /* Tag input takes less space */
+    font-family: 'Urbanist', sans-serif;
   }
   .tags-input-field-bwp input {
     width: 100%;
     padding: 0.6rem 0.8rem;
-    background-color: var(--bw-bg-tertiary, #eff1f3);
-    border: 1px solid var(--bw-border-primary, #d1d5db);
+    background-color: var(--main-bg);
+    border: 1px solid var(--dropdown-bg-color);
     border-radius: 20px;
     font-size: 0.9rem;
-    color: var(--bw-text-primary, #1c1c1e);
+    color: var(--dropdown-select-color);
     outline: none;
   }
   .tags-input-field-bwp input::placeholder { color: var(--bw-text-tertiary, #8e8e93); }
   .tags-input-field-bwp input:focus {
-      border-color: var(--bw-accent-pink);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--bw-accent-pink) 20%, transparent);
+    border: 2px solid var(--dropdown-bg-color);
   }
 
   /* Fixed Bottom Action Bar */
@@ -323,8 +325,8 @@
     justify-content: space-between; /* Space out back and save */
     align-items: center;
     padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom)); /* Bottom padding for safe area */
-    background-color: var(--bw-bg-primary, #ffffff); /* Match form bg */
-    border-top: 1px solid var(--bw-border-secondary, #e5e7eb);
+    background-color: var(--dropdown-bg-color); /* Match form bg */
+    border-top: 1px solid var(--dropdown-border-color);
     width: 100%; /* Ensure it spans full width of form-slide */
     box-sizing: border-box;
     /* No position:fixed, it's part of the flex column now */
@@ -345,22 +347,21 @@
 
 
   .back-button {
-    background-color: var(--bw-bg-tertiary, #eff1f3);
-    color: var(--bw-text-secondary, #5f6368);
-    border: 1px solid var(--bw-border-primary, #d1d5db);
+    background-color: var(--dropdown-bg-color);
+    color: var(--dropdown-text-color);
+    border: 1px solid var(--dropdown-text-color);
   }
   .back-button:hover {
     background-color: #e0e0e0; /* Darker tertiary */
   }
 
   .save-button {
-    background-color: var(--bw-accent-pink, #ff69b4);
-    color: var(--bw-text-on-accent, #ffffff);
-    border: 1px solid var(--bw-accent-pink, #ff69b4);
+    background-color: var(--main-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--main-bg);
   }
   .save-button:hover {
-    background-color: var(--bw-accent-pink-dark, #f953a4);
-    border-color: var(--bw-accent-pink-dark, #f953a4);
+    /* background-color: var(--dropdown-select-color); */
   }
   .action-button-bwp:active {
       transform: scale(0.97);

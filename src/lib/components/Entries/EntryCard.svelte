@@ -106,25 +106,22 @@
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-    background-color: var(--card-bg, #ffffff); /* Using CSS variable */
+    transition: all 0.2s ease-out;
+    background-color: var(--card-bg); /* Using CSS variable */
     cursor: pointer;
     position: relative;
-    box-shadow: 0 4px 10px var(--card-shadow, rgba(0,0,0,0.07)); /* Softer default shadow */
+    box-shadow: var(--card-shadow); /* Softer default shadow */
   }
-  .entry-card:hover {
+  .entry-card:active,
+  .entry-card:focus {
     transform: translateY(-4px) rotate(-0.5deg);
-    box-shadow: 0 10px 22px var(--card-shadow, rgba(0,0,0,0.12));
-  }
-  .entry-card:focus-visible {
-    outline: 2px solid var(--bw-accent-pink, #ff69b4); /* Using BWP variable */
-    outline-offset: 2px;
+    box-shadow: var(--card-shadow);
   }
   .entry-title {
     font-family: 'Graffiti Urban', sans-serif; /* Ensure this font is loaded */
     font-size: 1.8rem;
     letter-spacing: 0.08rem;
-    color: var(--text-primary, #1c1c1e); /* Using CSS variable */
+    color: var(--card-title-text); /* Using CSS variable */
     margin: 0;
     line-height: 1.2;
     white-space: nowrap;
@@ -134,7 +131,7 @@
 
   .date-display {
     font-size: 0.75rem;
-    color: var(--text-tertiary, #8e8e93); /* Using CSS variable */
+    color: var(--card-date-text); /* Using CSS variable */
     font-family: 'Urbanist', sans-serif; /* Ensure this font is loaded */
     font-weight: 500;
   }
@@ -152,8 +149,8 @@
     z-index: 1; /* For stacking context with drips */
     align-self: flex-start;
     margin-top: 0.25rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    color: var(--main-bg, #ffffff); /* Default text color for mood display if not overridden by .mood-label */
+    box-shadow: var(--mood-shadow);
+    color: var(--card-border); /* Default text color for mood display if not overridden by .mood-label */
     font-family: 'Graffiti Urban', sans-serif; /* Ensure this font is loaded */
     font-weight: lighter;
     letter-spacing: 0.08rem;

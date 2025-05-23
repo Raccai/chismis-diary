@@ -41,7 +41,7 @@
   .primary {
     width: 50px;
     height: 50px;
-    background-color: var(--add-btn-bg);
+    background-color: var(--takeNote-btn-bg);
     border-radius: 12px;
     transition: all 150ms ease-in-out;
   }

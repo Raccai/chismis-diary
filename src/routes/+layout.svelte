@@ -146,22 +146,8 @@
     flex-direction: column; /* So content wrapper can have padding-top */
   }
 
-  /* Assuming EntryForm is directly inside form-slide,
-     and form-slide needs to account for Topbar height.
-     Let Topbar height be H_topbar. EntryForm has its own padding.
-     The content of EntryForm should start below Topbar.
-     This is typically handled by padding on the EntryForm container itself
-     or an inner wrapper within form-slide.
-     For simplicity, if EntryForm is the direct child and needs to clear a 56px topbar:
-  */
   .form-slide {
-    /* Add padding at the top of the form-slide to push content down */
-    padding-top: 56px; /* Adjust to actual Topbar height */
     /* The EntryForm component should then have its own internal padding for its content */
     overflow-y: auto; /* Make the form-slide itself scrollable if content exceeds height */
   }
-
-
-  /* Ensure app.css is imported if global styles like body are defined there,
-     or define them here with :global() if preferred. */
 </style>
