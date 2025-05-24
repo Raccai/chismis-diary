@@ -129,25 +129,39 @@
   {:else}
     <div class="heatmap-grid-container">
        <div class="heatmap-grid" style="--grid-rows: {numberOfRows};">
-         {#each paddedDailyData as day (day.date)}
+          {#each paddedDailyData as day (day.date)}
+            {@const isPadding = day.dominantMoodValue === 'padding'}
             {@const styling = getMoodStyling(day.dominantMoodValue)}
+            {@const moodObj = day.dominantMoodValue && day.dominantMoodValue !== 'padding' 
+                ? moodMap.get(day.dominantMoodValue) 
+                : null
+            }
+            {@const cellBg = isPadding 
+                ? 'transparent' 
+                : moodObj 
+                    ? moodObj.colorDark
+                    : styling.bgColor || defaultBgColor
+            }
+            
             {@const tooltipText = `${day.date}${styling.label !== 'No Entry' ? ': ' + styling.label : ': No entries'}${day.entryCount > 0 ? ' ('+day.entryCount+' entr'+(day.entryCount===1?'y':'ies')+')' : ''}`}
+            
             <div
-               class:padding={day.dominantMoodValue === 'padding'}
-               class:no-entry={!day.dominantMoodValue && day.dominantMoodValue !== 'padding'}
-               class="heatmap-cell"
-               title={tooltipText}
-               aria-label={tooltipText}
-               on:click={(e) => handleCellClick(day, e)}
-               role="button"
-               tabindex={day.dominantMoodValue === 'padding' ? -1 : 0}
-               on:keydown={(e) => { if(e.key === 'Enter' || e.key === ' ') handleCellClick(day, e); }}
+                class:padding={isPadding}
+                class:no-entry={!day.dominantMoodValue && !isPadding}
+                class="heatmap-cell"
+                title={tooltipText}
+                aria-label={tooltipText}
+                on:click={(e) => handleCellClick(day, e)}
+                role="button"
+                tabindex={isPadding ? -1 : 0}
+                style="background-color: {cellBg};"
+                on:keydown={(e) => { if(e.key === 'Enter' || e.key === ' ') handleCellClick(day, e); }}
             >
-               {#if styling.emoji}
-                 <span class="emoji">{styling.emoji}</span>
-               {/if}
+                {#if styling.emoji}
+                  <span class="emoji">{styling.emoji}</span>
+                {/if}
             </div>
-         {/each}
+          {/each}
        </div>
     </div>
     <!-- Legend removed as requested -->
@@ -232,7 +246,6 @@
     transition: background-color 0.2s, border-color 0.1s;
     overflow: hidden;
     cursor: pointer;
-    background-color: var(--main-dark-grey);
     border: 1px solid var(--card-border);
   }
   .heatmap-cell:not(.padding):hover,
@@ -241,14 +254,12 @@
      outline: none;
   }
   .heatmap-cell.padding {
-     background-color: transparent;
      border: none;
      cursor: default;
   }
   .heatmap-cell .emoji {
       font-size: 0.8em;
       line-height: 1;
-      filter: grayscale(30%);
       opacity: 0.9;
       pointer-events: none;
   }

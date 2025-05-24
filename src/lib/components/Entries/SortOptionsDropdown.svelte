@@ -52,9 +52,8 @@
   /* Re-use styles from MoodSelectDropdown or define them here if they differ significantly */
   .custom-dropdown-content {
     background-color: var(--dropdown-bg-color);
-    border: 2px solid var(--dropdown-border-color);
     border-radius: 12px; /* Rounded corners for dropdown */
-    box-shadow: 0 4px 4px var(--bw-shadow-color-medium, rgba(0,0,0,0.4));
+    box-shadow: var(--bw-shadow-color-medium);
     min-width: 160px; /* Ensure it's not too narrow */
     max-height: 180px; /* Allow scrolling for many moods */
     overflow-y: auto;
@@ -68,7 +67,7 @@
     text-align: left;
     background-color: transparent;
     border: none;
-    color: var(--main-bg);
+    color: var(--dropdown-text-color);
     cursor: pointer;
     transition: background-color 0.15s ease;
     font-family: 'Graffiti Urban', sans-serif;

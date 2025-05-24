@@ -70,10 +70,10 @@
         datasets: [{
           label: 'Mood Score Trend',
           data: currentChartData?.data || [],
-          borderColor: 'var(--dataviz-line-color)',
+          borderColor: '#ffffff',
           borderWidth: 2.5,
-          pointBackgroundColor: 'var(--dataviz-point-bg, #ff85c4)',
-          pointBorderColor: 'var(--dataviz-point-border, #1a202c)',
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: '#ffffff',
           pointBorderWidth: 2,
           pointRadius: 4,
           pointHoverRadius: 6,
@@ -100,9 +100,9 @@
           legend: { display: false },
           tooltip: {
             enabled: true,
-            backgroundColor: 'var(--dataviz-tooltip-bg)',
-            titleColor: 'var(--dataviz-tooltip-text)',
-            bodyColor: 'var(--dataviz-tooltip-text)',
+            backgroundColor: '#900C3F',
+            titleColor: '#ffffff',
+            bodyColor: '#ffffff',
             bodyFont: { weight: '500' },
             padding: 8,
             cornerRadius: 6,
@@ -122,22 +122,22 @@
           y: {
             // beginAtZero: false, // Consider your score range
             grid: {
-              color: 'var(--dataviz-grid-line-color, #2d3748)',
-              borderColor: 'var(--dataviz-axis-line-color, #4a5568)',
+              color: '#5b0023',
+              borderColor: '#FBF7EC',
               drawBorder: false,
             },
             ticks: {
-              color: 'var(--dataviz-tick-label-color, #a0aec0)',
+              color: '#FBF7EC',
               padding: 8
             }
           },
           x: {
             grid: {
                display: false,
-               borderColor: 'var(--dataviz-axis-line-color, #4a5568)',
+               borderColor: '#FBF7EC',
             },
             ticks: {
-               color: 'var(--dataviz-tick-label-color, #a0aec0)',
+               color: '#FBF7EC',
                maxRotation: 0,
                minRotation: 0,
                autoSkipPadding: 20,

@@ -1,107 +1,107 @@
 <script>
-    import { entriesStore } from "$lib/stores/entriesStore.js";
-    import { deleteEntry } from "$lib/utils/entryHelpers";
-    import EntryCard from "$lib/components/Entries/EntryCard.svelte";
-    import { uiStore } from '$lib/stores/uiStore.js';
-    import { quintOut } from "svelte/easing";
-    import { fly, slide } from "svelte/transition";
-    import MoodFilterBar from "$lib/components/Entries/MoodFilterBar.svelte"; // Adjust path if needed
-    import { tick } from 'svelte';
+  import { entriesStore } from "$lib/stores/entriesStore.js";
+  import { deleteEntry } from "$lib/utils/entryHelpers";
+  import EntryCard from "$lib/components/Entries/EntryCard.svelte";
+  import { uiStore } from '$lib/stores/uiStore.js';
+  import { quintOut } from "svelte/easing";
+  import { fly, slide } from "svelte/transition";
+  import MoodFilterBar from "$lib/components/Entries/MoodFilterBar.svelte"; // Adjust path if needed
+  import { tick } from 'svelte';
 
-    let selectedMoodFilter = null;
-    let searchTerm = "";
-    let showSearchBar = false;
-    let searchInputEl;
+  let selectedMoodFilter = null;
+  let searchTerm = "";
+  let showSearchBar = false;
+  let searchInputEl;
 
-    // --- State for Sorting ---
-    let currentSortKey = 'date_desc'; // Default sort order
+  // --- State for Sorting ---
+  let currentSortKey = 'date_desc'; // Default sort order
 
-    // --- Event handler for sort changes from MoodFilterBar ---
-    // This function is called when MoodFilterBar dispatches the 'sort' event
-    function handleSortChange(event) {
-      currentSortKey = event.detail;
-      console.log("Page: Sort key changed to:", currentSortKey);
-    }
+  // --- Event handler for sort changes from MoodFilterBar ---
+  // This function is called when MoodFilterBar dispatches the 'sort' event
+  function handleSortChange(event) {
+    currentSortKey = event.detail;
+    console.log("Page: Sort key changed to:", currentSortKey);
+  }
 
-    // --- Reactive Filtered AND Sorted Entries ---
-    $: filteredAndSortedEntries = (() => {
-        console.log("Recalculating filteredAndSortedEntries. Current sort:", currentSortKey, "Mood filter:", selectedMoodFilter, "Search:", searchTerm);
-        // Start with a shallow copy to avoid mutating the original store's array during sort
-        let processedEntries = [...$entriesStore];
+  // --- Reactive Filtered AND Sorted Entries ---
+  $: filteredAndSortedEntries = (() => {
+      console.log("Recalculating filteredAndSortedEntries. Current sort:", currentSortKey, "Mood filter:", selectedMoodFilter, "Search:", searchTerm);
+      // Start with a shallow copy to avoid mutating the original store's array during sort
+      let processedEntries = [...$entriesStore];
 
-        // Apply filtering
-        processedEntries = processedEntries.filter(entry => {
-            const moodMatch = !selectedMoodFilter || entry.mood === selectedMoodFilter;
-            const term = searchTerm.trim().toLowerCase();
-            const searchMatch = !term ||
-                                (entry.title && entry.title.toLowerCase().includes(term)) ||
-                                (entry.text && entry.text.toLowerCase().includes(term));
-            return moodMatch && searchMatch;
-        });
+      // Apply filtering
+      processedEntries = processedEntries.filter(entry => {
+          const moodMatch = !selectedMoodFilter || entry.mood === selectedMoodFilter;
+          const term = searchTerm.trim().toLowerCase();
+          const searchMatch = !term ||
+                              (entry.title && entry.title.toLowerCase().includes(term)) ||
+                              (entry.text && entry.text.toLowerCase().includes(term));
+          return moodMatch && searchMatch;
+      });
 
-        // Apply sorting
-        if (currentSortKey === 'date_desc') {
-            processedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-        } else if (currentSortKey === 'date_asc') {
-            processedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-        } else if (currentSortKey === 'none') {
-            // 'none' means no specific sort, so it keeps the order after filtering.
-        }
+      // Apply sorting
+      if (currentSortKey === 'date_desc') {
+          processedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+      } else if (currentSortKey === 'date_asc') {
+          processedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+      } else if (currentSortKey === 'none') {
+          // 'none' means no specific sort, so it keeps the order after filtering.
+      }
 
-        console.log("Page: Processed entries count:", processedEntries.length);
-        return processedEntries; // <<<--- THIS RETURN WAS CRITICAL AND MISSING IN THE PASTED VERSION
-    })();
+      console.log("Page: Processed entries count:", processedEntries.length);
+      return processedEntries; // <<<--- THIS RETURN WAS CRITICAL AND MISSING IN THE PASTED VERSION
+  })();
 
 
-    // --- Filtering Handlers ---
-    function handleMoodFilterChange(e) {
-      selectedMoodFilter = e.detail;
-    }
+  // --- Filtering Handlers ---
+  function handleMoodFilterChange(e) {
+    selectedMoodFilter = e.detail;
+  }
 
-    async function handleToggleSearch() {
-      showSearchBar = !showSearchBar;
-      if (!showSearchBar) {
-        searchTerm = "";
-      } else {
-        await tick();
-        if (searchInputEl) {
-            searchInputEl.focus();
-        }
+  async function handleToggleSearch() {
+    showSearchBar = !showSearchBar;
+    if (!showSearchBar) {
+      searchTerm = "";
+    } else {
+      await tick();
+      if (searchInputEl) {
+          searchInputEl.focus();
       }
     }
+  }
 
-    let debounceTimer;
-    function handleSearchInput(e) {
-      clearTimeout(debounceTimer);
-      const value = e.target.value;
-      debounceTimer = setTimeout(() => {
-        searchTerm = value;
-      }, 300);
-    }
+  let debounceTimer;
+  function handleSearchInput(e) {
+    clearTimeout(debounceTimer);
+    const value = e.target.value;
+    debounceTimer = setTimeout(() => {
+      searchTerm = value;
+    }, 300);
+  }
 
-    // --- Entry Actions ---
-    function handleEdit(event) {
-      const entryToEdit = event.detail;
-      if (entryToEdit && typeof entryToEdit.id !== 'undefined') {
-        uiStore.showEntryForm(entryToEdit);
-      } else {
-        console.error("Page: handleEdit - Invalid event detail:", event.detail);
-      }
+  // --- Entry Actions ---
+  function handleEdit(event) {
+    const entryToEdit = event.detail;
+    if (entryToEdit && typeof entryToEdit.id !== 'undefined') {
+      uiStore.showEntryForm(entryToEdit);
+    } else {
+      console.error("Page: handleEdit - Invalid event detail:", event.detail);
     }
+  }
 
-    function handleDelete(event) {
-      const entryId = event.detail;
-      if (typeof entryId === 'string' || typeof entryId === 'number') {
-        deleteEntry(entryId);
-      } else {
-        console.error("Page: handleDelete - Invalid event detail (ID):", event.detail);
-      }
+  function handleDelete(event) {
+    const entryId = event.detail;
+    if (typeof entryId === 'string' || typeof entryId === 'number') {
+      deleteEntry(entryId);
+    } else {
+      console.error("Page: handleDelete - Invalid event detail (ID):", event.detail);
     }
+  }
 
-    function clearSearch() {
-        searchTerm = "";
-        if(searchInputEl) searchInputEl.value = "";
-    }
+  function clearSearch() {
+      searchTerm = "";
+      if(searchInputEl) searchInputEl.value = "";
+  }
 </script>
 
 <div class="filters-and-content-wrapper">

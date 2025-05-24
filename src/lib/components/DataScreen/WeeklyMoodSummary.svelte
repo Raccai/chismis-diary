@@ -1,15 +1,5 @@
-<script>export let weeklySummaries = [];
-
-    const moodBaseColors = {
-      happy: '#34d399', 
-      sad: '#60a5fa', 
-      excited: '#facc15', 
-      angry: '#f87171',
-      anxious: '#c084fc', 
-      okay: '#fb923c', 
-      default: '#94a3b8'
-    };
-    const getMoodColor = (moodValue) => moodBaseColors[moodValue] || moodBaseColors.default;
+<script>
+  export let weeklySummaries = [];
 </script>
 
 <div class="weekly-summary-card">
@@ -22,11 +12,13 @@
   {#if weeklySummaries.length === 0}
     <p class="no-summary-message">Not enough data for weekly summaries yet.</p>
   {:else}
-    <ul class="summary-list">
+  <ul class="summary-list">
       {#each weeklySummaries as summary (summary.dateRangeString)}
-        {@const moodColor = getMoodColor(summary.dominantMood.value)}
+        {@const moodMainColor = summary.dominantMood.colorDark || 'var(--dataviz-default-dark, #94a3b8)'}
+        {@const iconAreaBg = summary.dominantMood.colorLight || 'var(--dataviz-default-light-bg, #4a5568)'}
+        {@const iconTextColor = summary.dominantMood.colorDark || 'var(--dataviz-default-dark, #e2e8f0)'}
         <li class="summary-item">
-          <div class="item-icon-area" style="background-color: {moodColor}20;">
+          <div class="item-icon-area" style="background-color: {moodMainColor};">
             <span class="item-icon">{summary.dominantMood.emoji || '❓'}</span>
           </div>
           <div class="item-content-area">
@@ -34,7 +26,7 @@
             <span class="item-secondary-text">{summary.dateRangeString}</span>
           </div>
           <div class="item-tag-area">
-            <span class="item-tag" style="background-color: {moodColor};">
+            <span class="item-tag" style="background-color: {moodMainColor};">
               {summary.dominantMoodCount} {summary.dominantMoodCount === 1 ? 'Entry' : 'Entries'}
             </span>
           </div>
@@ -148,7 +140,7 @@
 
   .item-tag {
     /* background-color set inline */
-    color: var(--card-title-text); 
+    color: var(--main-white); 
     font-family: "Urbanist", sans-serif;
     font-size: 0.7rem;
     font-weight: bold;

@@ -134,12 +134,12 @@
 
   /* Specific Card for Trend Chart */
   .trend-chart-card {
-    background-color: var(--card-bg);
-    color: var(--card-title-text);
+    background-color: #310013;
+    color: #FBF7EC;
     padding: 1.25rem;
     border-radius: 16px;
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    border: 1px solid var(--card-border);
+    border: 2px solid #400019;
     display: flex;
     flex-direction: column;
   }
@@ -151,19 +151,19 @@
   .trend-title {
      font-size: 1.1rem;
      font-weight: normal;
-     color: var(--data-text-primary);
+     color: #FBF7EC;
      margin: 0 0 0.25rem 0; /* Space below title */
   }
   .trend-score {
      font-size: 2.5rem;
      font-weight: normal;
-     color: #ffffff;
+     color: #FBF7EC;
      line-height: 1.1;
   }
    .trend-score .pts {
       font-size: 1rem;
       font-weight: normal;
-      color: #a0aec0; /* Lighter gray for 'pts' */
+      color: #FBF7EC; /* Lighter gray for 'pts' */
       margin-left: 0.25rem;
    }
 
@@ -175,7 +175,7 @@
     justify-content: center;
     gap: 0.5rem;
     margin-top: 1.25rem;
-    background-color: var(--card-mini-bg);
+    background-color: #1b000a;
     padding: 0.5rem;
     border-radius: 8px;
     /* Remove max-width or adjust if needed, centering handles alignment */
@@ -189,7 +189,7 @@
   .time-range-selector button {
     background-color: transparent;
     border: none;
-    color: var(--card-title-text);
+    color: #FBF7EC;
     /* Slightly reduce padding if still tight */
     padding: 0.4rem 0.7rem;
     border-radius: 6px;
@@ -201,15 +201,15 @@
   }
 
   .time-range-selector button.active {
-    background-color: var(--main-grey); /* Active background */
-    color: var(--card-title-text); /* Active text */
+    background-color: #FBF7EC; /* Active background */
+    color: var(--main-black); /* Active text */
     font-weight: 700;
   }
 
    .info-button {
     background: none;
     border: none;
-    color: var(--card-title-text); /* Gray */
+    color: #FBF7EC; 
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;

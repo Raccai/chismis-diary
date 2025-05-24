@@ -3,6 +3,8 @@
   import { addEntry, updateEntry } from "$lib/utils/entryHelpers.js";
   import { moodStore } from "$lib/stores/moodStore.js";
   import { createEventDispatcher, onMount, onDestroy, tick } from "svelte";
+  import { toasts } from "$lib/stores/toastStore";
+  import { uiStore } from "$lib/stores/uiStore";
 
   const dispatch = createEventDispatcher();
   export let selectedEntry = null;
@@ -78,20 +80,68 @@
     tags = tagInput.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0).map(tag => tag.startsWith('#') ? tag : `#${tag}`);
   }
 
-    function saveEntry() {
-        if(text.trim() || title.trim()) {
-        processTags();
-        const entryData = { title, text, mood: currentMood, tags };
-            if (selectedEntry && selectedEntry.id) {
-                updateEntry(selectedEntry.id, entryData.title, entryData.text, entryData.mood, entryData.tags);
-            } else {
-                addEntry(entryData.title, entryData.text, entryData.mood, entryData.tags);
-            }
-            dispatch("save");
-        } else {
-            alert("Chismis needs a title or some text!");
-        }
+  function saveEntry() {
+    console.log("EntryForm: saveEntry triggered.");
+    console.log("EntryForm: current text:", text);
+    console.log("EntryForm: current title:", title);
+    console.log("EntryForm: selectedEntry at save:", selectedEntry);
+
+    // Ensure text or title has content
+    if (text.trim() || title.trim()) {
+      processTags(); // Process tags before creating entryData
+      const entryData = {
+        title: title.trim() || `Chismis - ${new Date().toLocaleDateString()}`, // Default title if empty
+        text: text,
+        mood: currentMood,
+        tags: tags
+      };
+      console.log("EntryForm: entryData prepared:", entryData);
+
+      if (selectedEntry && selectedEntry.id) {
+        // UPDATE PATH: Show modal to confirm update
+        uiStore.showModal({
+          title: 'Confirm Update', // Changed title
+          message: `Are you sure you want to update the chismis titled "<strong>${entryData.title}</strong>"?`,
+          confirmText: 'Update It!',
+          cancelText: 'Nvm',
+          confirmClass: 'confirm-button', // Use a general confirm style, not 'danger'
+          onConfirm: () => {
+            console.log("EntryForm: Modal confirmed for UPDATE.");
+            updateEntry(selectedEntry.id, entryData.title, entryData.text, entryData.mood, entryData.tags);
+            dispatch("save"); // Close form AFTER successful action
+            toasts.success(`"${entryData.title}" updated!`);
+          },
+          onCancel: () => {
+            console.log("EntryForm: Modal cancelled for UPDATE.");
+            toasts.info('Update cancelled.');
+          }
+        });
+      } else {
+        // ADD PATH: Show modal to confirm save
+        uiStore.showModal({
+          title: 'Confirm Save', // Changed title
+          message: `Do you want to save this new chismis titled "<strong>${entryData.title}</strong>"?`,
+          confirmText: 'Save It!',
+          cancelText: 'Not Yet',
+          confirmClass: 'confirm-button', // Use a general confirm style
+          onConfirm: () => {
+            console.log("EntryForm: Modal confirmed for ADD.");
+            addEntry(entryData.title, entryData.text, entryData.mood, entryData.tags);
+            dispatch("save"); // Close form AFTER successful action
+            toasts.success(`"${entryData.title}" saved!`);
+          },
+          onCancel: () => {
+            console.log("EntryForm: Modal cancelled for ADD.");
+            toasts.info('Chismis not saved.');
+          }
+        });
+      }
+    } else {
+      // Using toast for error message instead of alert
+      toasts.error("Chismis needs a title or some text!");
+      // alert("Chismis needs a title or some text!"); // Old way
     }
+  }
 
   function handleBack() {
       dispatch('save'); // Using 'save' event to trigger close in layout, as it does the same thing

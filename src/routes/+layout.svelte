@@ -4,6 +4,8 @@
   import EntryForm from '$lib/components/Entries/EntryForm.svelte';
   import LoadingIndicator from '$lib/components/LoadingIndicator.svelte';
   import Navbar from '$lib/components/Navbar.svelte'; // Assuming this is your bottom tab bar
+  import ToastContainer from '$lib/components/Notifications/ToastContainer.svelte';
+  import Modal from '$lib/components/Notifications/Modal.svelte';
   import { uiStore } from '$lib/stores/uiStore.js';
   import { navigating, page } from '$app/stores';
   import { onDestroy } from 'svelte'; // Not strictly needed for this loader version anymore
@@ -75,6 +77,8 @@
 
   <main class="content-area">
     <slot /> <!-- Standard slot for Svelte 4 / non-Runes Svelte 5 -->
+    <ToastContainer />
+    <Modal />
   </main>
 
   <!-- Pass the reactive pathname to Navbar -->

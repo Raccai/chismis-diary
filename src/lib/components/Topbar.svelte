@@ -43,12 +43,13 @@
   }
 
   .logo-container-bwp span {
-    font-size: 3rem;
+    font-size: 2.4rem;
     letter-spacing: 0.16rem;
+    margin-left: -0.2rem;
   }
 
   .logo-container-bwp .logo {
-    transform: scale(0.9);
+    transform: scale(0.8);
   }
 
   .top-bar-actions-bwp {

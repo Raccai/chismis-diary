@@ -97,7 +97,7 @@
 
   --main-black: #1d1c19;
   --main-white: #ffffff;  
-  --main-dark-white: #FBF7EC;  
+  --main-dark-white: #e9e9e9;  
   --main-grey: #c4c4c4;
   --main-dark-grey: #23262B;
   --main-placeholder: #c3beb5;
@@ -126,11 +126,11 @@
   --main-bg: var(--main-white);
   --filterbar-bg: #FBF7EC;
 
-  --dropdown-text-color: var(--main-white);
+  --dropdown-text-color: var(--main-black);
   --dropdown-border-color: var(--main-white);
-  --dropdown-bg-color: var(--main-black);
-  --dropdown-select-color: var(--main-dark-grey);
-  --dropdown-shadow: 0 4px 4px rgba(0,0,0,0.4);
+  --dropdown-bg-color: var(--main-white);
+  --dropdown-select-color: var(--main-dark-white);
+  --dropdown-shadow: 0 2px 4px rgba(0,0,0,0.24);
   --filter-button-bg: var(--main-black);
   --filter-button-border: var(--main-white);
   --filter-button-text: var(--main-white);
@@ -150,18 +150,6 @@
   --data-cont-border: 1px solid var(--main-black);
   --data-cont-bg: var(--main-white);
   --data-text-primary: var(--main-black);
-
-  --dataviz-line-color: #5DADE2; /* A default blue */
-  --dataviz-point-bg: #5DADE2;
-  --dataviz-point-border: #FFFFFF;
-  --dataviz-gradient-start: rgba(93, 173, 226, 0.5);
-  --dataviz-gradient-end: rgba(93, 173, 226, 0.05);
-  --dataviz-tooltip-bg: #333333;
-  --dataviz-tooltip-text: #FFFFFF;
-  --dataviz-grid-line-color: #E0E0E0;
-  --dataviz-axis-line-color: #BDBDBD;
-  --dataviz-tick-label-color: #757575;
-  --dataviz-card-bg-for-point-border: #FFFFFF;
 }
 
 /* --- DARK MODE for B&W&Pink Theme --- */
@@ -197,11 +185,11 @@ body.dark { /* Toggled by themeStore.js */
   --main-bg: #11100b;
   --filterbar-bg: #1d1c19;
 
-  --dropdown-text-color: var(--main-black);
-  --dropdown-border-color: var(--main-black);
-  --dropdown-bg-color: var(--main-white);
-  --dropdown-select-color: var(--main-dark-white);
-  --dropdown-shadow: 0 4px 4px rgba(0,0,0,0.4);
+  --dropdown-text-color: var(--main-white);
+  --dropdown-border-color: var(--main-white);
+  --dropdown-bg-color: var(--main-black);
+  --dropdown-select-color: var(--main-grey);
+  --dropdown-shadow: 0 2px 4px rgba(0,0,0,0.24);
   --filter-button-bg: var(--main-white);
   --filter-button-border: var(--main-black);
   --filter-button-text: var(--main-black); 
@@ -214,18 +202,6 @@ body.dark { /* Toggled by themeStore.js */
   --data-cont-border: 1px solid var(--main-white);
   --data-cont-bg: var(--main-black);
   --data-text-primary: var(--main-white);
-
-  --dataviz-line-color: #fff; 
-  --dataviz-point-bg: var(--main-white);
-  --dataviz-point-border: var(--main-white); 
-  --dataviz-gradient-start: rgba(251, 247, 236, 0.5); 
-  --dataviz-gradient-end: rgba(251, 247, 236, 0.05);
-  --dataviz-tooltip-bg: var(--main-white);
-  --dataviz-tooltip-text: var(--main-black);
-  --dataviz-grid-line-color: var(--main-dark-grey);
-  --dataviz-axis-line-color: var(--main-dark-white);
-  --dataviz-tick-label-color: rgb(243, 228, 193);
-  --dataviz-card-bg-for-point-border: var(--main-white); 
 }
 
 

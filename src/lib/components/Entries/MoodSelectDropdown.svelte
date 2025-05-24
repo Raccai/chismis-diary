@@ -59,9 +59,8 @@
 <style>
   .custom-dropdown-content {
     background-color: var(--dropdown-bg-color);
-    border: 2px solid var(--dropdown-border-color);
     border-radius: 12px; /* Rounded corners for dropdown */
-    box-shadow: 0 4px 4px var(--dropdown-shadow, rgba(0,0,0,0.4));
+    box-shadow: var(--dropdown-shadow);
     min-width: 200px; /* Ensure it's not too narrow */
     max-height: 250px; /* Allow scrolling for many moods */
     overflow-y: auto;
@@ -75,7 +74,7 @@
     text-align: left;
     background-color: transparent;
     border: none;
-    color: var(--main-bg);
+    color: var(--dropdown-text-color);
     cursor: pointer;
     transition: background-color 0.15s ease;
     font-family: 'Graffiti Urban', sans-serif;

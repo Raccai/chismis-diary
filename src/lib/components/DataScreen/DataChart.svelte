@@ -13,8 +13,6 @@
   let scrollLeftButton = null;
   let scrollRightButton = null;
 
-  // REMOVED getMoodColor and getLighterMoodColor functions as colors come from moodStats
-
   function scrollContent(direction) {
     if (!scrollContainer) return;
     const itemWidth = scrollContainer.querySelector('.mood-bar-item')?.offsetWidth || 150;
@@ -63,9 +61,9 @@
       {#each moodStats as mood (mood.value)}
         {@const barHeightPercent = Math.max(0, Math.min(100, (mood.count / maxCount) * 100))}
         <!-- Use colors directly from the mood object -->
-        {@const barColor = mood.colorDark || 'var(--dataviz-default-dark, #94a3b8)'}
-        {@const labelBgColor = mood.colorLight || 'var(--dataviz-default-light, #cbd5e1)'}
-        {@const labelTextColor = mood.colorDark || 'var(--dataviz-default-dark, #2d3748)'}
+        {@const barColor = mood.colorDark || '#94a3b8)'}
+        {@const labelBgColor = mood.colorLight || '#cbd5e1)'}
+        {@const labelTextColor = mood.colorDark || '#2d3748)'}
 
 
         <div class="mood-bar-item-dynamic">
