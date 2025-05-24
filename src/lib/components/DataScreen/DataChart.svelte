@@ -1,123 +1,85 @@
 <script>
   import { onDestroy, onMount } from 'svelte';
+  // import { moodStore } from '$lib/stores/moodStore.js'; // Not needed if colors come via moodStats prop
 
-  // Props: Expects array: [{ value: 'happy', label: 'Happy', emoji: '😄', count: 15 }, ...]
+  // Props: Expects array:
+  // [{ value: 'happy', label: 'Happy', emoji: '😄', count: 15, colorLight: '#...', colorMedium: '#...', colorDark: '#...' }, ...]
   export let moodStats = [];
-  export let title = "Mood Stats"; // Allow customizing title
+  export let title = "Mood Stats";
 
-  // Reactive calculation for max count to scale bars
-  $: maxCount = moodStats.length > 0 ? Math.max(...moodStats.map(m => m.count), 1) : 1; // Use 1 as min to avoid division by zero
+  $: maxCount = moodStats.length > 0 ? Math.max(...moodStats.map(m => m.count), 1) : 1;
 
-  // DOM element references for scrolling
   let scrollContainer = null;
   let scrollLeftButton = null;
   let scrollRightButton = null;
 
-  // Helper function for mood colors (customize as needed)
-  const moodBaseColors = {
-    happy: '#34d399',   // Emerald 400
-    sad: '#60a5fa',     // Blue 400
-    excited: '#facc15', // Yellow 400 (Amber 400)
-    angry: '#f87171',   // Red 400
-    anxious: '#c084fc', // Purple 400
-    okay: '#fb923c',    // Orange 400
-    default: '#94a3b8'  // Slate 400
-  };
+  // REMOVED getMoodColor and getLighterMoodColor functions as colors come from moodStats
 
-  // Function to get the primary color for a mood
-  function getMoodColor(moodValue) {
-    return moodBaseColors[moodValue] || moodBaseColors.default;
-  }
-
-  function getLighterMoodColor(moodValue) {
-     const colors = {
-        happy: '#a7f3d0',   // Emerald 200
-        sad: '#bfdbfe',     // Blue 200
-        excited: '#fde68a', // Amber 200
-        angry: '#fecaca',   // Red 200
-        anxious: '#e9d5ff', // Purple 200
-        okay: '#fed7aa',    // Orange 200
-        default: '#cbd5e1'  // Slate 300
-     };
-     return colors[moodValue] || colors.default;
-  }
-
-  // Scrolling functions
   function scrollContent(direction) {
     if (!scrollContainer) return;
-
-    // Calculate scroll amount - scroll by roughly the width of one item + gap
-    const itemWidth = scrollContainer.querySelector('.mood-bar-item')?.offsetWidth || 150; // Estimate width
-    const gap = 16; // Matches the gap in .bars-wrapper style (1rem)
-    const scrollAmount = (itemWidth + gap) * direction; // direction is 1 or -1
-
-    scrollContainer.scrollBy({
-      left: scrollAmount,
-      behavior: 'smooth'
-    });
+    const itemWidth = scrollContainer.querySelector('.mood-bar-item')?.offsetWidth || 150;
+    const gap = 16;
+    const scrollAmount = (itemWidth + gap) * direction;
+    scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
 
-  // Function to update arrow visibility/disabled state (optional but good UX)
   function updateArrowStates() {
-    if (!scrollContainer || !scrollLeftButton || !scrollRightButton) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
-    scrollLeftButton.disabled = scrollLeft <= 0;
-    // Need a small tolerance for floating point inaccuracies
-    scrollRightButton.disabled = scrollLeft >= (scrollWidth - clientWidth - 1);
+     if (!scrollContainer || !scrollLeftButton || !scrollRightButton) return;
+     const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+     scrollLeftButton.disabled = scrollLeft <= 0;
+     scrollRightButton.disabled = scrollLeft >= (scrollWidth - clientWidth - 1);
   }
 
   onMount(() => {
     if (scrollContainer) {
-      // Initial check
-      updateArrowStates();
-
-      // Add event listener to update on scroll
-      scrollContainer.addEventListener('scroll', updateArrowStates, { passive: true });
+       updateArrowStates();
+       scrollContainer.addEventListener('scroll', updateArrowStates, { passive: true });
     }
   });
 
   onDestroy(() => {
-    if (scrollContainer) {
-      scrollContainer.removeEventListener('scroll', updateArrowStates);
-    }
+     if (scrollContainer) {
+       scrollContainer.removeEventListener('scroll', updateArrowStates);
+     }
   });
 
-  // Update arrows when data changes causing scroll width potentially changing
   $: if (moodStats && scrollContainer) {
-    // Wait a tick for DOM to potentially update before checking scroll state
-    setTimeout(updateArrowStates, 0);
+      setTimeout(updateArrowStates, 0);
   }
 
 </script>
 
-<div class="mood-stats-card">
-  <div class="card-header">
-    <h2 class="card-title">{title}</h2>
-    <div class="nav-arrows">
-      <button bind:this={scrollLeftButton} class="arrow-button left" on:click={() => scrollContent(-1)} aria-label="Scroll left" disabled>⬅️</button>
-      <button bind:this={scrollRightButton} class="arrow-button right" on:click={() => scrollContent(1)} aria-label="Scroll right" disabled>➡️</button>
+<div class="mood-stats-card-dynamic">
+  <div class="card-header-dynamic">
+    <h2 class="card-title-dynamic">{title}</h2>
+    <div class="nav-arrows-dynamic">
+      <button bind:this={scrollLeftButton} class="arrow-button-dynamic left" on:click={() => scrollContent(-1)} aria-label="Scroll left" disabled>⬅️</button>
+      <button bind:this={scrollRightButton} class="arrow-button-dynamic right" on:click={() => scrollContent(1)} aria-label="Scroll right" disabled>➡️</button>
     </div>
   </div>
 
-  <div class="scroll-container" bind:this={scrollContainer}>
-    <div class="bars-wrapper">
+  <div class="scroll-container-dynamic" bind:this={scrollContainer}>
+    <div class="bars-wrapper-dynamic">
       {#each moodStats as mood (mood.value)}
         {@const barHeightPercent = Math.max(0, Math.min(100, (mood.count / maxCount) * 100))}
-        {@const barColor = getMoodColor(mood.value)}
-        {@const labelBgColor = getLighterMoodColor(mood.value)}
+        <!-- Use colors directly from the mood object -->
+        {@const barColor = mood.colorDark || 'var(--dataviz-default-dark, #94a3b8)'}
+        {@const labelBgColor = mood.colorLight || 'var(--dataviz-default-light, #cbd5e1)'}
+        {@const labelTextColor = mood.colorDark || 'var(--dataviz-default-dark, #2d3748)'}
 
-        <div class="mood-bar-item" style="background-color: #2d3748;"> 
-          <div class="count-display">{mood.count}</div>
-          <div class="bar-visual-container">
+
+        <div class="mood-bar-item-dynamic">
+          <div class="count-display-dynamic">{mood.count}</div>
+          <div class="bar-visual-container-dynamic">
              <div
-               class="bar"
+               class="bar-dynamic"
                style="height: {barHeightPercent}%; background-color: {barColor};"
                title="{mood.label}: {mood.count}"
              ></div>
           </div>
-          <div class="label-container" style="background-color: {labelBgColor};">
-            <span class="icon">{mood.emoji || '❓'}</span>
-            <span class="label">{mood.label}</span>
+          <div class="label-container-dynamic" style="background-color: {labelBgColor};">
+            <span class="icon-dynamic">{mood.emoji || '❓'}</span>
+            <span class="label-dynamic" style="color: {labelTextColor};">{mood.label}</span>
           </div>
         </div>
       {/each}
@@ -126,162 +88,164 @@
 </div>
 
 <style>
-  .mood-stats-card {
-    background-color: #1a202c; /* Dark background (Tailwind gray-900) */
-    color: #e2e8f0; /* Light text (Tailwind slate-200) */
+  /* --- Styles for DataChart with dynamic colors --- */
+  /* These styles assume your BWP theme variables are set for fallback and general card look */
+
+  .mood-stats-card-dynamic {
+    background-color: var(--card-bg); /* From your dark theme for dataviz */
+    color: var(--card-title-text);
     padding: 1.25rem;
-    border-radius: 16px; /* More rounded */
+    border-radius: 16px;
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    border: 1px solid #2d3748; /* Darker border (Tailwind gray-800) */
+    border: 1px solid var(--card-border);
     overflow: hidden;
   }
 
-  .card-header {
+  .card-header-dynamic {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.25rem; /* More space below header */
-    padding: 0 0.25rem; /* Slight padding horizontal */
+    margin-bottom: 1.25rem;
+    padding: 0 0.25rem;
   }
 
-  .card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #cbd5e1; /* Lighter gray title (Tailwind slate-300) */
+  .card-title-dynamic {
+    font-family: "Urbanist", sans-serif; /* Match EntryCard */
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--card-title-text); /* From your dataviz theme */
     margin: 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
-   /* Optional: Add an icon to the title like in the image */
-  .card-title::before {
-     content: '📊'; /* Placeholder icon */
-     font-size: 1.2em;
-     /* Or use an SVG icon */
-  }
 
-  .nav-arrows {
+  .nav-arrows-dynamic {
     display: flex;
     gap: 0.5rem;
   }
 
-  .arrow-button {
-    background-color: #2d3748; /* Dark buttons (gray-800) */
-    border: 1px solid #4a5568; /* Medium dark border (gray-600) */
-    color: #a0aec0; /* Medium light text (gray-400) */
+  .arrow-button-dynamic {
+    background-color: var(--card-title-text); /* Match dataviz theme */
     border-radius: 50%;
     width: 32px;
     height: 32px;
-    display: flex; justify-content: center; align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
     line-height: 1;
   }
-
-  .arrow-button:hover:not(:disabled) {
-    background-color: #4a5568;
-    color: #e2e8f0;
+  .arrow-button-dynamic:hover:not(:disabled) {
+    background-color: #4a5568; 
   }
-  .arrow-button:disabled {
+  .arrow-button-dynamic:disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
 
-  .scroll-container {
+  .scroll-container-dynamic {
     overflow-x: auto;
-    scrollbar-width: none; /* Only needed for testing */
-    -ms-overflow-style: none; 
-    margin-left: -1.5rem;
-    margin-right: -1.5rem;
-    padding: 0 1.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-left: -1.25rem; /* Counteract card padding */
+    margin-right: -1.25rem;
+    padding-left: 1.25rem; /* Restore padding inside scroll */
+    padding-right: 1.25rem;
   }
-  .scroll-container::-webkit-scrollbar { display: none; }
+  .scroll-container-dynamic::-webkit-scrollbar {
+    display: none;
+  }
 
-  .bars-wrapper {
+  .bars-wrapper-dynamic {
     display: flex;
-    gap: 1rem; /* Space between mood bars */
-    padding: 0.25rem 0.5rem 0.5rem 0.5rem; /* Top/Bottom/Horizontal padding for items */
+    gap: 1rem;
+    padding: 0.25rem 0.1rem 0.5rem 0.1rem; /* Minimal padding for items within scroll */
     width: max-content;
   }
 
-  .mood-bar-item {
-    width: 120px; /* Slightly wider */
-    height: 240px; /* Taller */
-    background-color: #2d3748; /* Default dark card background (gray-800) */
-    border-radius: 12px; /* Match card rounding */
+  .mood-bar-item-dynamic {
+    width: 100px; /* Slightly narrower to fit more */
+    height: 220px; /* Slightly shorter */
+    background-color: var(--card-mini-bg); /* Background for individual item */
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1rem 0.5rem; /* More vertical padding */
+    padding: 0.75rem 0.5rem;
     box-sizing: border-box;
-    border: 1px solid #4a5568; /* Subtle border */
+    /* border: 1px solid #4a5568; /* Optional inner border */
     position: relative;
     text-align: center;
-    overflow: hidden; /* Ensure content clips to rounded corners */
+    overflow: hidden;
   }
 
-  .count-display {
-    font-size: 2.5rem; /* Larger count */
-    font-weight: 700; /* Bolder */
-    color: #ffffff; /* White count */
+  .count-display-dynamic {
+    font-size: 2.2rem; /* Adjusted */
+    font-weight: 600; /* Adjusted */
+    color: var(--card-title-text);
     line-height: 1.1;
-    margin-bottom: 0.75rem; /* More space below count */
-    z-index: 2; /* Above bar container */
+    margin-bottom: 0.5rem;
+    z-index: 2;
     position: relative;
   }
 
-  .bar-visual-container {
+  .bar-visual-container-dynamic {
     position: absolute;
-    bottom: 60px; /* Height of the label container + padding */
+    bottom: 55px; /* Adjusted for label container height */
     left: 0;
     right: 0;
-    height: calc(100% - 60px - 4.5rem); /* Adjust height: 100% - label height - approx count height/margin */
+    height: calc(100% - 55px - 3.8rem); /* Adjust calculation */
     display: flex;
-    align-items: flex-end; /* Bar grows from bottom */
+    align-items: flex-end;
     justify-content: center;
-    padding: 0 15%; /* Keep bar from edges */
+    padding: 0 20%; /* Bar width within container */
     box-sizing: border-box;
     z-index: 1;
   }
 
-  .bar {
+  .bar-dynamic {
     width: 100%;
-    border-radius: 6px 6px 0 0;
+    /* height & background-color set by inline style */
+    border-radius: 5px 5px 0 0; /* Adjusted */
     transition: height 0.4s ease-out;
   }
 
-  .label-container {
-    position: absolute; /* Position at the bottom */
+  .label-container-dynamic {
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 60px; /* Fixed height for label area */
-    border-radius: 0 0 10px 10px; /* Round bottom corners only */
+    height: 55px; /* Adjusted */
+    /* background-color set inline via style prop using mood.colorLight */
+    border-radius: 0 0 8px 8px; /* Adjusted */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Center content vertically */
+    justify-content: center;
     gap: 0.1rem;
-    padding: 0.25rem;
+    padding: 0.2rem;
     box-sizing: border-box;
     z-index: 2;
   }
 
-  .label-container .icon {
-    font-size: 1.6rem; /* Larger icon */
+  .label-container-dynamic .icon-dynamic {
+    font-size: 1.5rem; /* Adjusted */
     line-height: 1;
-    color: #1a202c; /* Darker color for icon on light background */
+    /* color determined by labelTextColor (mood.colorDark) in the span style */
   }
 
-  .label-container .label {
-    font-size: 0.8rem;
-    font-weight: 600; /* Bolder label */
-    color: #2d3748; /* Darker color for label text */
+  .label-container-dynamic .label-dynamic {
+    font-size: 0.75rem; /* Adjusted */
+    font-weight: 500;  /* Adjusted */
+    /* color set inline via style prop using mood.colorDark */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 90%; /* Prevent text touching edges */
+    width: 90%;
+    font-family: 'Urbanist', sans-serif;
   }
 </style>

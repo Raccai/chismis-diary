@@ -124,7 +124,7 @@
   .no-data-message {
     text-align: center;
     font-style: italic;
-    color: #a0aec0; /* Lighter text on dark theme */
+    color: var(--card-title-text); /* Lighter text on dark theme */
     background-color: #2d3748; /* Darker background card */
     padding: 2rem;
     border-radius: 12px;
@@ -134,12 +134,12 @@
 
   /* Specific Card for Trend Chart */
   .trend-chart-card {
-    background-color: #1a202c;
-    color: #e2e8f0;
+    background-color: var(--card-bg);
+    color: var(--card-title-text);
     padding: 1.25rem;
     border-radius: 16px;
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    border: 1px solid #2d3748;
+    border: 1px solid var(--card-border);
     display: flex;
     flex-direction: column;
   }
@@ -150,19 +150,19 @@
   }
   .trend-title {
      font-size: 1.1rem;
-     font-weight: 600;
-     color: #cbd5e1;
+     font-weight: normal;
+     color: var(--data-text-primary);
      margin: 0 0 0.25rem 0; /* Space below title */
   }
   .trend-score {
      font-size: 2.5rem;
-     font-weight: 700;
+     font-weight: normal;
      color: #ffffff;
      line-height: 1.1;
   }
    .trend-score .pts {
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: normal;
       color: #a0aec0; /* Lighter gray for 'pts' */
       margin-left: 0.25rem;
    }
@@ -175,7 +175,7 @@
     justify-content: center;
     gap: 0.5rem;
     margin-top: 1.25rem;
-    background-color: #2d3748;
+    background-color: var(--card-mini-bg);
     padding: 0.5rem;
     border-radius: 8px;
     /* Remove max-width or adjust if needed, centering handles alignment */
@@ -189,32 +189,27 @@
   .time-range-selector button {
     background-color: transparent;
     border: none;
-    color: #a0aec0;
+    color: var(--card-title-text);
     /* Slightly reduce padding if still tight */
     padding: 0.4rem 0.7rem;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.8rem;
-    font-weight: 500;
+    font-family: "Urbanist", sans-serif;
     transition: background-color 0.2s, color 0.2s;
     white-space: nowrap; /* Keep button text on one line */
   }
 
-  .time-range-selector button:hover {
-    background-color: #4a5568; /* Hover background */
-    color: #ffffff;
-  }
-
   .time-range-selector button.active {
-    background-color: #4a5568; /* Active background */
-    color: #ffffff; /* Active text */
-    font-weight: 600;
+    background-color: var(--main-grey); /* Active background */
+    color: var(--card-title-text); /* Active text */
+    font-weight: 700;
   }
 
    .info-button {
     background: none;
     border: none;
-    color: #718096; /* Gray */
+    color: var(--card-title-text); /* Gray */
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;

@@ -136,7 +136,6 @@
                class:padding={day.dominantMoodValue === 'padding'}
                class:no-entry={!day.dominantMoodValue && day.dominantMoodValue !== 'padding'}
                class="heatmap-cell"
-               style="background-color: {styling.bgColor}; border-color: {borderColor};"
                title={tooltipText}
                aria-label={tooltipText}
                on:click={(e) => handleCellClick(day, e)}
@@ -186,12 +185,12 @@
 
 <style>
   .heatmap-card {
-    background-color: #1a202c;
-    color: #e2e8f0;
+    background-color: var(--card-bg);
+    color: vaR(--card-title-text);
     padding: 1rem 1.25rem 1.25rem 1.25rem;
     border-radius: 16px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    border: 1px solid #2d3748;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
   }
 
   .card-header {
@@ -199,15 +198,16 @@
   }
 
   .card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #cbd5e1;
+    font-family: "Urbanist", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--card-title-text);
     margin: 0;
   }
 
   .no-data-message {
     text-align: center;
-    color: #a0aec0;
+    color: var(--card-title-text);
     padding: 1rem 0;
     font-style: italic;
   }
@@ -232,10 +232,12 @@
     transition: background-color 0.2s, border-color 0.1s;
     overflow: hidden;
     cursor: pointer;
+    background-color: var(--main-dark-grey);
+    border: 1px solid var(--card-border);
   }
   .heatmap-cell:not(.padding):hover,
   .heatmap-cell:not(.padding):focus {
-     border-color: #e2e8f0;
+     border-color: var(--card-border);
      outline: none;
   }
   .heatmap-cell.padding {
@@ -258,17 +260,18 @@
     transform: translateX(-50%) translateY(-100%) translateY(-8px); /* Center horizontally, move above point, add 8px gap */
     transform-origin: bottom center; /* For scale transition */
 
-    background-color: #2d3748; /* Dark background */
-    color: #e2e8f0; /* Light text */
+    background-color: var(--card-bg); /* Dark background */
+    color: var(--card-title-text); /* Light text */
+    font-family: "Urbanist", sans-serif;
     padding: 0.75rem 1rem;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-shadow: var(--card-shadow);
     z-index: 1100; /* High z-index */
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.2rem;
-    border: 1px solid #4a5568;
+    border: 1px solid var(--card-border);
     min-width: 150px;
     pointer-events: none; /* Prevent tooltip from interfering with clicks, window listener handles closing */
     white-space: nowrap; /* Prevent wrapping */

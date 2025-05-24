@@ -1,143 +1,242 @@
 <script>
   import { onMount, onDestroy, tick } from 'svelte';
-  // Import specific Chart.js components to enable tree-shaking
   import {
-      Chart,
-      LineController,
-      LineElement,
-      PointElement,
-      CategoryScale, // Use CategoryScale for simpler labels like 'Oct 26', 'Wk of Oct 23'
-      // TimeScale, // Use TimeScale if using a date adapter and want precise time axes
-      LinearScale,
-      Tooltip,
-      Filler // Needed for gradient fill below line
+      Chart, LineController, LineElement, PointElement, CategoryScale,
+      LinearScale, Tooltip, Filler
   } from 'chart.js';
-  // Optional: Import date adapter if needed
-  // import { AdapterDateFns } from 'chartjs-adapter-date-fns';
-  // import 'chartjs-adapter-date-fns'; // Register it
+  import { theme } from '$lib/stores/themeStore.js'; // Import your theme store
 
-  // Register the components
   Chart.register(
-      LineController, LineElement, PointElement, CategoryScale, /* TimeScale, */
+      LineController, LineElement, PointElement, CategoryScale,
       LinearScale, Tooltip, Filler
   );
-  // Optional: Register date adapter
-  // Chart.register(AdapterDateFns);
 
-
-  // Props: Expects { labels: [...], data: [...] } from calculateMoodScoreTrend
+  // Props: Expects { labels: string[], data: number[] } | null
   export let chartData = null;
 
   let canvasElement;
   let chartInstance = null;
-  let chartStatusMessage = 'Loading chart...'; // Message for user
+  let chartStatusMessage = 'Initializing chart...'; // Initial message
 
-  // Chart Configuration
-  const chartConfig = {
-    type: 'line',
-    data: {
-      labels: [], // Populated by chartData
-      datasets: [{
-        label: 'Mood Score Trend',
-        data: [], // Populated by chartData
-        borderColor: 'rgba(96, 165, 250, 1)', // Blue-400
-        borderWidth: 3,
-        pointBackgroundColor: 'rgba(96, 165, 250, 1)',
-        pointBorderColor: '#1a202c', // Match dark background
-        pointBorderWidth: 2,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        tension: 0.3, // Smoothes the line
-        fill: true, // Enable filling below the line
-        backgroundColor: (context) => { // Gradient fill
-            const ctx = context.chart.ctx;
-            if (!ctx) return 'rgba(96, 165, 250, 0.1)'; // Fallback needed during init
-            const gradient = ctx.createLinearGradient(0, 0, 0, context.chart.height);
-            gradient.addColorStop(0, 'rgba(96, 165, 250, 0.5)'); // Start color (more opaque)
-            gradient.addColorStop(1, 'rgba(96, 165, 250, 0.05)'); // End color (more transparent)
-            return gradient;
-          },
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false, // Allow chart to fill container height
-      plugins: {
-        legend: { display: false }, // Hide default legend
-        tooltip: {
-          enabled: true,
-          backgroundColor: '#2d3748', // Dark tooltip
-          titleColor: '#e2e8f0',
-          bodyColor: '#cbd5e1',
-          padding: 10,
-          cornerRadius: 6,
-          // Custom tooltip title/label if needed
-        },
-        filler: {
-           propagate: false, // Important for gradient fill
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: false, // Allow negative scores if moods are scored that way
-          grid: {
-            color: '#2d3748', // Dark grid lines (gray-800)
-            borderColor: '#4a5568', // Axis line color (gray-600)
-          },
-          ticks: {
-            color: '#a0aec0' // Light tick labels (gray-400)
-          }
-        },
-        x: {
-          grid: {
-             display: false, // Hide vertical grid lines for cleaner look
-             borderColor: '#4a5568', // Axis line color
-          },
-          ticks: {
-             color: '#a0aec0' // Light tick labels
-          }
-        }
-      },
-      interaction: { // How chart reacts to hover/click
-          mode: 'index', // Show tooltip for all datasets at that index
-          intersect: false, // Tooltip triggers even if not directly hovering point
-      },
-      // Custom elements like the data point labels require plugins or more complex drawing
+  // Helper to get resolved CSS variable value from document.body
+  function getResolvedCssVar(variableName, fallbackColor = '#000000') {
+    if (typeof window !== 'undefined' && document.body) {
+      const value = getComputedStyle(document.body).getPropertyValue(variableName).trim();
+      if (value && (value.startsWith('#') || value.startsWith('rgb') || value.startsWith('hsl'))) {
+        return value;
+      }
     }
-  };
-
-  // Update chart when data changes
-  $: if (chartInstance && chartData && chartData.labels && chartData.data) {
-      chartInstance.data.labels = chartData.labels;
-      chartInstance.data.datasets[0].data = chartData.data;
-      chartInstance.update('none'); // 'none' prevents animation on update
-      chartStatusMessage = ''; // Clear loading message
-      // console.log("Chart updated with new data");
-  } else if (chartInstance && !chartData) {
-      // Handle case where data becomes null (e.g., no entries)
-      chartInstance.data.labels = [];
-      chartInstance.data.datasets[0].data = [];
-      chartInstance.update('none');
-      chartStatusMessage = 'No data available for this period.';
-      // console.log("Chart cleared, no data");
+    return fallbackColor;
   }
 
-  onMount(() => {
-    if (!canvasElement) return;
-    chartInstance = new Chart(canvasElement, chartConfig);
+  // Helper to convert hex to an object {r, g, b}
+  function hexToRgbComponents(hex) {
+    if (!hex || typeof hex !== 'string' || !hex.startsWith('#')) {
+      console.warn("Invalid hex color for RGB conversion:", hex, "Using fallback black.");
+      return { r: 0, g: 0, b: 0 };
+    }
+    hex = hex.replace(/^#/, '');
+    let r = 0, g = 0, b = 0;
+    if (hex.length === 3) {
+        r = parseInt(hex[0] + hex[0], 16);
+        g = parseInt(hex[1] + hex[1], 16);
+        b = parseInt(hex[2] + hex[2], 16);
+    } else if (hex.length === 6) {
+        r = parseInt(hex[0] + hex[1], 16);
+        g = parseInt(hex[2] + hex[3], 16);
+        b = parseInt(hex[4] + hex[5], 16);
+    } else {
+        console.warn("Invalid hex length for RGB conversion:", hex, "Using fallback black.");
+        return { r: 0, g: 0, b: 0 };
+    }
+    return { r, g, b };
+  }
 
-    // Initial data load check
-    if (!chartData || !chartData.labels || !chartData.data) {
-        chartStatusMessage = 'No data available for this period.';
+  // Function to create the chart configuration dynamically
+  function createChartConfig(currentChartData) {
+    // console.log("createChartConfig called. Current chartData:", currentChartData); // For debugging
+
+    // For the gradient, resolve colors at the time of config creation
+    const resolvedGradientBaseHex = getResolvedCssVar('--dataviz-gradient-start', '#ff85c4'); // Your main pink
+    const {r, g, b} = hexToRgbComponents(resolvedGradientBaseHex);
+
+    const gradientStartRgba = `rgba(${r}, ${g}, ${b}, 0.4)`; // Adjusted alpha
+    const gradientEndRgba = `rgba(${r}, ${g}, ${b}, 0.05)`;
+
+    return {
+      type: 'line',
+      data: {
+        labels: currentChartData?.labels || [],
+        datasets: [{
+          label: 'Mood Score Trend',
+          data: currentChartData?.data || [],
+          borderColor: 'var(--dataviz-line-color)',
+          borderWidth: 2.5,
+          pointBackgroundColor: 'var(--dataviz-point-bg, #ff85c4)',
+          pointBorderColor: 'var(--dataviz-point-border, #1a202c)',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0.4,
+          fill: true,
+          backgroundColor: (context) => {
+              const chart = context.chart;
+              const { ctx, chartArea } = chart;
+              // Check if chartArea is defined and has height to prevent errors during init/destroy
+              if (!ctx || !chartArea || chartArea.bottom <= chartArea.top) {
+                   return gradientEndRgba; // Fallback or transparent
+              }
+              const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+              gradient.addColorStop(0, gradientEndRgba);
+              gradient.addColorStop(1, gradientStartRgba);
+              return gradient;
+            },
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'var(--dataviz-tooltip-bg)',
+            titleColor: 'var(--dataviz-tooltip-text)',
+            bodyColor: 'var(--dataviz-tooltip-text)',
+            bodyFont: { weight: '500' },
+            padding: 8,
+            cornerRadius: 6,
+            displayColors: false,
+            callbacks: {
+              label: function(tooltipItem) {
+                let label = tooltipItem.dataset.label || '';
+                if (label) label += ': ';
+                if (tooltipItem.parsed.y !== null) label += tooltipItem.parsed.y.toFixed(2) + ' pts';
+                return label;
+              }
+            }
+          },
+          filler: { propagate: false }
+        },
+        scales: {
+          y: {
+            // beginAtZero: false, // Consider your score range
+            grid: {
+              color: 'var(--dataviz-grid-line-color, #2d3748)',
+              borderColor: 'var(--dataviz-axis-line-color, #4a5568)',
+              drawBorder: false,
+            },
+            ticks: {
+              color: 'var(--dataviz-tick-label-color, #a0aec0)',
+              padding: 8
+            }
+          },
+          x: {
+            grid: {
+               display: false,
+               borderColor: 'var(--dataviz-axis-line-color, #4a5568)',
+            },
+            ticks: {
+               color: 'var(--dataviz-tick-label-color, #a0aec0)',
+               maxRotation: 0,
+               minRotation: 0,
+               autoSkipPadding: 20,
+               padding: 8
+            }
+          }
+        },
+        interaction: { mode: 'index', intersect: false },
+      }
+    };
+  }
+
+  // Central function to initialize or update the chart
+  function buildOrUpdateChart(dataForChart) {
+    // console.log("buildOrUpdateChart called with data:", dataForChart); // For debugging
+    if (!canvasElement) {
+      chartStatusMessage = "Canvas element not yet available for chart.";
+      console.error("buildOrUpdateChart: canvasElement is not defined.");
+      return;
     }
 
+    const newConfig = createChartConfig(dataForChart);
+
+    // Determine if there's valid data to display
+    const hasValidData = dataForChart && dataForChart.labels && dataForChart.labels.length > 0 && dataForChart.data && dataForChart.data.length > 0;
+
+    if (hasValidData) {
+      newConfig.data.labels = dataForChart.labels;
+      newConfig.data.datasets[0].data = dataForChart.data;
+      chartStatusMessage = ''; // Clear status message as we have data
+    } else {
+      newConfig.data.labels = [];
+      newConfig.data.datasets[0].data = [];
+      chartStatusMessage = 'No data available for this period.';
+    }
+
+    if (!chartInstance) {
+      // console.log("Creating new chart instance."); // For debugging
+      chartInstance = new Chart(canvasElement, newConfig);
+    } else {
+      // console.log("Updating existing chart."); // For debugging
+      // Update data first
+      chartInstance.data.labels = newConfig.data.labels;
+      chartInstance.data.datasets = newConfig.data.datasets; // Replace whole datasets array for theme changes
+
+      // Then update options, which also forces re-evaluation of styles
+      chartInstance.options = newConfig.options;
+
+      chartInstance.update('none');
+    }
+  }
+
+  // --- Reactive Effects ---
+  let mounted = false;
+
+  // 1. React to chartData prop changes
+  $: if (mounted && canvasElement) {
+    // console.log("Reactive: chartData prop changed:", chartData); // For debugging
+    buildOrUpdateChart(chartData);
+  }
+
+  // 2. React to theme changes
+  let unsubscribeTheme;
+
+  onMount(async () => {
+    await tick(); // Ensure canvasElement is available in the DOM
+    mounted = true;
+
+    if (!canvasElement) {
+      chartStatusMessage = "Chart canvas element not found onMount.";
+      console.error("onMount: canvasElement is null after tick.");
+      return;
+    }
+    // console.log("Component Mounted. Initial chartData:", chartData); // For debugging
+    buildOrUpdateChart(chartData); // Initial draw with whatever chartData is (might be null)
+
+    unsubscribeTheme = theme.subscribe(currentThemeValue => {
+      if (mounted && chartInstance) { // Only update if chart exists and component is fully mounted
+        console.log("Theme changed to:", currentThemeValue, ". Triggering chart update for theme.");
+        tick().then(() => { // Wait for CSS vars on body to potentially update
+            buildOrUpdateChart(chartData); // Rebuild/update with current data and new theme config
+        });
+      } else if (mounted && !chartInstance && canvasElement) {
+        // If theme changes before first data arrives but after mount and canvas is ready
+        console.log("Theme changed before initial data, ensuring empty chart uses new theme config.");
+        buildOrUpdateChart(null); // Build an empty chart with the new theme config
+      }
+    });
+
     return () => {
-       // Cleanup on component destroy
-       if (chartInstance) {
-         chartInstance.destroy();
-         chartInstance = null;
-         // console.log("Chart destroyed");
-       }
+      if (chartInstance) {
+        chartInstance.destroy();
+        chartInstance = null;
+        // console.log("Chart destroyed on unmount"); // For debugging
+      }
+      if (unsubscribeTheme) {
+        unsubscribeTheme();
+      }
+      mounted = false;
     };
   });
 
@@ -147,7 +246,7 @@
   {#if chartStatusMessage}
      <div class="status-message">{chartStatusMessage}</div>
   {/if}
-  <canvas bind:this={canvasElement}></canvas>
+  <canvas bind:this={canvasElement}></canvas> <!-- Removed .chart-canvas-themed, style canvas directly -->
 </div>
 
 <style>
@@ -156,9 +255,9 @@
     height: 300px; /* Or adjust as needed */
     width: 100%;
   }
-  canvas {
-    display: block; /* Prevent extra space below canvas */
-    height: 100% !important; /* Override potential inline style from Chart.js */
+  canvas { /* Style canvas tag directly */
+    display: block;
+    height: 100% !important;
     width: 100% !important;
   }
   .status-message {
@@ -166,8 +265,10 @@
      top: 50%;
      left: 50%;
      transform: translate(-50%, -50%);
-     color: #a0aec0; /* Light gray text */
+     color: var(--dataviz-card-subtle-text, #a0aec0); /* Use CSS var */
      font-style: italic;
-     z-index: 5; /* Above canvas if needed */
+     font-size: 0.9rem;
+     z-index: 5; /* Ensure it's visible if chart is transparent initially */
+     text-align: center;
   }
 </style>

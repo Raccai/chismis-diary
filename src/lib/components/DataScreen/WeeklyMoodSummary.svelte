@@ -47,12 +47,12 @@
 
 <style>
   .weekly-summary-card {
-    background-color: #1a202c; /* Dark background */
+    background-color: var(--card-bg); /* Dark background */
     color: #e2e8f0; /* Light text */
     padding: 1rem 0.75rem 1.25rem 0.75rem; /* Less horizontal padding */
     border-radius: 16px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    border: 1px solid #2d3748;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
   }
 
   .card-header {
@@ -64,15 +64,16 @@
   }
 
   .card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #cbd5e1;
+    font-family: "Urbanist", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--card-title-text);
     margin: 0;
   }
 
   .no-summary-message {
     text-align: center;
-    color: #a0aec0; /* Lighter gray */
+    color: var(--card-title-text);
     padding: 1rem 0;
     font-style: italic;
   }
@@ -87,18 +88,14 @@
   }
 
   .summary-item {
-    background-color: #2d3748; /* Darker item background */
+    background-color: var(--card-mini-bg); /* Darker item background */
     border-radius: 12px;
     padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
     gap: 1rem;
-    border: 1px solid #4a5568;
+    border: 1px solid var(--card-mini-border);
     transition: background-color 0.2s;
-  }
-  .summary-item:hover {
-     background-color: #4a5568; /* Lighter on hover */
-     cursor: pointer; /* Indicate clickability if planned */
   }
 
   .item-icon-area {
@@ -124,17 +121,20 @@
   }
 
   .item-primary-text {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #e2e8f0; /* Lighter text */
+    font-family: "Urbanist", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--card-title-text); /* Lighter text */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .item-secondary-text {
-    font-size: 0.8rem;
-    color: #a0aec0; /* Lighter gray */
+    font-family: "Urbanist", sans-serif;
+    font-weight: 200;
+    font-size: 0.7rem;
+    color: var(--card-title-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -148,21 +148,12 @@
 
   .item-tag {
     /* background-color set inline */
-    color: #ffffff; /* White text on colored tag */
+    color: var(--card-title-text); 
+    font-family: "Urbanist", sans-serif;
     font-size: 0.7rem;
     font-weight: bold;
     padding: 0.2rem 0.6rem;
     border-radius: 10px; /* Pill shape */
     white-space: nowrap;
-  }
-
-  .item-action-area {
-    flex-shrink: 0;
-    color: #718096; /* Medium gray arrow */
-  }
-
-  .item-arrow {
-      font-size: 1.2rem;
-      font-weight: bold;
   }
 </style>

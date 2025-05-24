@@ -6,11 +6,6 @@
   export let entry;
   const dispatch = createEventDispatcher();
 
-  // Default colors if not provided by moodStore item
-  const DEFAULT_COLOR_LIGHT = 'var(--bw-text-on-accent, #ffffff)'; // For text on dark mood bg
-  const DEFAULT_COLOR_MEDIUM = 'var(--bw-bg-tertiary, #eff1f3)';  // For tag background
-  const DEFAULT_COLOR_DARK = 'var(--bw-text-secondary, #5f6368)'; // Default mood bg, tag text/border
-
   function deriveMoodDetails(currentMoodValue, storeData) {
     if (!currentMoodValue || !storeData) {
       return {
@@ -102,7 +97,7 @@
     padding: 1rem 1.25rem;
     margin: 0.8rem 0;
     border-radius: 18px;
-    border: 2px solid var(--card-border, #e0e0e0); /* Using CSS variable for border */
+    /* border: 2px solid var(--card-border, #e0e0e0); */
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
@@ -111,6 +106,7 @@
     cursor: pointer;
     position: relative;
     box-shadow: var(--card-shadow); /* Softer default shadow */
+    border: 1px solid var(--card-border);
   }
   .entry-card:active,
   .entry-card:focus {
@@ -120,6 +116,7 @@
   .entry-title {
     font-family: 'Graffiti Urban', sans-serif; /* Ensure this font is loaded */
     font-size: 1.8rem;
+    font-weight: normal;
     letter-spacing: 0.08rem;
     color: var(--card-title-text); /* Using CSS variable */
     margin: 0;
@@ -149,7 +146,6 @@
     z-index: 1; /* For stacking context with drips */
     align-self: flex-start;
     margin-top: 0.25rem;
-    box-shadow: var(--mood-shadow);
     color: var(--card-border); /* Default text color for mood display if not overridden by .mood-label */
     font-family: 'Graffiti Urban', sans-serif; /* Ensure this font is loaded */
     font-weight: lighter;
