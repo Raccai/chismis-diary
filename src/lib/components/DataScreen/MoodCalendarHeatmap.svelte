@@ -15,7 +15,7 @@
       happy: '#34d399', sad: '#60a5fa', excited: '#facc15', angry: '#f87171',
       anxious: '#c084fc', okay: '#fb923c', default: '#94a3b8'
     };
-    const defaultBgColor = '#2d3748';
+    const defaultBgColor = '#23262B';
     const paddingBgColor = 'transparent';
     const borderColor = '#4a5568';
 
@@ -23,6 +23,10 @@
     // Now stores data AND position info
     let activeTooltipData = null; // { data: { date, dayName, ... }, position: { top, left, width } } | null
     let tooltipElement = null; // Still useful for click-outside
+
+    function isEmojiImage(emoji) {
+      return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
+    }
 
     // --- Mood Styling Function ---
     function getMoodStyling(moodValue) {
@@ -35,7 +39,7 @@
             const bgColor = moodValue ? `${baseColor}33` : defaultBgColor;
             return { emoji: moodDef.emoji, bgColor: bgColor, label: moodDef.label };
         } else {
-            return { emoji: '➖', bgColor: defaultBgColor, label: 'No Entry' };
+            return { emoji: ' ', bgColor: defaultBgColor, label: 'No Entry' };
         }
     }
 
@@ -142,7 +146,6 @@
                     ? moodObj.colorDark
                     : styling.bgColor || defaultBgColor
             }
-            
             {@const tooltipText = `${day.date}${styling.label !== 'No Entry' ? ': ' + styling.label : ': No entries'}${day.entryCount > 0 ? ' ('+day.entryCount+' entr'+(day.entryCount===1?'y':'ies')+')' : ''}`}
             
             <div
@@ -157,8 +160,10 @@
                 style="background-color: {cellBg};"
                 on:keydown={(e) => { if(e.key === 'Enter' || e.key === ' ') handleCellClick(day, e); }}
             >
-                {#if styling.emoji}
-                  <span class="emoji">{styling.emoji}</span>
+                {#if isEmojiImage(styling.emoji)}
+                  <img src={styling.emoji} alt={styling.label} class="mood-emoji-img">
+                {:else}
+                  <span class="mood-emoji">{styling.emoji}</span>
                 {/if}
             </div>
           {/each}
@@ -182,9 +187,12 @@
         <span class="tooltip-day">{activeTooltipData.data.dayName}</span>
         <span class="tooltip-date">{activeTooltipData.data.date}</span>
         <div class="tooltip-mood">
-            {#if activeTooltipData.data.emoji !== '➖'}
-                <span class="tooltip-emoji">{activeTooltipData.data.emoji}</span>
-                <span class="tooltip-label">{activeTooltipData.data.label}</span>
+            {#if activeTooltipData.data.emoji !== ' '}
+                {#if isEmojiImage(activeTooltipData.data.emoji)}
+                  <img src={activeTooltipData.data.emoji} alt={activeTooltipData.data.label} class="mood-emoji-img-tooltip">
+                {:else}
+                  <span class="mood-emoji-tooltip">{activeTooltipData.data.emoji}</span>
+                {/if}
             {:else}
                  <span class="tooltip-label">{activeTooltipData.data.label}</span>
             {/if}
@@ -257,13 +265,15 @@
      border: none;
      cursor: default;
   }
-  .heatmap-cell .emoji {
-      font-size: 0.8em;
-      line-height: 1;
-      opacity: 0.9;
-      pointer-events: none;
+  .mood-emoji {
+    line-height: 1;
+    opacity: 0.9;
+    pointer-events: none;
   }
-
+  .mood-emoji-img {
+    width: 25px;
+    height: 25px;
+  }
 
   /* --- Tooltip Styles --- */
   .heatmap-tooltip {
@@ -307,9 +317,15 @@
     margin-bottom: 0.25rem;
   }
 
-  .tooltip-emoji {
-    font-size: 1.2rem;
+  .mood-emoji-tooltip {
     line-height: 1;
+    font-size: 1.4rem;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+  .mood-emoji-img-tooltip {
+    width: 40px;
+    height: 40px;
   }
 
   .tooltip-label {

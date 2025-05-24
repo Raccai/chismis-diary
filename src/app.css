@@ -150,6 +150,12 @@
   --data-cont-border: 1px solid var(--main-black);
   --data-cont-bg: var(--main-white);
   --data-text-primary: var(--main-black);
+
+  --primary-btn-bg: var(--main-black);
+  --primary-btn-text: var(--main-white);
+  --secondary-btn-bg: var(--main-white);
+  --secondary-btn-text: var(--main-black);
+  --secondary-btn-border: var(--main-black);
 }
 
 /* --- DARK MODE for B&W&Pink Theme --- */
@@ -202,6 +208,12 @@ body.dark { /* Toggled by themeStore.js */
   --data-cont-border: 1px solid var(--main-white);
   --data-cont-bg: var(--main-black);
   --data-text-primary: var(--main-white);
+
+  --primary-btn-bg: var(--main-white);
+  --primary-btn-text: var(--main-black);
+  --secondary-btn-bg: var(--main-black);
+  --secondary-btn-text: var(--main-white);
+  --secondary-btn-border: var(--main-white);
 }
 
 

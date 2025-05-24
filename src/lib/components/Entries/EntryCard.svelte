@@ -1,10 +1,15 @@
 <script>
   import { moodStore } from '$lib/stores/moodStore.js';
   import { get } from 'svelte/store';
-  import { createEventDispatcher, onMount, tick } from 'svelte'; // onMount, tick might not be used in this final version unless for future additions
+  import { createEventDispatcher, onMount, tick } from 'svelte';
 
   export let entry;
   const dispatch = createEventDispatcher();
+
+  // Added default color constants
+  const DEFAULT_COLOR_LIGHT = '#F1F1F1';
+  const DEFAULT_COLOR_MEDIUM = '#C7C7C7';
+  const DEFAULT_COLOR_DARK = '#3C3C3C';
 
   function deriveMoodDetails(currentMoodValue, storeData) {
     if (!currentMoodValue || !storeData) {
@@ -28,6 +33,9 @@
 
   $: moodDetails = deriveMoodDetails(entry.mood, get(moodStore));
 
+  // Helper function to check if emoji is an image path
+  $: isEmojiImage = moodDetails.emoji && (moodDetails.emoji.includes('.png') || moodDetails.emoji.includes('.jpg') || moodDetails.emoji.includes('.jpeg') || moodDetails.emoji.includes('.gif') || moodDetails.emoji.includes('.svg'));
+
   function formatDate(dateInput) {
     if (!dateInput) return 'No date';
     const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
@@ -39,7 +47,6 @@
   function handleEdit() {
     dispatch("edit", entry);
   }
-
 </script>
 
 <!-- Entire card is clickable for editing -->
@@ -57,7 +64,13 @@
   <div class="date-display">{formatDate(entry.date)}</div>
 
   <div class="mood-display" style="background-color: {moodDetails.colorDark}; border-color: {moodDetails.colorDark};">
-    <span class="mood-emoji">{moodDetails.emoji}</span>
+    <!-- Conditional rendering for emoji vs image -->
+    {#if isEmojiImage}
+      <img src={moodDetails.emoji} alt={moodDetails.label} class="mood-emoji">
+    {:else}
+      <span class="mood-emoji-text" aria-label={moodDetails.label}>{moodDetails.emoji}</span>
+    {/if}
+    
     <span class="mood-label" style="color: {moodDetails.colorLight};">
       {moodDetails.label}
     </span>
@@ -97,28 +110,29 @@
     padding: 1rem 1.25rem;
     margin: 0.8rem 0;
     border-radius: 18px;
-    /* border: 2px solid var(--card-border, #e0e0e0); */
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
     transition: all 0.2s ease-out;
-    background-color: var(--card-bg); /* Using CSS variable */
+    background-color: var(--card-bg);
     cursor: pointer;
     position: relative;
-    box-shadow: var(--card-shadow); /* Softer default shadow */
+    box-shadow: var(--card-shadow);
     border: 1px solid var(--card-border);
   }
+  
   .entry-card:active,
   .entry-card:focus {
     transform: translateY(-4px) rotate(-0.5deg);
     box-shadow: var(--card-shadow);
   }
+  
   .entry-title {
-    font-family: 'Graffiti Urban', sans-serif; /* Ensure this font is loaded */
+    font-family: 'Graffiti Urban', sans-serif;
     font-size: 1.8rem;
     font-weight: normal;
     letter-spacing: 0.08rem;
-    color: var(--card-title-text); /* Using CSS variable */
+    color: var(--card-title-text);
     margin: 0;
     line-height: 1.2;
     white-space: nowrap;
@@ -128,8 +142,8 @@
 
   .date-display {
     font-size: 0.75rem;
-    color: var(--card-date-text); /* Using CSS variable */
-    font-family: 'Urbanist', sans-serif; /* Ensure this font is loaded */
+    color: var(--card-date-text);
+    font-family: 'Urbanist', sans-serif;
     font-weight: 500;
   }
 
@@ -138,29 +152,29 @@
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
     border-width: 2px;
     border-style: solid;
-    border-radius: 20px; /* Pill shape */
-    position: relative; /* For drips */
-    z-index: 1; /* For stacking context with drips */
+    border-radius: 20px;
+    position: relative;
+    z-index: 1;
     align-self: flex-start;
     margin-top: 0.25rem;
-    color: var(--card-border); /* Default text color for mood display if not overridden by .mood-label */
-    font-family: 'Graffiti Urban', sans-serif; /* Ensure this font is loaded */
+    color: var(--card-border);
+    font-family: 'Graffiti Urban', sans-serif;
     font-weight: lighter;
     letter-spacing: 0.08rem;
     transform: rotate(-2deg);
   }
 
-  .drip-container { /* Renamed from .drip-fill for clarity */
+  .drip-container {
     position: absolute;
-    bottom: 0px; /* Align with the very bottom of .mood-display */
+    bottom: 0px;
     left: 0;
     width: 100%;
-    height: 25px; /* Max visual height of drips from bottom of mood-display */
+    height: 25px;
     pointer-events: none;
-    z-index: 0; /* Behind mood-display text/emoji, but part of its visual block */
+    z-index: 0;
   }
 
   .drip-svg {
@@ -187,14 +201,21 @@
   }
 
   .mood-emoji {
-    font-size: 1.3em;
-    line-height: 1;
+    width: 50px;
+    height: 50px;
   }
+  
+  .mood-emoji-text {
+    font-size: 24px;
+    line-height: 1;
+    display: inline-block;
+  }
+  
   .mood-label {
-    /* color set inline via style prop based on moodDetails.colorLight */
     font-family: 'Graffiti Urban', sans-serif;
     font-size: 1rem;
     letter-spacing: 0.08rem;
+    font-weight: normal;
   }
 
   .tag-chips-container {
@@ -206,12 +227,10 @@
 
   .tag-chip {
     display: inline-block;
-    /* background-color and color set inline via style prop */
     padding: 0.3rem 0.7rem;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 500;
-    /* border set inline */
     font-family: 'Urbanist', sans-serif;
     line-height: 1.2;
   }

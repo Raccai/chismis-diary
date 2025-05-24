@@ -22,6 +22,21 @@
   let showMoodDropdown = false;
   let moodDropdownButtonRef; // To help with click outside logic
 
+  // Get current mood details including colors
+  $: currentMoodDetails = $moodStore.find(m => m.value === currentMood) || $moodStore[0] || {
+    value: 'happy',
+    label: 'Happy',
+    emoji: '😊',
+    colorLight: '#FFE4EC',
+    colorMedium: '#FBA6C9',
+    colorDark: '#9D2851'
+  };
+
+  // Helper function to check if emoji is an image path
+  function isEmojiImage(emoji) {
+    return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
+  }
+
   onMount(async () => {
     // Autofocus logic
     if (!selectedEntry && descriptionTextareaRef) { // Focus description for new entry
@@ -34,7 +49,6 @@
   onDestroy(() => {
       document.removeEventListener('click', handleClickOutsideDropdown, true);
   });
-
 
   $: {
     if (selectedEntry && selectedEntry.id !== _loadedEntryId) {
@@ -174,13 +188,22 @@
         <button
           type="button"
           class="mood-dropdown-trigger"
+          style="
+            background-color: {currentMoodDetails.colorDark};
+            border-color: {currentMoodDetails.colorDark};
+            color: {currentMoodDetails.colorLight};
+          "
           on:click={toggleMoodDropdown}
           aria-haspopup="listbox"
           aria-expanded={showMoodDropdown}
           bind:this={moodDropdownButtonRef}
         >
-          <span class="selected-mood-emoji">{$moodStore.find(m => m.value === currentMood)?.emoji || '😐'}</span>
-          <span class="selected-mood-label">{$moodStore.find(m => m.value === currentMood)?.label || 'Mood'}</span>
+          {#if isEmojiImage(currentMoodDetails.emoji)}
+            <img src={currentMoodDetails.emoji} alt={currentMoodDetails.label} class="selected-mood-emoji-img">
+          {:else}
+            <span class="selected-mood-emoji">{currentMoodDetails.emoji}</span>
+          {/if}
+          <span class="selected-mood-label">{currentMoodDetails.label}</span>
           <span class="dropdown-arrow">{showMoodDropdown ? '▲' : '▼'}</span>
         </button>
         {#if showMoodDropdown}
@@ -194,7 +217,12 @@
                 on:keydown={(e) => { if(e.key === 'Enter' || e.key === ' ') selectMood(moodOption.value)}}
                 tabindex="0"
               >
-                <span class="option-emoji">{moodOption.emoji}</span>
+                <!-- Conditional rendering for emoji vs image in dropdown -->
+                {#if isEmojiImage(moodOption.emoji)}
+                  <img src={moodOption.emoji} alt={moodOption.label} class="option-emoji-img">
+                {:else}
+                  <span class="option-emoji">{moodOption.emoji}</span>
+                {/if}
                 {moodOption.label}
               </li>
             {/each}
@@ -296,22 +324,41 @@
     width: 100%;
     display: flex;
     align-items: center;
-    background-color: var(--dropdown-bg-color);
-    border: 1px solid var(--dropdown-border-color);
+    /* background-color and border-color set inline via style prop */
+    border-width: 1px;
+    border-style: solid;
     border-radius: 20px; /* Pill shape */
     padding: 0.6rem 0.8rem;
     font-size: 0.9rem;
-    color: var(--dropdown-text-color);
+    /* color set inline via style prop */
     text-align: left;
     cursor: pointer;
+    transition: opacity 0.2s;
   }
   .mood-dropdown-trigger:focus-visible {
-    border-color: var(--dropdown-select-color);
+    opacity: 0.8;
     box-shadow: 0 4px 4px var(--bw-shadow-color-medium, rgba(0,0,0,0.4));
   }
-  .selected-mood-emoji { font-size: 1.1em; margin-right: 0.4rem; }
-  .selected-mood-label { flex-grow: 1; }
-  .dropdown-arrow { margin-left: 0.5rem; font-size: 0.7rem; }
+  .mood-dropdown-trigger:hover {
+    opacity: 0.9;
+  }
+
+  .selected-mood-emoji { 
+    font-size: 1.1em; 
+    margin-right: 0.4rem; 
+  }
+  .selected-mood-emoji-img {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.4rem;
+  }
+  .selected-mood-label { 
+    flex-grow: 1; 
+  }
+  .dropdown-arrow { 
+    margin-left: 0.5rem; 
+    font-size: 0.7rem; 
+  }
 
   .mood-dropdown-options {
     position: absolute;
@@ -348,7 +395,11 @@
     margin-right: 0.6rem;
     font-size: 1.1em;
   }
-
+  .mood-dropdown-options .option-emoji-img {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.6rem;
+  }
 
   .tags-input-field-bwp {
     flex-basis: 40%; /* Tag input takes less space */
@@ -358,10 +409,10 @@
     width: 100%;
     padding: 0.6rem 0.8rem;
     background-color: var(--main-bg);
-    border: 1px solid var(--dropdown-bg-color);
+    border: 1px solid var(--secondary-btn-border);
     border-radius: 20px;
     font-size: 0.9rem;
-    color: var(--dropdown-select-color);
+    color: var(--secondary-btn-text);
     outline: none;
   }
   .tags-input-field-bwp input::placeholder { color: var(--bw-text-tertiary, #8e8e93); }
@@ -376,7 +427,7 @@
     align-items: center;
     padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom)); /* Bottom padding for safe area */
     background-color: var(--dropdown-bg-color); /* Match form bg */
-    border-top: 1px solid var(--dropdown-border-color);
+    border-top: 2px solid var(--secondary-btn-border);
     width: 100%; /* Ensure it spans full width of form-slide */
     box-sizing: border-box;
     /* No position:fixed, it's part of the flex column now */
@@ -395,23 +446,18 @@
   .action-button-bwp:first-child { margin-left: 0; }
   .action-button-bwp:last-child { margin-right: 0; }
 
-
   .back-button {
-    background-color: var(--dropdown-bg-color);
-    color: var(--dropdown-text-color);
-    border: 1px solid var(--dropdown-text-color);
+    background-color: var(--secondary-btn-bg);
+    color: var(--secondary-btn-text);
+    border: 2px solid var(--secondary-btn-border);
   }
   .back-button:hover {
     background-color: #e0e0e0; /* Darker tertiary */
   }
 
   .save-button {
-    background-color: var(--main-bg);
-    color: var(--text-primary);
-    border: 1px solid var(--main-bg);
-  }
-  .save-button:hover {
-    /* background-color: var(--dropdown-select-color); */
+    background-color: var(--primary-btn-bg);
+    color: var(--primary-btn-text);
   }
   .action-button-bwp:active {
       transform: scale(0.97);

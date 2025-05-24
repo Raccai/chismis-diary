@@ -1,21 +1,22 @@
 <script>
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
-  import { moodStore } from '$lib/stores/moodStore.js'; // To get mood options
+  import { moodStore } from '$lib/stores/moodStore.js';
 
-  export let currentMood = null; // The currently selected mood value
-
+  export let currentMood = null; // This prop determines the selection
   const dispatch = createEventDispatcher();
 
-  function selectMood(moodValue) {
-    dispatch('select', { value: moodValue }); // Dispatch an object with value property
-    // Parent (MoodFilterBar) will handle closing
+  function isEmojiImage(emoji) {
+    return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
   }
 
-  function closeDropdown() {
+  function selectMood(moodValue) {
+    dispatch('select', { value: moodValue }); // Parent handles this
+  }
+
+  function closeDropdown() { // Called by parent or Escape key
     dispatch('close');
   }
 
-  // Handle Escape key to close
   function handleKeydown(event) {
     if (event.key === 'Escape') {
       closeDropdown();
@@ -24,7 +25,6 @@
 
   onMount(() => window.addEventListener('keydown', handleKeydown));
   onDestroy(() => window.removeEventListener('keydown', handleKeydown));
-
 </script>
 
 <div class="custom-dropdown-content mood-select-dropdown" role="listbox" aria-label="Select Mood">
@@ -32,6 +32,7 @@
     class="dropdown-option"
     class:active={currentMood === null}
     on:click={() => selectMood(null)}
+    aria-pressed={currentMood === null}
   >
     <span class="option-icon">🌐</span>
     <span class="option-label">All Moods</span>
@@ -43,77 +44,84 @@
   {#each $moodStore as moodOption (moodOption.value)}
     <button
       class="dropdown-option"
-      class:active={currentMood === moodOption.value}
+      class:active={currentMood === moodOption.value} 
       on:click={() => selectMood(moodOption.value)}
+      aria-pressed={currentMood === moodOption.value}
     >
-      <span class="option-icon">{moodOption.emoji}</span>
+      {#if isEmojiImage(moodOption.emoji)}
+        <img src={moodOption.emoji} alt={moodOption.label} class="selected-mood-emoji-img">
+      {:else}
+        <span class="option-emoji">{moodOption.emoji}</span>
+      {/if}
+
       <span class="option-label">{moodOption.label}</span>
-      {#if currentMood === moodOption.value}
+      {#if currentMood === moodOption.value} <!-- Checkmark based on prop -->
         <span class="checkmark">✓</span>
       {/if}
     </button>
   {/each}
-  <!-- <button class="dropdown-close-button" on:click={closeDropdown}>Close</button> -->
 </div>
 
 <style>
   .custom-dropdown-content {
-    background-color: var(--dropdown-bg-color);
-    border-radius: 12px; /* Rounded corners for dropdown */
-    box-shadow: var(--dropdown-shadow);
-    min-width: 200px; /* Ensure it's not too narrow */
-    max-height: 250px; /* Allow scrolling for many moods */
+    background-color: var(--dropdown-bg-color, var(--bw-bg-primary, #ffffff));
+    border-radius: 12px;
+    box-shadow: var(--dropdown-shadow, 0 5px 15px rgba(0,0,0,0.1));
+    min-width: 200px;
+    max-height: 250px;
     overflow-y: auto;
+    padding: 0.5rem 0;
+    border: 1px solid var(--dropdown-border-color, var(--bw-border-primary));
   }
-
   .dropdown-option {
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0.75rem 1rem; /* Padding for each option */
+    padding: 0.75rem 1rem;
     text-align: left;
     background-color: transparent;
     border: none;
-    color: var(--dropdown-text-color);
+    color: var(--dropdown-text-color, var(--bw-text-primary));
     cursor: pointer;
     transition: background-color 0.15s ease;
     font-family: 'Graffiti Urban', sans-serif;
-    font-size: 1.2rem;
-    letter-spacing: 0.08rem;
+    font-size: 1rem; /* Adjusted for BWP theme */
+    letter-spacing: 0.05rem;
   }
   .dropdown-option:hover {
-    background-color: var(--dropdown-select-color);
+    background-color: var(--dropdown-hover-bg-color, var(--bw-bg-tertiary, #eff1f3));
   }
-  .dropdown-option.active {
-    background-color: var(--dropdown-select-color);
+  .dropdown-option.active { /* Style for the selected item */
+    background-color: var(--dropdown-select-bg-color, var(--bw-accent-pink-subtle-bg));
+    color: var(--dropdown-select-text-color, var(--bw-accent-pink));
     font-weight: 500;
   }
-
   .option-icon {
     margin-right: 0.75rem;
-    font-size: 1.1em;
-    width: 24px; /* Align icons */
+    font-size: 1.2em; /* Consistent emoji size */
+    width: 24px;
     text-align: center;
+  }
+  .option-emoji { /* Class for text emojis in the list */
+    font-size: 1.2em;
+    margin-right: 0.75rem;
+    width: 24px;
+    text-align: center;
+  }
+  .selected-mood-emoji-img { /* For image emojis */
+    width: 24px; /* Consistent size with text emojis */
+    height: 24px;
+    margin-right: 0.75rem;
+    object-fit: contain;
   }
   .option-label {
     flex-grow: 1;
   }
   .checkmark {
-    background-color: var(--dropdown-select-color);
-    margin-left: 0.5rem;
+    color: var(--dropdown-select-text-color, var(--bw-accent-pink));
+    margin-left: auto; /* Push checkmark to the right */
     font-size: 1rem;
     font-weight: bold;
-  }
-
-  .dropdown-close-button { /* If you want an explicit close button inside */
-    display: block;
-    width: calc(100% - 2rem); /* Full width minus padding */
-    margin: 0.75rem auto 0.25rem auto;
-    padding: 0.6rem;
-    background-color: var(--bw-button-secondary-bg, #eff1f3);
-    color: var(--bw-button-secondary-text, #1c1c1e);
-    border: 1px solid var(--bw-button-secondary-border, #d1d5db);
-    border-radius: 8px;
-    font-weight: 500;
+    padding-left: 0.5rem;
   }
 </style>

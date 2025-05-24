@@ -65,7 +65,8 @@
   .toast-message {
     flex-grow: 1;
     margin: 0;
-    line-height: 1.4;
+    line-height: 0.8;
+    font-family: "Urbanist", sans-serif;
   }
 
   .toast-close-button {

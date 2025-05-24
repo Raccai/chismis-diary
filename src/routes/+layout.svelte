@@ -74,10 +74,10 @@
 
 <div class="app-container">
   <Topbar />
+  <ToastContainer />
 
   <main class="content-area">
     <slot /> <!-- Standard slot for Svelte 4 / non-Runes Svelte 5 -->
-    <ToastContainer />
     <Modal />
   </main>
 

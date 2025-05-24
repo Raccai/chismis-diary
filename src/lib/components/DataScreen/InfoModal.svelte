@@ -41,7 +41,7 @@
     >
       <header class="modal-header">
         <h3 id="modal-title" class="modal-title">{title}</h3>
-        <button class="close-button" on:click={closeModal} aria-label="Close modal">×</button>
+        <button class="close-button" on:click={closeModal} aria-label="Close modal">✌️</button>
       </header>
       <div class="modal-body">
         <slot></slot> <!-- Content of the modal goes here -->
@@ -53,95 +53,83 @@
 <style>
   .modal-overlay {
     position: fixed;
-    inset: 0; /* Cover the whole screen */
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black overlay */
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1500; /* Very high z-index */
-    padding: 1rem; /* Ensure modal content doesn't touch screen edges */
+    z-index: 1500;
+    padding: 1rem;
+    backdrop-filter: blur(2px);
   }
 
   .modal-content {
-    background-color: #2d3748; /* Dark background for modal content (Tailwind gray-800) */
-    color: #e2e8f0; /* Light text */
-    padding: 1.5rem;
+    position: relative;
+    background-color: var(--card-bg);
+    color: var(--card-title-text);
+    padding: 2rem 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    border: 1px solid #4a5568; /* Medium dark border (gray-600) */
-    max-width: 500px; /* Max width of the modal */
-    width: 90%; /* Responsive width */
-    max-height: 80vh; /* Max height, allow scrolling for content */
-    overflow-y: auto; /* Enable scrolling for modal body if content is long */
+    border: 4px solid var(--accent-color);
+    box-shadow:
+      0 0 0 2px var(--card-border),
+      0 8px 24px rgba(0, 0, 0, 0.4);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
+    /* subtle spray-paint texture */
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.03) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(255,255,255,0.03) 0%, transparent 40%);
   }
 
   .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #4a5568; /* Separator line */
+    border-bottom: 1px solid var(--card-border);
     padding-bottom: 0.75rem;
     margin-bottom: 1rem;
   }
 
   .modal-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #cbd5e1; /* Lighter gray title (Tailwind slate-300) */
+    font-family: "Urbanist", sans-serif;
+    font-size: 1.6rem;
     margin: 0;
+    /* graffiti-style text shadow layering */
+    text-shadow:
+      2px 2px 0 var(--accent-color),
+    -2px -2px 0 var(--highlight-color),
+      2px -2px 0 var(--card-border),
+    -2px 2px 0 var(--card-border);
   }
 
   .close-button {
-    background: none;
+    background: var(--accent-color);
     border: none;
-    color: #a0aec0; /* Medium light text (gray-400) */
-    font-size: 1.8rem; /* Larger close button */
-    font-weight: bold;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--card-bg);
+    font-size: 1.2rem;
     cursor: pointer;
-    padding: 0;
-    line-height: 1;
-    transition: color 0.2s;
+    transition: transform 0.2s ease, background 0.2s ease;
   }
+
   .close-button:hover {
-    color: #e2e8f0; /* Lighter on hover */
+    background: var(--highlight-color);
+    transform: rotate(90deg);
   }
 
   .modal-body {
-    font-size: 0.9rem;
+    width: 100%;
+    font-family: "Urbanist", sans-serif;
+    font-size: 0.95rem;
     line-height: 1.6;
-    /* Styles for content inside slot will come from where it's used or global styles */
-  }
-  /* Example styles for content placed in slot */
-  :global(.modal-body h4) { /* Targeting elements passed into the slot */
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #e2e8f0;
-  }
-  :global(.modal-body p) {
-     margin: 0 0 0.75rem 0;
-     color: #a0aec0;
-  }
-  :global(.modal-body ul) {
-    list-style: none;
-    padding: 0;
-    margin: 0.5rem 0;
-  }
-  :global(.modal-body li) {
-      margin-bottom: 0.3rem;
-      color: #cbd5e1;
-      display: flex; /* Align emoji and text nicely */
-      align-items: center;
-      gap: 0.5rem;
-   }
-  :global(.modal-body li strong) {
-      color: #ffffff;
-   }
-  :global(.modal-body li .mood-emoji-in-modal) { /* Specific class for emoji in modal list */
-      font-size: 1.1em;
-      width: 20px; /* Align emojis */
-      text-align: center;
   }
 </style>

@@ -13,16 +13,19 @@
       calculateMoodScoreTrend
    } from '$lib/utils/moodAnalysis.js'; // Assuming calculateMoodScoreTrend exists now
 
-   const moodScoreMapping = {
-      happy: 2, excited: 2, okay: 1, anxious: -1,
-      sad: -1, angry: -2, default: 0
-   };
-   function getMoodScoreDisplay(moodValue) {
-      return moodScoreMapping.hasOwnProperty(moodValue) ? moodScoreMapping[moodValue] : moodScoreMapping.default;
-   }
-   // Get mood details for the legend directly from the store
-   const moodDefinitions = get(moodStore) || [];
+  const moodScoreMapping = {
+    love: 3, happy: 2, kilig: 1, anxious: -2,
+    sad: -1, angry: -2, betrayed: -3, default: 0
+  };
+  function getMoodScoreDisplay(moodValue) {
+    return moodScoreMapping.hasOwnProperty(moodValue) ? moodScoreMapping[moodValue] : moodScoreMapping.default;
+  }
+  // Get mood details for the legend directly from the store
+  const moodDefinitions = get(moodStore) || [];
 
+  function isEmojiImage(emoji) {
+    return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
+  }
 
   // Import Display Components
   import DataChart from '$lib/components/DataScreen/DataChart.svelte';
@@ -105,9 +108,16 @@
     <p>Each mood is assigned a score to help track overall well-being trends. Higher scores generally indicate more positive moods, while lower or negative scores suggest more challenging periods.</p>
     <ul>
       {#each moodDefinitions as mood}
-         <li><span class="mood-emoji-in-modal">{mood.emoji}</span> {mood.label}: <strong>{getMoodScoreDisplay(mood.value)} pts</strong></li>
+         <li style="background-color: {mood.colorDark};">
+          {#if isEmojiImage(mood.emoji)}
+            <img src={mood.emoji} alt={mood.label} class="mood-emoji-in-modal-img">
+          {:else}
+            <span class="mood-emoji-in-modal">{mood.emoji}</span>
+          {/if}
+          {mood.label}: 
+          <strong> {getMoodScoreDisplay(mood.value)} pts</strong>
+        </li>
       {/each}
-      <li><span class="mood-emoji-in-modal">❓</span> (Other/Unknown): <strong>{getMoodScoreDisplay('default')} pts</strong></li>
     </ul>
     <p>The score shown in the chart for a day, week, or month is the average of all mood scores recorded during that period.</p>
   </InfoModal>
@@ -219,5 +229,33 @@
   }
   .info-button:hover {
     color: #a0aec0;
+  }
+
+  ul {
+    list-style: none;
+    margin: 1rem 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    background-color: var(--card-border);      /* subtle card-border bg */
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent-color);
+    color: var(--main-white);
+  }
+
+  .mood-emoji-in-modal,
+  .mood-emoji-in-modal-img {
+    margin-right: 0.4rem;
+  }
+
+  .mood-emoji-in-modal-img {
+    width: 40px;
+    height: 40px;
   }
 </style>

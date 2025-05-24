@@ -1,9 +1,6 @@
 <script>
   import { onDestroy, onMount } from 'svelte';
-  // import { moodStore } from '$lib/stores/moodStore.js'; // Not needed if colors come via moodStats prop
 
-  // Props: Expects array:
-  // [{ value: 'happy', label: 'Happy', emoji: '😄', count: 15, colorLight: '#...', colorMedium: '#...', colorDark: '#...' }, ...]
   export let moodStats = [];
   export let title = "Mood Stats";
 
@@ -12,6 +9,10 @@
   let scrollContainer = null;
   let scrollLeftButton = null;
   let scrollRightButton = null;
+
+  function isEmojiImage(emoji) {
+    return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
+  }
 
   function scrollContent(direction) {
     if (!scrollContainer) return;
@@ -65,7 +66,6 @@
         {@const labelBgColor = mood.colorLight || '#cbd5e1)'}
         {@const labelTextColor = mood.colorDark || '#2d3748)'}
 
-
         <div class="mood-bar-item-dynamic">
           <div class="count-display-dynamic">{mood.count}</div>
           <div class="bar-visual-container-dynamic">
@@ -76,7 +76,11 @@
              ></div>
           </div>
           <div class="label-container-dynamic" style="background-color: {labelBgColor};">
-            <span class="icon-dynamic">{mood.emoji || '❓'}</span>
+            {#if isEmojiImage(mood.emoji)}
+              <img src={mood.emoji} alt={mood.label} class="mood-emoji-img">
+            {:else}
+              <span class="mood-emoji">{mood.emoji}</span>
+            {/if}
             <span class="label-dynamic" style="color: {labelTextColor};">{mood.label}</span>
           </div>
         </div>
@@ -230,10 +234,14 @@
     z-index: 2;
   }
 
-  .label-container-dynamic .icon-dynamic {
-    font-size: 1.5rem; /* Adjusted */
+  .mood-emoji {
     line-height: 1;
-    /* color determined by labelTextColor (mood.colorDark) in the span style */
+    opacity: 0.9;
+    pointer-events: none;
+  }
+  .mood-emoji-img {
+    width: 25px;
+    height: 25px;
   }
 
   .label-container-dynamic .label-dynamic {

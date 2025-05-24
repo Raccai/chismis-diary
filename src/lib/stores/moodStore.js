@@ -21,10 +21,10 @@ export const moodStore = readable([
   {
     value: 'chismis',
     label: 'Chismis',
-    emoji: '🍵',
-    colorLight: '#D9FBE4',
-    colorMedium: '#96E6B9',
-    colorDark: '#2C6B4E'
+    emoji: 'src/lib/characters/ChismisUnlocked.png',
+    colorLight: '#FFE6E6',
+    colorMedium: '#FFCCCE',
+    colorDark: '#C82C37'
   },
   {
     value: 'love',
@@ -53,18 +53,18 @@ export const moodStore = readable([
   {
     value: 'kilig',
     label: 'Kilig',
-    emoji: '🥰',
-    colorLight: '#FFEEF4',
-    colorMedium: '#FBB6CF',
-    colorDark: '#8B2C51'
+    emoji: 'src/lib/characters/KiligUnlocked.png',
+    colorLight: '#FCFFE8',
+    colorMedium: '#F7FFC4',
+    colorDark: '#989E38'
   },
   {
     value: 'inis',
     label: 'Inis',
-    emoji: '😒',
-    colorLight: '#FFF4D6',
-    colorMedium: '#FCD774',
-    colorDark: '#7A5E10'
+    emoji: 'src/lib/characters/InisUnlocked.png',
+    colorLight: '#FFEAE8',
+    colorMedium: '#FC9E90',
+    colorDark: '#7B2517'
   },
   {
     value: 'tampo',
@@ -113,5 +113,13 @@ export const moodStore = readable([
     colorLight: '#FFEAF6',
     colorMedium: '#F7B0D5',
     colorDark: '#872456'
+  },
+  {
+    value: 'sabog',
+    label: 'Sabog',
+    emoji: 'src/lib/characters/SabogUnlocked.png',
+    colorLight: '#FFF2E8',
+    colorMedium: '#FFECDB',
+    colorDark: '#E57425'
   }
 ]);

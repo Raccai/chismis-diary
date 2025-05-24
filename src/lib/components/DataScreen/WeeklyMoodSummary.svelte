@@ -1,5 +1,9 @@
 <script>
   export let weeklySummaries = [];
+
+  function isEmojiImage(emoji) {
+    return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
+  }
 </script>
 
 <div class="weekly-summary-card">
@@ -19,7 +23,11 @@
         {@const iconTextColor = summary.dominantMood.colorDark || 'var(--dataviz-default-dark, #e2e8f0)'}
         <li class="summary-item">
           <div class="item-icon-area" style="background-color: {moodMainColor};">
-            <span class="item-icon">{summary.dominantMood.emoji || '❓'}</span>
+            {#if isEmojiImage(summary.dominantMood.emoji)}
+              <img src={summary.dominantMood.emoji} alt={summary.dominantMood.label} class="selected-mood-emoji-img">
+            {:else}
+              <span class="mood-emoji">{summary.dominantMood.emoji}</span>
+            {/if}
           </div>
           <div class="item-content-area">
             <span class="item-primary-text">{summary.dominantMood.label || 'Unknown Mood'}</span>
@@ -101,8 +109,13 @@
     /* background-color set inline */
   }
 
-  .item-icon {
+  .mood-emoji {
     font-size: 1.6rem;
+  }
+
+  .selected-mood-emoji-img {
+    height: 40px;
+    width: 40px;
   }
 
   .item-content-area {
