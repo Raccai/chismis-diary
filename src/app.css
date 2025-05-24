@@ -115,7 +115,7 @@
   --card-title-text: var(--main-black);
   --card-date-text: var(--main-grey);
   --card-mood-text: var(--main-white);
-  --card-mini-bg: var(--main-white);
+  --card-mini-bg: var(--main-dark-white);
   --card-mini-border: #cacaca;
   --card-shadow: 0 4px 10px rgba(0,0,0,0.12);
   --mood-shadow: 0 2px 4px rgba(0,0,0,0.1);

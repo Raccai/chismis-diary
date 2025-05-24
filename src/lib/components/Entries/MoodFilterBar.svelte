@@ -57,7 +57,6 @@
     aria-haspopup="dialog"
   >
     <span class="btn-icon"><SortIcon /></span>
-    <!-- Optional: Text could show current sort e.g. $currentSortKey === 'date_asc' ? 'Oldest' : 'Newest' -->
   </button>
 
   <!-- Horizontally Scrollable Mood Chips -->
@@ -169,6 +168,8 @@
     /* Hide scrollbar */
     scrollbar-width: none;
     -ms-overflow-style: none;
+    border-right: 2px dashed var(--main-grey);
+    border-left: 2px dashed var(--main-grey);
   }
   .mood-chips-scroll-graffiti::-webkit-scrollbar { display: none; }
 
