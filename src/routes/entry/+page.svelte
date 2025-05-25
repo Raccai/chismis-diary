@@ -3,6 +3,7 @@
     import { deleteEntry } from "$lib/utils/entryHelpers.js";
     import EntryCard from "$lib/components/Entries/EntryCard.svelte";
     import { uiStore } from '$lib/stores/uiStore.js';
+    import { filterSortStore } from "$lib/stores/filterSortStore";
     import { quintOut } from "svelte/easing";
     import { fly, slide } from "svelte/transition";
     import MoodFilterBar from "$lib/components/Entries/MoodFilterBar.svelte"; // Adjust path if needed
@@ -12,7 +13,6 @@
     let searchTerm = "";
     let showSearchBar = false;
     let searchInputEl;
-    let currentSortKey = 'date_desc'; // Default sort order
 
     function handleSortFromBar(event) {
       currentSortKey = event.detail;
@@ -67,6 +67,7 @@
     }
 
     $: filteredAndSortedEntries = (() => {
+        const sortKeyToUse = $filterSortStore.currentSortKey;
         let processedEntries = [...$entriesStore];
 
         processedEntries = processedEntries.filter(entry => {
@@ -78,13 +79,13 @@
             return moodMatch && searchMatch;
         });
 
-        if (currentSortKey === 'date_desc') {
+        if (sortKeyToUse === 'date_desc') {
             processedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-        } else if (currentSortKey === 'date_asc') {
+        } else if (sortKeyToUse === 'date_asc') {
             processedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-        } else if (currentSortKey === 'title_asc') {
+        } else if (sortKeyToUse === 'title_asc') {
             processedEntries.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-        } else if (currentSortKey === 'title_desc') {
+        } else if (sortKeyToUse === 'title_desc') {
             processedEntries.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
         }
         // 'none' or other unhandled sort keys will result in the filtered order
@@ -112,10 +113,9 @@
 
     <MoodFilterBar
       currentMoodFilter={selectedMoodFilter}
-      currentSortKey={currentSortKey}
+      currentSortKey={$filterSortStore.currentSortKey}
       isSearchActive={showSearchBar}
       on:filter={handleMoodFilterChange}
-      on:sort={handleSortFromBar}
       on:toggleSearch={handleToggleSearchFromBar}
     />
   </div>

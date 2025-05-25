@@ -15,12 +15,18 @@ const initialModalOptions = {
   _confirmed: false
 };
 
+const initialSortModalOptions = { // For the sort modal
+    currentSortKey: 'date_desc', // Default sort
+};
+
 const initialUiState = {
   isFormVisible: false,
   entryToEdit: null,
   isSideMenuVisible: false,
   isModalVisible: false,
-  modalOptions: { ...initialModalOptions }
+  modalOptions: { ...initialModalOptions },
+  isSortModalVisible: false,
+  sortOptions: { ...initialSortModalOptions }
 };
 
 function createUiStore() {
@@ -83,6 +89,19 @@ function createUiStore() {
     },
 
     // --- Modal (Popup) Methods ---
+    showModalOnly: (options) => {
+      update(s => {
+        console.log("uiStore: showModal called with options:", options);
+        return {
+          ...s,
+          isModalVisible: true,
+          // Merge provided options with defaults, ensuring all keys from initialModalOptions are present
+          modalOptions: { ...initialModalOptions, ...options, _confirmed: false },
+          isFormVisible: false,     // Close form if modal opens
+          isSideMenuVisible: false  // Close side menu if modal opens
+        };
+      });
+    },
     showModal: (options) => {
       update(s => {
         console.log("uiStore: showModal called with options:", options);
@@ -142,6 +161,23 @@ function createUiStore() {
             modalOptions: { ...initialModalOptions } // Reset options
         };
       });
+    },
+
+    // --- Sort Modal Methods ---
+    toggleSortModal: () => {
+      update(s => {
+        console.log("uiStore: toggleSortModal. New state:", !s.isSortModalVisible);
+        return {
+          ...s,
+          isSortModalVisible: !s.isSortModalVisible,
+          isFormVisible: false, // Close other overlays
+          isSideMenuVisible: false,
+          isModalVisible: false
+        };
+      });
+    },
+    closeSortModal: () => {
+      update(s => ({ ...s, isSortModalVisible: false }));
     },
 
     // --- Full UI Reset (Optional) ---

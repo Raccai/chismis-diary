@@ -9,12 +9,9 @@
   import SortIcon from '$lib/icons/SortIcon.svelte'; // A graffiti-style sort icon
 
   export let currentMoodFilter = null;
-  export let currentSortKey = 'date_desc';
   export let isSearchActive = false; // To style the search trigger button
 
   const dispatch = createEventDispatcher();
-
-  let showSortModal = false;
 
   function isEmojiImage(emoji) {
     return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
@@ -23,19 +20,6 @@
   function handleMoodChipSelect(moodValue) { // From MoodChip or direct click
     const newFilter = currentMoodFilter === moodValue ? null : moodValue;
     dispatch('filter', newFilter);
-  }
-
-  function toggleSortModal() {
-    // If search is active AND we are about to open the sort modal, tell parent to close search
-    if (isSearchActive && !showSortModal) {
-        dispatch('toggleSearch');
-    }
-    showSortModal = !showSortModal;
-  }
-
-  function handleSortSelectedFromModal(event) {
-    dispatch('sort', event.detail); // event.detail IS the value ('date_desc', etc.)
-    showSortModal = false;
   }
 
   function toggleSearchInterface() {
@@ -48,17 +32,6 @@
 </script>
 
 <div class="filter-bar-graffiti">
-  <!-- Sort Button -->
-  <button
-    class="filter-action-button-graffiti sort-button-graffiti"
-    class:active={showSortModal || (currentSortKey !== 'date_desc' && currentSortKey !== 'none')}
-    on:click={toggleSortModal}
-    aria-expanded={showSortModal}
-    aria-haspopup="dialog"
-  >
-    <span class="btn-icon"><SortIcon /></span>
-  </button>
-
   <!-- Horizontally Scrollable Mood Chips -->
   <div class="mood-chips-scroll-graffiti">
     <button
@@ -98,15 +71,6 @@
   </button>
 </div>
 
-{#if showSortModal}
-  <SortModal
-    bind:show={showSortModal}
-    currentSortKey={currentSortKey}
-    on:sortChange={handleSortSelectedFromModal}
-    on:close={() => showSortModal = false}
-  />
-{/if}
-
 <style>
   .filter-bar-graffiti {
     display: flex;
@@ -121,7 +85,7 @@
     padding: 0.6rem;
     background-color: var(--bw-bg-tertiary, #eff1f3);
     border: 2px solid var(--bw-bg-contrast, #000000); /* Thick "marker" border */
-    border-radius: 10px; /* Slightly chunky */
+    border-radius: 8px; /* Slightly chunky */
     color: var(--bw-text-primary, #1c1c1e);
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.2s;
@@ -164,22 +128,22 @@
     display: flex;
     overflow-x: auto;
     gap: 0.5rem;
-    padding: 0.25rem 0.5rem; /* Padding inside the scroll area */
+    padding: 0.25rem 1.25rem 0.25rem 1.25rem; /* Padding inside the scroll area */
+    margin-left: -1.25rem;
     /* Hide scrollbar */
     scrollbar-width: none;
     -ms-overflow-style: none;
     border-right: 2px dashed var(--main-grey);
-    border-left: 2px dashed var(--main-grey);
   }
   .mood-chips-scroll-graffiti::-webkit-scrollbar { display: none; }
 
   .mood-chip-graffiti {
     flex-shrink: 0; /* Prevent chips from shrinking */
-    padding: 0.5rem 0.8rem;
+    padding: 0.2rem 0.6rem;
     border: 2px solid var(--mood-color-dark, var(--bw-bg-contrast)); /* Use dynamic mood color for border */
     background-color: var(--mood-color-light, var(--bw-bg-tertiary)); /* Use dynamic mood color for bg */
     color: var(--mood-color-dark, var(--bw-text-primary)); /* Text color contrasts with light bg */
-    border-radius: 16px; /* Pill shape */
+    border-radius: 8px; /* Pill shape */
     font-family: 'Urbanist', sans-serif;
     font-size: 0.85rem;
     font-weight: 500;

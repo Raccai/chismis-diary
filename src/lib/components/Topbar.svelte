@@ -2,20 +2,35 @@
   import TakeNoteTopbar from '$lib/icons/TakeNoteTopbar.svelte';
   import ThemeToggle from '../../lib/components/Settings/ThemeToggle.svelte';
   import { theme } from '$lib/stores/themeStore.js';
+  import { uiStore } from '$lib/stores/uiStore';
+  import SortIcon from '$lib/icons/SortIcon.svelte';
+  import { page } from '$app/stores';
+
+  function handleSortClick() {
+    uiStore.toggleSortModal();
+  }
+
+  $: showSortButton = $page.url.pathname === '/entry' || $page.url.pathname === '/';
 </script>
 
 <header class="top-bar-bwp">
   <div class="logo-container-bwp">
-    <div class="logo">
+    <a href="/entry" class="logo">
       <TakeNoteTopbar />
-    </div>
+    </a>
     <span>
       CD
     </span>
   </div>
 
   <div class="top-bar-actions-bwp">
-    <!-- <button class="pro-button-bwp">✨ PRO</button> -->
+    {#if showSortButton}
+      <button class="top-bar-action-button sort-button-topbar" on:click={handleSortClick} aria-label="Sort entries">
+        <div class="sort-icon">
+          <SortIcon />
+        </div>
+      </button>
+    {/if}
     <ThemeToggle />
   </div>
 </header>
@@ -58,19 +73,13 @@
     gap: 0.75rem;
   }
 
-  /* .pro-button-bwp {
-    background-color: var(--icon-bg);
-    color: var(--icon-text); 
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 0.4rem 0.8rem;
-    border-radius: 16px; 
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    transition: all 150ms ease-in-out;
+  .sort-button-topbar {
+    border: 2px solid var(--main-white);
+    padding: 4px 6px;
+    border-radius: 8px;
   }
-  .pro-button-bwp:hover {
-    background-color: var(--icon-bg-hovered);
-  } */
+
+  .sort-icon {
+    transform: scale(0.8);
+  }
 </style>
