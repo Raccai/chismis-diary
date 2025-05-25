@@ -5,6 +5,7 @@
   import { createEventDispatcher, onMount, onDestroy, tick } from "svelte";
   import { toasts } from "$lib/stores/toastStore";
   import { uiStore } from "$lib/stores/uiStore";
+  import Button from "../Button.svelte";
 
   const dispatch = createEventDispatcher();
   export let selectedEntry = null;
@@ -242,12 +243,22 @@
   </div>
 
   <div class="form-actions-bwp">
-    <button type="button" class="action-button-bwp back-button" on:click={handleBack}>
-      Discard <!-- Or "Back" or an Icon -->
-    </button>
-    <button type="submit" class="action-button-bwp save-button" on:click={saveEntry}>
-      {selectedEntry ? "Update Story" : "Save Chismis"}
-    </button>
+    <Button 
+      type="secondary"
+      addBtn={false}
+      ariaLabel="Discard"
+      onClick={() => handleBack()}
+      class="secondary"
+      text="Discard"
+    />
+    <Button 
+      type="primary"
+      addBtn={false}
+      ariaLabel={selectedEntry ? "Update Story" : "Save Chismis"}
+      onClick={() => saveEntry()}
+      class="primary"
+      text={selectedEntry ? "Update Story" : "Save Chismis"}
+    />
   </div>
 </div>
 
@@ -417,7 +428,9 @@
   }
   .tags-input-field-bwp input::placeholder { color: var(--bw-text-tertiary, #8e8e93); }
   .tags-input-field-bwp input:focus {
+    background-color: var(--dropdown-text-color);
     border: 2px solid var(--dropdown-bg-color);
+    color: var(--dropdown-bg-color);
   }
 
   /* Fixed Bottom Action Bar */
@@ -425,41 +438,12 @@
     display: flex;
     justify-content: space-between; /* Space out back and save */
     align-items: center;
+    gap: 8px;
     padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom)); /* Bottom padding for safe area */
     background-color: var(--dropdown-bg-color); /* Match form bg */
     border-top: 2px solid var(--secondary-btn-border);
     width: 100%; /* Ensure it spans full width of form-slide */
     box-sizing: border-box;
     /* No position:fixed, it's part of the flex column now */
-  }
-
-  .action-button-bwp {
-    padding: 0.75rem 1.25rem;
-    border-radius: 20px; /* Pill shape */
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.15s;
-    flex-grow: 1; /* Let buttons share space */
-    margin: 0 0.5rem; /* Add some margin between buttons */
-  }
-  .action-button-bwp:first-child { margin-left: 0; }
-  .action-button-bwp:last-child { margin-right: 0; }
-
-  .back-button {
-    background-color: var(--secondary-btn-bg);
-    color: var(--secondary-btn-text);
-    border: 2px solid var(--secondary-btn-border);
-  }
-  .back-button:hover {
-    background-color: #e0e0e0; /* Darker tertiary */
-  }
-
-  .save-button {
-    background-color: var(--primary-btn-bg);
-    color: var(--primary-btn-text);
-  }
-  .action-button-bwp:active {
-      transform: scale(0.97);
   }
 </style>

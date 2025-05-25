@@ -10,6 +10,7 @@
 
   export let currentMoodFilter = null;
   export let isSearchActive = false; // To style the search trigger button
+  export let showSortModal = false;
 
   const dispatch = createEventDispatcher();
 
@@ -35,7 +36,7 @@
   <!-- Horizontally Scrollable Mood Chips -->
   <div class="mood-chips-scroll-graffiti">
     <button
-      class="mood-chip-graffiti all-moods"
+      class="all-moods"
       class:active={currentMoodFilter === null}
       on:click={() => handleMoodChipSelect(null)}
     >
@@ -83,33 +84,27 @@
   .filter-action-button-graffiti {
     flex-shrink: 0; /* Prevent buttons from shrinking */
     padding: 0.6rem;
-    background-color: var(--bw-bg-tertiary, #eff1f3);
-    border: 2px solid var(--bw-bg-contrast, #000000); /* Thick "marker" border */
+    background-color: var(--secondary-btn-bg);
+    border: 2px solid var(--secondary-btn-border); /* Thick "marker" border */
     border-radius: 8px; /* Slightly chunky */
-    color: var(--bw-text-primary, #1c1c1e);
+    color: var(--secondary-btn-text);
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 2px 2px 0px var(--bw-bg-contrast, #000000); /* Hard shadow */
+    box-shadow: 2px 2px 0px var(--secondary-btn-border); /* Hard shadow */
   }
-  .filter-action-button-graffiti:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0px var(--bw-bg-contrast, #000000);
-  }
-  .filter-action-button-graffiti:active {
+  .filter-action-button-graffiti:active,
+  .filter-action-button-graffiti:focus {
     transform: translate(1px, 1px);
-    box-shadow: 1px 1px 0px var(--bw-bg-contrast, #000000);
+    box-shadow: 1px 1px 0px var(--secondary-btn-border);
   }
   .filter-action-button-graffiti.active {
-    background-color: var(--bw-accent-pink, #ff69b4);
-    color: var(--bw-text-on-accent, #ffffff);
-    border-color: var(--bw-accent-pink-dark, #f953a4);
-    box-shadow: 2px 2px 0px var(--bw-accent-pink-dark, #f953a4);
-  }
-  .filter-action-button-graffiti.active .btn-icon :global(svg path) {
-      fill: var(--bw-text-on-accent, #ffffff);
+    background-color: var(--main-yellow-light);
+    color: var(--main-black);
+    border-color: var(--main-yellow-dark);
+    box-shadow: 2px 2px 0px var(--main-yellow-dark);
   }
 
 
@@ -119,7 +114,7 @@
     display: inline-flex;
   }
   .btn-icon :global(svg) {
-      width: 100%; height: 100%; fill: currentColor;
+    width: 100%; height: 100%; fill: currentColor;
   }
 
 
@@ -137,12 +132,10 @@
   }
   .mood-chips-scroll-graffiti::-webkit-scrollbar { display: none; }
 
-  .mood-chip-graffiti {
+  .mood-chip-graffiti,
+  .all-moods {
     flex-shrink: 0; /* Prevent chips from shrinking */
     padding: 0.2rem 0.6rem;
-    border: 2px solid var(--mood-color-dark, var(--bw-bg-contrast)); /* Use dynamic mood color for border */
-    background-color: var(--mood-color-light, var(--bw-bg-tertiary)); /* Use dynamic mood color for bg */
-    color: var(--mood-color-dark, var(--bw-text-primary)); /* Text color contrasts with light bg */
     border-radius: 8px; /* Pill shape */
     font-family: 'Urbanist', sans-serif;
     font-size: 0.85rem;
@@ -153,17 +146,40 @@
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    box-shadow: 2px 2px 0px color-mix(in srgb, var(--mood-color-dark, var(--bw-bg-contrast)) 80%, black);
+  }
+  .all-moods {
+    border: 2px solid var(--secondary-btn-border); /* Use dynamic mood color for border */
+    background-color: var(--secondary-btn-bg); /* Use dynamic mood color for bg */
+    color: var(--secondary-btn-text); /* Text color contrasts with light bg */
+    box-shadow: 2px 2px 0px var(--secondary-btn-border);
+  }
+  .all-moods:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--secondary-btn-border);
+  }
+  .all-moods.active {
+    background-color: var(--secondary-btn-border); /* Active is solid dark mood color */
+    color: var(--secondary-btn-bg); /* Text contrasts with dark bg */
+    border-color: var(--secondary-btn-border);
+    box-shadow: 1px 1px 0px var(--secondary-btn-border);
+    transform: translate(1px, 1px);
+    font-weight: 700;
+  }
+  .mood-chip-graffiti {
+    border: 2px solid var(--mood-color-dark); 
+    background-color: var(--mood-color-light); 
+    color: var(--mood-color-dark); 
+    box-shadow: 2px 2px 0px color-mix(in srgb, var(--mood-color-dark) 80%, black);
   }
   .mood-chip-graffiti:hover {
     transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0px color-mix(in srgb, var(--mood-color-dark, var(--bw-bg-contrast)) 80%, black);
+    box-shadow: 3px 3px 0px color-mix(in srgb, var(--mood-color-dark) 80%, black);
   }
   .mood-chip-graffiti.active {
-    background-color: var(--mood-color-dark, var(--bw-accent-pink)); /* Active is solid dark mood color */
-    color: var(--mood-color-light, var(--bw-text-on-accent)); /* Text contrasts with dark bg */
-    border-color: var(--mood-color-dark, var(--bw-accent-pink));
-    box-shadow: 1px 1px 0px color-mix(in srgb, var(--mood-color-dark, var(--bw-bg-contrast)) 60%, black);
+    background-color: var(--mood-color-dark); /* Active is solid dark mood color */
+    color: var(--mood-color-light); /* Text contrasts with dark bg */
+    border-color: var(--mood-color-dark);
+    box-shadow: 1px 1px 0px color-mix(in srgb, var(--mood-color-dark) 60%, black);
     transform: translate(1px, 1px);
   }
   .option-emoji {

@@ -104,6 +104,9 @@
   --main-card-bg: #ded9ca;
   --main-yellow-light: #ffe16a;
   --main-yellow-dark: #f6cb21;
+  --main-red-light: #ef4444;
+  --main-green-light: #038214;
+  --main-blue-light: #44a5ef;
   
   --navbar-bg: var(--main-black);
   --navbar-text: var(--main-white);
@@ -111,6 +114,9 @@
   --topbar-bg: var(--main-black);
   --topbar-text: var(--main-white);
   --topbar-height: 60px;
+  --toast-bg: var(--main-white);
+  --toast-border: var(--main-dark-white);
+  --toast-text: var(--main-black);
 
   --card-bg: var(--main-white);
   --card-border: #cacaca;
@@ -162,6 +168,9 @@
   --secondary-btn-bg-active: var(--main-yellow-light);
   --secondary-btn-text-active: var(--main-white);
   --secondary-btn-border-active: var(--main-yellow-dark);
+  --danger-btn-bg:var(--main-red-light);
+  --danger-btn-border:var(--main-red-light);
+  --danger-btn-text:var(--main-white);
 }
 
 /* --- DARK MODE for B&W&Pink Theme --- */
@@ -175,6 +184,9 @@ body.dark { /* Toggled by themeStore.js */
   --main-card-bg: #ded9ca;
   --main-yellow-light: #ffe16a;
   --main-yellow-dark: #f6cb21;
+  --main-red-light: #ef4444;
+  --main-green-light: #44ef5b;
+  --main-blue-light: #44a5ef;
   
   --navbar-bg: var(--main-black);
   --navbar-text: var(--main-white);
@@ -182,6 +194,9 @@ body.dark { /* Toggled by themeStore.js */
   --topbar-bg: var(--main-black);
   --topbar-text: var(--main-white);
   --topbar-height: 60px;
+  --toast-bg: var(--main-black);
+  --toast-border: var(--main-grey);
+  --toast-text: var(--main-white);
 
   --card-bg: var(--main-dark-grey);
   --card-border: #525252;
@@ -226,6 +241,9 @@ body.dark { /* Toggled by themeStore.js */
   --secondary-btn-bg-active: var(--main-yellow-light);
   --secondary-btn-text-active: var(--main-white);
   --secondary-btn-border-active: var(--main-yellow-dark);
+  --danger-btn-bg:var(--main-red-light);
+  --danger-btn-border:var(--main-red-light);
+  --danger-btn-text:var(--main-white);
 }
 
 

@@ -2,6 +2,12 @@
   import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte';
   import { scale, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import Button from '../Button.svelte';
+  import AZ from '$lib/icons/A-Z.svelte';
+  import ZA from '$lib/icons/Z-A.svelte';
+  import OldestFirst from '$lib/icons/OldestFirst.svelte';
+  import NewestFirst from '$lib/icons/NewestFirst.svelte';
+  import DefaultOrder from '$lib/icons/DefaultOrder.svelte';
 
   export let show = false;
   export let currentSortKey = 'date_desc';
@@ -9,11 +15,11 @@
   const dispatch = createEventDispatcher();
 
   const sortOptions = [
-    { label: 'Newest First', value: 'date_desc', icon: '📅⬇️' },
-    { label: 'Oldest First', value: 'date_asc', icon: '📅⬆️' },
-    { label: 'Title (A-Z)', value: 'title_asc', icon: '🏷️🅰️' },
-    { label: 'Title (Z-A)', value: 'title_desc', icon: '🏷️🇿' },
-    { label: 'Default Order', value: 'none', icon: '🔄' }
+    { label: 'Newest First', value: 'date_desc', iconComponent: NewestFirst },
+    { label: 'Oldest First', value: 'date_asc', iconComponent: OldestFirst },
+    { label: 'Title (A-Z)', value: 'title_asc', iconComponent: AZ },
+    { label: 'Title (Z-A)', value: 'title_desc', iconComponent: ZA },
+    { label: 'Default Order', value: 'none', iconComponent: DefaultOrder }
   ];
 
   let internalSortKey = currentSortKey;
@@ -80,19 +86,29 @@
               hidden
             />
             <span class="radio-custom-graffiti" aria-hidden="true"></span>
-            <span class="radio-icon">{option.icon}</span>
+            <svelte:component this={option.iconComponent} />
             <span class="radio-label-graffiti">{option.label}</span>
           </label>
         {/each}
       </div>
 
       <div class="modal-actions-graffiti">
-        <button type="button" class="modal-button-graffiti cancel" on:click={closeModal}>
-          Cancel
-        </button>
-        <button type="button" class="modal-button-graffiti apply" on:click={applySort}>
-          Apply Sort
-        </button>
+        <Button 
+          type="secondary"
+          addBtn={false}
+          ariaLabel="Cancel"
+          onClick={() => closeModal()}
+          class="secondary"
+          text="Cancel"
+        />
+        <Button 
+          type="primary"
+          addBtn={false}
+          ariaLabel="Apply Sort"
+          onClick={() => applySort()}
+          class="primary"
+          text="Apply Sort"
+        />
       </div>
     </div>
   </div>
@@ -134,27 +150,6 @@
     gap: 0.75rem;
     margin-top: 1rem;
   }
-  .modal-button-graffiti {
-    flex: 1;
-    padding: 0.7rem 1rem;
-    border-radius: 10px;
-    font-family: 'Graffiti Urban', sans-serif;
-    font-size: 1rem;
-    border: 2px solid currentColor;
-    transition: transform 0.1s;
-  }
-  .modal-button-graffiti:active {
-    transform: scale(0.96);
-  }
-  .modal-button-graffiti.cancel {
-    background-color: var(--secondary-btn-bg);
-    color: var(--secondary-btn-text);
-    border-color: var(--secondary-btn-border);
-  }
-  .modal-button-graffiti.apply {
-    background-color: var(--primary-btn-bg);
-    color: var(--primary-btn-text);
-  }
 
   /* Options list */
   .options-list-graffiti {
@@ -168,6 +163,7 @@
     display: flex;
     align-items: center;
     padding: 0.8rem;
+    gap: 8px;
     border: 2px dashed var(--card-border);
     border-radius: 10px;
     background: var(--card-mini-bg);
@@ -195,7 +191,6 @@
     left: -20%;
     width: 140%;
     height: 140%;
-    background-image: url('/assets/spray-splatter.svg'); /* Will add soon */
     background-size: 200px 200px;
     background-repeat: no-repeat;
     opacity: 0.08;
@@ -232,12 +227,7 @@
     transition: opacity 0.2s;
   }
 
-  /* Icon & label */
-  .radio-icon {
-    font-size: 0.9rem;
-    margin-right: 0.5rem;
-    line-height: 1;
-  }
+  /* Label */
   .radio-label-graffiti {
     font-family: 'Urbanist', sans-serif;
     font-size: 0.9rem;
@@ -258,7 +248,6 @@
   .radio-option-graffiti.checked .radio-custom-graffiti::after {
     opacity: 1;
   }
-  .radio-option-graffiti.checked .radio-icon,
   .radio-option-graffiti.checked .radio-label-graffiti {
     color: var(--card-bg);
     font-weight: 700;

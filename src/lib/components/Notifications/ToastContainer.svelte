@@ -3,7 +3,7 @@
   import { fly, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
 
-  // Icons for different toast types (simple emojis or SVGs)
+  // Emojis for now, will make icons later
   const icons = {
     info: 'ℹ️',
     success: '✅',
@@ -86,25 +86,33 @@
 
   /* Toast Types - Using BWP theme accents */
   .toast-info {
-    background-color: var(--bw-accent-pink, #ff69b4); /* Or a neutral info color */
+    background-color: var(--toast-bg);
+    border-top: 2px solid var(--main-blue-light); 
+    color: var(--toast-text);
   }
   .toast-success {
-    background-color: #34d399; /* Emerald 400 - like a success green */
+    background-color: var(--toast-bg);
+    border-top: 2px solid var(--main-green-light); 
+    color: var(--toast-text);
   }
   .toast-error {
-    background-color: #f87171; /* Red 400 */
+    background-color: var(--toast-bg);
+    border-top: 2px solid var(--main-red-light); 
+    color: var(--toast-text);
   }
   .toast-warning {
-    background-color: #facc15; /* Amber 400 */
+    background-color: var(--toast-bg);
+    border-top: 2px solid var(--main-yellow-light); 
+    color: var(--toast-text);
   }
 
   /* Adjust text color for specific toast types if needed for contrast */
   .toast-success, .toast-warning {
-      color: var(--bw-bg-contrast, #000000); /* Darker text on lighter success/warning backgrounds */
+    color: var(--bw-bg-contrast, #000000); /* Darker text on lighter success/warning backgrounds */
   }
   .toast-success .toast-close-button,
   .toast-warning .toast-close-button {
-      color: inherit;
+    color: inherit;
   }
 
 </style>

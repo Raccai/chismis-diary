@@ -11,7 +11,6 @@ export function exportData() {
       appVersion: '1.0.0', // Consider making this dynamic from a const
       exportedAt: new Date().toISOString(),
       entries: get(entriesStore),
-      userProgress: get(userProgress),
       theme: get(theme) // Export current theme preference
       // Add other stores if needed: e.g., settings specific to other features
     };
@@ -51,21 +50,13 @@ export function importData(jsonFile, onCompleteCallback, onErrorCallback) {
       if (!importedRaw.entries || !Array.isArray(importedRaw.entries)) {
         throw new Error("Invalid file: 'entries' array is missing or not an array.");
       }
-      // Add more checks: appVersion compatibility, structure of entries, userProgress, etc.
+      // Add more checks: appVersion compatibility, structure of entries etc.
       console.log("Imported data version:", importedRaw.appVersion);
 
       // --- Update Stores ---
       // Be very careful: This overwrites existing data.
       entriesStore.set(importedRaw.entries);
-
-      if (importedRaw.userProgress && typeof importedRaw.userProgress === 'object') {
-        userProgress.set(importedRaw.userProgress);
-      } else {
-        console.warn("User progress data missing or invalid in import file. Progress not restored.");
-        // Optionally, reset userProgress to its default initial state here
-        // userProgress.set(defaultValueFromUserProgressStore);
-      }
-
+      
       if (importedRaw.theme && (importedRaw.theme === 'light' || importedRaw.theme === 'dark')) {
         theme.set(importedRaw.theme);
       } else {
@@ -90,12 +81,6 @@ export function clearAllAppData() {
   // and clear corresponding localStorage items.
   try {
     entriesStore.set([]); // Reset entries
-    userProgress.set({ /* ... your initial userProgress state from userProgressStore.js ... */
-        totalEntries: 0,
-        uniqueMoodsUsedCount: 0,
-        maxTagsInEntryCount: 0,
-        // Reset all specific milestone and character unlock keys too
-    });
     theme.set('light'); // Reset theme to default (or system preference logic)
 
     // Explicitly clear localStorage items (though stores might do this on set([]) if subscribed)

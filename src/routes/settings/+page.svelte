@@ -1,8 +1,8 @@
 <script>
   import { entriesStore } from '$lib/stores/entriesStore.js';
-  import { uiStore } from '$lib/stores/uiStore.js'; // For modals
+  import { uiStore } from '$lib/stores/uiStore.js'; 
   import { toasts } from '$lib/stores/toastStore.js';
-  // Import your data utility functions
+  import Button from '$lib/components/Button.svelte';
   import { exportData, importData, clearAllAppData } from '$lib/utils/dataUtils.js'; // We'll create/update this file
 
   let importFile = null;
@@ -25,7 +25,7 @@
       toasts.error("No file selected for import.");
       return;
     }
-    uiStore.showModal({
+    uiStore.showModalOnly({
       title: 'Confirm Import',
       message: 'Importing data will <strong>overwrite all current entries and progress</strong>. This cannot be undone. Are you sure you want to proceed?',
       confirmText: 'Yes, Import',
@@ -76,9 +76,14 @@
 
     <div class="setting-item">
       <p class="setting-description">Export all your chismis entries and app data to a JSON file. Keep it safe!</p>
-      <button class="action-button export-button" on:click={handleExport}>
-        <span class="btn-icon">📤</span> Export Data
-      </button>
+      <Button 
+        type="secondary"
+        addBtn={false}
+        ariaLabel="Export Data"
+        onClick={() => handleExport()}
+        class="secondary"
+        text="Export Data"
+      />
     </div>
 
     <div class="setting-item">
@@ -91,9 +96,14 @@
           on:change={handleFileSelect}
           class="file-input"
         />
-        <button class="action-button import-button" on:click={handleImport} disabled={!importFile}>
-          <span class="btn-icon">📥</span> Import Data
-        </button>
+        <Button 
+          type="secondary"
+          addBtn={false}
+          ariaLabel="Import Data"
+          onClick={() => handleImport()}
+          class="secondary"
+          text="Import Data"
+        />
       </div>
       {#if importFile}
         <p class="selected-file-info">Selected: {importFile.name}</p>
@@ -102,138 +112,109 @@
 
     <div class="setting-item clear-data-item">
       <p class="setting-description">Permanently delete all your chismis entries, achievements, and settings from this device.</p>
-      <button 
-      type="button" 
-        class="action-button clear-button" 
-        on:click|stopPropagation|preventDefault={handleClearData}
-      >
-        <span class="btn-icon">🗑️</span> Clear All App Data
-      </button>
+
+      <Button 
+        type="danger"
+        addBtn={false}
+        ariaLabel="Import Data"
+        onClick={() => handleClearData()}
+        class="danger"
+        text="Clear all app data"
+      />
     </div>
   </section>
 </div>
 
 <style>
-  /* Using BWP theme variables */
   .settings-page {
-    padding: 20px 20px 140px 20px; /* Vertical padding, horizontal comes from layout .content-area */
+    padding: 20px 20px 140px 20px; 
   }
 
   .page-title {
     font-family: 'Graffiti Urban', sans-serif; /* Your graffiti font */
-    color: var(--bw-text-primary);
+    color: var(--card-title-text);
+    font-weight: normal;
     font-size: 2.2rem;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
   .settings-section {
-    background-color: var(--bw-bg-secondary);
-    border-radius: 12px;
-    border: 1px solid var(--bw-border-secondary);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
   }
 
   .section-title {
-    font-size: 1.2rem;
-    font-weight: normal;
-    color: var(--bw-text-primary);
+    font-family: "Urbanist", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--card-title-text);
     margin-top: 0;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--bw-border-primary);
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--card-border);
   }
 
   .setting-item {
-    margin-bottom: 1.5rem;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    padding: 20px;
   }
   .setting-item:last-child {
     margin-bottom: 0;
   }
 
   .setting-description {
-    font-size: 0.9rem;
-    color: var(--bw-text-secondary);
+    font-family: "Urbanist", sans-serif;
+    font-size: 0.8rem;
+    color: var(--card-title-text);
     margin-bottom: 0.75rem;
     line-height: 1.5;
   }
 
-  .action-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.2rem;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    border: 1px solid transparent;
-  }
-  .action-button:active {
-    transform: scale(0.97);
-  }
-  .btn-icon {
-    font-size: 1.1em;
-  }
-
-  .export-button, .import-button {
-    background-color: var(--bw-button-secondary-bg);
-    color: var(--bw-button-secondary-text);
-    border-color: var(--bw-button-secondary-border);
-  }
-  .export-button:hover, .import-button:hover:not(:disabled) {
-    background-color: var(--bw-button-secondary-hover-bg);
-  }
-  .import-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-
-  .clear-button {
-    background-color: #ef4444; /* Red for destructive */
-    color: white;
-    border-color: #ef4444;
-  }
-  .clear-button:hover {
-    background-color: #dc2626;
-    border-color: #dc2626;
-  }
-
   .import-controls {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
     gap: 0.75rem;
-    margin-bottom: 0.5rem;
+    width: 100%;
   }
   .file-input {
     font-size: 0.9rem;
-    color: var(--bw-text-secondary);
+    font-family: "Urbanist", sans-serif;
+    color: var(--card-title-text);
     /* Basic styling, can be enhanced */
   }
   .file-input::file-selector-button {
     padding: 0.5rem 0.8rem;
     margin-right: 0.75rem;
     border-radius: 6px;
-    background-color: var(--bw-bg-tertiary);
-    color: var(--bw-text-primary);
-    border: 1px solid var(--bw-border-primary);
+    background-color: var(--card-mini-bg);
+    color: var(--card-title-text);
+    border: 1px solid var(--card-border);
     cursor: pointer;
     transition: background-color 0.2s;
   }
-  .file-input::file-selector-button:hover {
-    background-color: #e0e0e0;
+  .file-input::file-selector-button:active,
+  .file-input::file-selector-button:focus {
+    background-color: var(--card-bg);
+    border: var(--card-border);
   }
 
   .selected-file-info {
     font-size: 0.8rem;
-    color: var(--bw-text-tertiary);
+    margin-top: 1rem;
+    font-family: "Urbanist", sans-serif;
+    color: var(--card-title-text);
     font-style: italic;
   }
 
   .clear-data-item {
-      border-top: 2px dashed var(--bw-accent-pink-subtle-border);
-      padding-top: 1.5rem;
-      margin-top: 2rem;
+    border: 2px dashed var(--card-border);
+    padding-top: 1.5rem;
   }
 </style>

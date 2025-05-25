@@ -2,7 +2,8 @@
   import { uiStore } from '$lib/stores/uiStore.js';
   import { scale, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
-  import { onMount, onDestroy } from 'svelte'; // Ensure these are imported
+  import { onMount, onDestroy } from 'svelte'; 
+  import Button from '../Button.svelte';
 
   let modalElement; // For potential focus management
 
@@ -74,17 +75,23 @@
 
         <div class="modal-actions">
           {#if !$uiStore.modalOptions.hideCancelButton}
-            <button type="button" class="modal-button cancel-button" on:click={handleCancel}>
-              {$uiStore.modalOptions.cancelText}
-            </button>
+            <Button 
+            type="secondary"
+              addBtn={false}
+              ariaLabel={$uiStore.modalOptions.cancelText}
+              onClick={() => handleCancel()}
+              class="secondary"
+              text={$uiStore.modalOptions.cancelText}
+            />
           {/if}
-          <button
-            type="button"
-            class="modal-button {$uiStore.modalOptions.confirmClass || 'confirm-button'}"
-            on:click={handleConfirm}
-          >
-            {$uiStore.modalOptions.confirmText}
-          </button>
+          <Button 
+            type="primary"
+            addBtn={false}
+            ariaLabel={$uiStore.modalOptions.confirmText}
+            onClick={() => handleConfirm()}
+            class="primary"
+            text={$uiStore.modalOptions.confirmText}
+          />
         </div>
       </div>
     </div>
@@ -160,55 +167,5 @@
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid var(--bw-border-secondary, #e5e7eb);
-  }
-  .modal-actions:has(button:only-child) {
-    justify-content: center;
-  }
-
-  .modal-button {
-    padding: 0.6rem 1rem;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: normal; /* Your style */
-    letter-spacing: 0.08rem; /* Your style */
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s, border-color 0.2s;
-    min-width: 90px;
-    text-align: center;
-    flex-grow: 1;
-    max-width: 180px;
-    border: 1px solid transparent;
-  }
-  .modal-button:active {
-    transform: scale(0.97);
-  }
-
-  .confirm-button { /* Default confirm button class */
-    background-color: var(--bw-accent-pink, var(--card-title-text)); /* Use BWP accent */
-    color: var(--bw-text-on-accent, var(--card-bg)); /* Use BWP variable */
-    border-color: transparent; /* Or var(--bw-accent-pink) */
-  }
-  .confirm-button:hover {
-    background-color: var(--bw-accent-pink-dark, #f953a4); /* Example darker pink */
-    border-color: var(--bw-accent-pink-dark, #f953a4);
-  }
-
-  .modal-button.danger {
-    background-color: #ef4444;
-    color: #ffffff;
-    border-color: #ef4444;
-  }
-  .modal-button.danger:hover {
-    background-color: #dc2626;
-    border-color: #dc2626;
-  }
-
-  .cancel-button {
-    background-color: var(--bw-button-light-bg, var(--card-bg)); /* Use BWP variable */
-    color: var(--bw-button-light-text, var(--card-title-text)); /* Use BWP variable */
-    border-color: var(--bw-border-primary, var(--card-title-text)); /* Use BWP variable */
-  }
-  .cancel-button:hover {
-    background-color: var(--bw-button-light-hover-bg, #e0e0e0); /* Use BWP variable */
   }
 </style>

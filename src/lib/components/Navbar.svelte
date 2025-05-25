@@ -70,7 +70,7 @@
     {#each navItems as item (item.text)}
       {#if item.type === 'add_button'}
         <Button
-          type="primary"
+          type="TakeNote"
           addBtn={true}
           ariaLabel="Add New Entry"
           onClick={() => handleNavClick(item)}

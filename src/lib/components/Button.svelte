@@ -3,13 +3,12 @@
 
   export let type = "";
   export let text = "";
-  export let icon = null;
   export let addBtn = false;
   export let onClick = () => {};
 </script>
 
-{#if type === "primary"}
-  <button class="primary" on:click={onClick}>
+{#if type === "TakeNote"}
+  <button class="TakeNote" on:click={onClick}>
     {#if addBtn === true}
       <div class="add-svg">
         <TakeNote />
@@ -18,6 +17,7 @@
     {text}
   </button>
 {:else}
+  <!-- svelte-ignore a11y_invalid_attribute -->
   <a 
     href="#" 
     class={type}
@@ -33,12 +33,12 @@
 {/if}
 
 <style>
-  /* Primary Button */
+  /* TakeNote Button */
   .add-svg {
     transform: scale(0.8);
   }
 
-  .primary {
+  .TakeNote {
     width: 50px;
     height: 50px;
     background-color: var(--takeNote-btn-bg);
@@ -46,11 +46,36 @@
     transition: all 150ms ease-in-out;
   }
 
-  .primary:active {
+  .TakeNote:active {
     transform: translateY(4%);
     border-bottom: 1px solid var(--primary);
   }
 
+  /* Primary Button */
+  .primary {
+    font-family: "Graffiti Urban", sans-serif;
+    background-color: var(--primary-btn-bg);
+    border: 2px solid var(--primary-btn-border);
+    margin-left: 0.2rem;
+    padding: 0.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    color: var(--primary-btn-text);
+    text-decoration: none;
+    flex-grow: 1;
+    min-width: 90px;
+  }
+  
+  .primary .content {
+    padding: 0;
+  }
+  
+  .primary .content p {
+    font-weight: normal;
+    font-size: 1.2rem;
+  }
   @keyframes bounce {
     0% {
       transform: scale(0.94);
@@ -84,14 +109,17 @@
 
   /* Secondary Button */
   .secondary {
-    border: 2px solid var(--primary);
+    font-family: "Graffiti Urban", sans-serif;
+    border: 2px solid var(--secondary-btn-border);
     padding: 0.8rem;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
-    color: var(--primary);
+    color: var(--secondary-btn-text);
     text-decoration: none;
+    flex-grow: 1;
+    min-width: 90px;
   }
   
   .secondary .content {
@@ -99,13 +127,8 @@
   }
   
   .secondary .content p {
-    font-weight: 500;
-  }
-
-  .secondary:hover,
-  .secondary:active,
-  .secondary:focus {
-    animation: bounce 300ms linear;
+    font-weight: normal;
+    font-size: 1.2rem;
   }
 
   /* Tertiary Button */
@@ -147,19 +170,40 @@
     transition: all 300ms ease-in-out;
   }
 
-  /* Delete button */
-  .delete {
-    background-color: var(--delete);
-    text-decoration: none;
-    font-weight: 500;
-    color: white;
-    padding: 0.4rem 0.8rem;
+  /* Danger button */
+  .danger {
+    font-family: "Graffiti Urban", sans-serif;
+    background-color: var(--danger-btn-bg);
+    border: 2px solid var(--danger-btn-border);
+    padding: 0.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 8px;
+    color: var(--danger-btn-text);
+    text-decoration: none;
+    flex-grow: 1;
+    min-width: 90px;
   }
   
-  .delete:hover,
-  .delete:active,
-  .delete:focus {
+  .danger .content {
+    padding: 0;
+  }
+  
+  .danger .content p {
+    font-weight: normal;
+    font-size: 1.2rem;
+  }
+
+  .danger:hover,
+  .danger:active,
+  .danger:focus,
+  .secondary:hover,
+  .secondary:active,
+  .secondary:focus,
+  .primary:hover,
+  .primary:active,
+  .primary:focus {
     animation: bounce 300ms linear;
   }
 </style>
