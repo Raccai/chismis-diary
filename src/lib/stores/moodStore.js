@@ -5,18 +5,18 @@ export const moodStore = readable([
   {
     value: 'happy',
     label: 'Happy',
-    emoji: '😊',
-    colorLight: '#FFE4EC',
-    colorMedium: '#FBA6C9',
-    colorDark: '#9D2851'
+    emoji: 'src/lib/characters/HappyUnlocked.png',
+    colorLight: '#FFF6EB',
+    colorMedium: '#FFEDD7',
+    colorDark: '#EC9923'
   },
   {
     value: 'sad',
     label: 'Sad',
-    emoji: '😢',
-    colorLight: '#E0EAFB',
-    colorMedium: '#A5C6F1',
-    colorDark: '#2C4B84'
+    emoji: 'src/lib/characters/SadUnlocked.png',
+    colorLight: '#E6FAFF',
+    colorMedium: '#A3D0D8',
+    colorDark: '#242829'
   },
   {
     value: 'chismis',
@@ -29,26 +29,26 @@ export const moodStore = readable([
   {
     value: 'love',
     label: 'In Love',
-    emoji: '😍',
-    colorLight: '#FFE1EC',
-    colorMedium: '#F7A8C3',
-    colorDark: '#851C46'
+    emoji: 'src/lib/characters/LoveUnlocked.png',
+    colorLight: '#FFEBEF',
+    colorMedium: '#FFD2DC',
+    colorDark: '#D96E82'
   },
   {
     value: 'betrayed',
     label: 'Betrayed',
-    emoji: '🔪',
-    colorLight: '#ECE4FF',
-    colorMedium: '#BFA8F7',
-    colorDark: '#3E1C82'
+    emoji: 'src/lib/characters/BetrayedUnlocked.png',
+    colorLight: '#FFE1F8',
+    colorMedium: '#DD8CCA',
+    colorDark: '#3F1C35'
   },
   {
     value: 'gigil',
     label: 'Gigil',
-    emoji: '😤',
-    colorLight: '#FFE7D3',
-    colorMedium: '#FFB97C',
-    colorDark: '#7A4312'
+    emoji: 'src/lib/characters/GigilUnlocked.png',
+    colorLight: '#FFE9D7',
+    colorMedium: '#FFCDC0',
+    colorDark: '#C65027'
   },
   {
     value: 'kilig',
@@ -69,47 +69,47 @@ export const moodStore = readable([
   {
     value: 'tampo',
     label: 'Tampo',
-    emoji: '😔',
-    colorLight: '#E9EDF7',
-    colorMedium: '#A9B7D8',
-    colorDark: '#364663'
+    emoji: 'src/lib/characters/TampoUnlocked.png',
+    colorLight: '#F0F9FF',
+    colorMedium: '#C0DEF2',
+    colorDark: '#5B7C93'
   },
   {
     value: 'loka',
     label: 'Loka-loka',
-    emoji: '🤪',
-    colorLight: '#FDE9F3',
-    colorMedium: '#F6A9D4',
-    colorDark: '#812C5F'
+    emoji: 'src/lib/characters/LokaUnlocked.png',
+    colorLight: '#FFF3F7',
+    colorMedium: '#FFB6CD',
+    colorDark: '#A66D7D'
   },
   {
     value: 'praning',
     label: 'Praning',
-    emoji: '😬',
-    colorLight: '#FFF7D8',
-    colorMedium: '#FCE399',
-    colorDark: '#6F5814'
+    emoji: 'src/lib/characters/PraningUnlocked.png',
+    colorLight: '#EBFFE9',
+    colorMedium: '#7DBC77',
+    colorDark: '#2D4029'
   },
   {
     value: 'bored',
     label: 'Bored',
-    emoji: '🥱',
-    colorLight: '#F1F1F1',
-    colorMedium: '#C7C7C7',
-    colorDark: '#3C3C3C'
+    emoji: 'src/lib/characters/BoredUnlocked.png',
+    colorLight: '#FFFCEE',
+    colorMedium: '#C9C0AB',
+    colorDark: '#59574B'
   },
   {
     value: 'taray',
     label: 'Taray Mode',
-    emoji: '😏',
-    colorLight: '#F8EBFF',
-    colorMedium: '#D8B6F7',
-    colorDark: '#663789'
+    emoji: 'src/lib/characters/TarayUnlocked.png',
+    colorLight: '#FFEBE9',
+    colorMedium: '#FFAAA4',
+    colorDark: '#C13727'
   },
   {
     value: 'ganda',
     label: 'Ganda Today',
-    emoji: '💅',
+    emoji: 'src/lib/characters/GandaUnlocked.png',
     colorLight: '#FFEAF6',
     colorMedium: '#F7B0D5',
     colorDark: '#872456'
@@ -118,8 +118,8 @@ export const moodStore = readable([
     value: 'sabog',
     label: 'Sabog',
     emoji: 'src/lib/characters/SabogUnlocked.png',
-    colorLight: '#FFF2E8',
-    colorMedium: '#FFECDB',
-    colorDark: '#E57425'
+    colorLight: '#FFF3EB',
+    colorMedium: '#FFDCC5',
+    colorDark: '#ED7523'
   }
 ]);

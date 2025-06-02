@@ -3,6 +3,7 @@
   import { moodStore } from '$lib/stores/moodStore.js'; // Import moodStore to get details
   import { get } from 'svelte/store'; // To read moodStore non-reactively
   import { onMount, onDestroy } from 'svelte'; // For click outside listener
+  import { analyzeTagConnections } from '$lib/utils/tagAnalysis.js';
 
   // Import analysis functions
   import {
@@ -33,6 +34,7 @@
   import MoodCalendarHeatmap from '$lib/components/DataScreen/MoodCalendarHeatmap.svelte';
   import MoodScoreTrendChart from '$lib/components/DataScreen/MoodScoreTrendChart.svelte';
   import InfoModal from '$lib/components/DataScreen/InfoModal.svelte';
+  import TagNetworkGraph from '$lib/components/DataScreen/TagNetworkGraph.svelte';
 
   // --- State for Time Range Selection ---
   let selectedTimeRange = '1M';
@@ -47,6 +49,8 @@
   let scoreInfoPopupElement = null;
   let scoreInfoButtonElement = null;
   let showScoreInfoModal = false;
+  let desiredHeight = 400;
+  let desiredWidth = 400;
 
   // --- Reactive Data Calculations ---
   $: moodCountsData = calculateMoodCounts($entriesStore, $moodStore);
@@ -55,6 +59,7 @@
   $: trendChartData = calculateMoodScoreTrend($entriesStore, selectedTimeRange);
   $: displayScore = trendChartData?.averageScore ?? trendChartData?.data?.[trendChartData.data.length - 1] ?? null;
   $: totalEntries = $entriesStore.length;
+  $: tagGraphData = analyzeTagConnections($entriesStore, $moodStore);
 </script>
 
 <div class="data-page-container">
@@ -121,6 +126,16 @@
     </ul>
     <p>The score shown in the chart for a day, week, or month is the average of all mood scores recorded during that period.</p>
   </InfoModal>
+
+  <!-- Target Network -->
+  {#if tagGraphData && tagGraphData.nodes.length > 0}
+    <TagNetworkGraph graphData={tagGraphData} width={desiredWidth} height={desiredHeight} />
+  {:else}
+    <div class="stats-section-card">
+      <h2>Chismis Connections</h2>
+      <p>Not enough tags used yet to show connections.</p>
+    </div>
+  {/if}
 </div>
 
 <style>
