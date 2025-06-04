@@ -7,6 +7,7 @@
   import ToastContainer from '$lib/components/Notifications/ToastContainer.svelte';
   import Modal from '$lib/components/Notifications/Modal.svelte';
   import SortModal from '$lib/components/Entries/SortModal.svelte';
+  import MusicPlayerModal from '$lib/components/MusicPlayerModal.svelte';
   import { filterSortStore } from '$lib/stores/filterSortStore';
   import { uiStore } from '$lib/stores/uiStore.js';
   import { navigating, page } from '$app/stores';
@@ -92,8 +93,9 @@
   
   <main class="content-area">
     <slot /> <!-- Standard slot for Svelte 4 / non-Runes Svelte 5 -->
-    <ToastContainer />
     <Modal />
+    <MusicPlayerModal />
+    <ToastContainer />
   </main>
 
   <!-- Pass the reactive pathname to Navbar -->

@@ -1,0 +1,17 @@
+export const musicTracks = [
+  { moodValue: 'betrayed', title: 'Dito Na Lang Ako', artist: 'Betrayed', src: '/music/Betrayed_DitoNaLangAko.ogg' },
+  { moodValue: 'bored', title: 'Sa Sarili Kong Mundo', artist: 'Bored', src: '/music/Bored_SaSariliKongMundo.ogg' },
+  { moodValue: 'chismis', title: 'Chismis Lang Yan', artist: 'Chismis', src: '/music/Chismis_ChismisLangYan.ogg' },
+  { moodValue: 'ganda', title: 'Puso Sa Salamin', artist: 'Ganda', src: '/music/Ganda_PusoSaSalamin.ogg' },
+  { moodValue: 'gigil', title: 'Oras Na', artist: 'Gigil', src: '/music/Gigil_OrasNa.ogg' },
+  { moodValue: 'happy', title: 'Panaginip Lang Ba', artist: 'Happy', src: '/music/Happy_PanaginipLangBa.ogg' },
+  { moodValue: 'inis', title: 'Huwag Mo Ako', artist: 'Inis', src: '/music/Inis_HuwagMoAko.ogg' },
+  { moodValue: 'kilig', title: 'Paruparo Sa Puso Ko', artist: 'Kilig', src: '/music/Kilig_ParuparoSaPusoKo.ogg' },
+  { moodValue: 'loka', title: 'Tikusera', artist: 'Loka', src: '/music/Loka_Tikusera.ogg' },
+  { moodValue: 'love', title: 'Yong 20 Pa tayo', artist: 'Love', src: '/music/Love_Yung20PaTayo.ogg' },
+  { moodValue: 'praning', title: 'Andami!', artist: 'Praning', src: '/music/Praning_Andami.ogg' },
+  { moodValue: 'sabog', title: 'Kabalintunaan Gyud', artist: 'Sabog', src: '/music/Sabog_KabalintunaanGyud.ogg' },
+  { moodValue: 'sad', title: 'Mga Taon Ko', artist: 'Sad', src: '/music/Sad_MgaTaonKo.ogg' },
+  { moodValue: 'tampo', title: 'Di Naman Mali Yon', artist: 'Tampo', src: '/music/Tampo_DiNamanMaliYon.ogg' },
+  { moodValue: 'taray', title: 'Mata Kahel', artist: 'Taray', src: '/music/Taray_MataKahel.ogg' },
+];
