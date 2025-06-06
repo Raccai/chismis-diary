@@ -41,14 +41,6 @@
     }
   }
 
-  onMount(() => {
-    window.addEventListener('keydown', handleKeyDown);
-  });
-
-  onDestroy(() => {
-    window.removeEventListener('keydown', handleKeyDown);
-  });
-
   $: if ($musicPlayer.isModalOpen && modalElement && typeof window !== 'undefined') {
       const firstFocusable = modalElement.querySelector('button, input[type="range"], [tabindex]:not([tabindex="-1"])');
       if (firstFocusable && document.activeElement !== firstFocusable) {

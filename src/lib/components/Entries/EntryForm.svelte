@@ -172,7 +172,6 @@
       bind:value={title}
       placeholder="Catchy Headline (Optional)"
     />
-    <!-- Maybe a subtle separator line here -->
   </div>
 
   <div class="form-content-area-bwp">
@@ -218,7 +217,6 @@
                 on:keydown={(e) => { if(e.key === 'Enter' || e.key === ' ') selectMood(moodOption.value)}}
                 tabindex="0"
               >
-                <!-- Conditional rendering for emoji vs image in dropdown -->
                 {#if isEmojiImage(moodOption.emoji)}
                   <img src={moodOption.emoji} alt={moodOption.label} class="option-emoji-img">
                 {:else}
@@ -266,15 +264,16 @@
   .entry-form-bwp {
     display: flex;
     flex-direction: column;
-    height: 100%; /* Fill the .form-slide from layout */
+    height: 100%;
+    width: 100%;
     background-color: var(--main-bg);
     color: var(--entry-form-content);
     font-family: 'Urbanist', sans-serif; /* Clean sans-serif */
   }
 
   .form-header-bwp {
-    padding: 1rem 1.25rem 0.75rem 1.25rem;
-    /* border-bottom: 1px solid var(--bw-border-secondary, #e5e7eb); */
+    padding: 1rem 1.25rem 0.4rem 1.25rem;
+    border-bottom: 2px solid var(--card-border);
   }
 
   .form-title-input-bwp {
@@ -295,7 +294,7 @@
 
   .form-content-area-bwp {
     flex-grow: 1; /* This area takes up most space */
-    padding: 0 1.25rem 1.25rem 1.25rem;
+    padding: 0rem 0rem 1rem 0rem;
     overflow-y: auto; /* Scroll only this area if content overflows */
     display: flex;
     flex-direction: column;
@@ -305,11 +304,12 @@
     flex-grow: 1; /* Textarea takes up available vertical space */
     width: 100%;
     border: none; /* No border for a cleaner look */
-    padding: 0.5rem 0; /* Minimal padding */
+    padding: 1rem 1.25rem 1rem 1.25rem; /* Minimal padding */
     font-size: 1.1rem; /* Larger text for readability */
     line-height: 1.7;
     background-color: transparent;
     color: var(--text-primary);
+    border-bottom: 2px solid var(--card-border);
     resize: none; /* Disable manual resize */
     outline: none;
     margin-bottom: 1rem; /* Space before mood/tags */
@@ -322,8 +322,8 @@
   .meta-controls-bwp {
     display: flex;
     gap: 0.75rem;
-    align-items: stretch; /* Make items same height */
-    margin-bottom: 1rem; /* Space before potential bottom bar */
+    align-items: stretch;
+    padding: 0 1rem;
   }
 
   .mood-selector-bwp {

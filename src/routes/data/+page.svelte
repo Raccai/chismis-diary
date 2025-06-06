@@ -4,6 +4,7 @@
   import { get } from 'svelte/store'; // To read moodStore non-reactively
   import { onMount, onDestroy } from 'svelte'; // For click outside listener
   import { analyzeTagConnections } from '$lib/utils/tagAnalysis.js';
+  import InfoIcon from '$lib/icons/InfoIcon.svelte';
 
   // Import analysis functions
   import {
@@ -85,7 +86,9 @@
                 aria-label="Show score calculation info"
                 on:click={() => showScoreInfoModal = true}
               >
-                ⓘ
+                <div class="info-icon">
+                  <InfoIcon />
+                </div>
               </button>
           </div>
           {#if displayScore !== null}
@@ -272,5 +275,13 @@
   .mood-emoji-in-modal-img {
     width: 40px;
     height: 40px;
+  }
+
+  .info-icon {
+    border: 2px solid #8b1a45;
+    background-color: #610e2e;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin: 0.25rem 0 0.5rem 0;
   }
 </style>

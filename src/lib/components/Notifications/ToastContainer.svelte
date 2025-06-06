@@ -13,10 +13,10 @@
 </script>
 
 {#if $toasts.length > 0}
-  <div class="toast-container-bwp">
+  <div class="toast-container">
     {#each $toasts as toast (toast.id)}
       <div
-        class="toast-bwp toast-{toast.type}"
+        class="toast toast-{toast.type}"
         in:fly="{{ y: -30, duration: 300, easing: quintOut }}"
         out:fade="{{ duration: 200 }}"
         role="alert"
@@ -33,7 +33,7 @@
 {/if}
 
 <style>
-  .toast-container-bwp {
+  .toast-container {
     position: fixed;
     top: calc(var(--topbar-height, 60px) + 1rem); /* Below topbar */
     right: 1rem;
@@ -45,13 +45,13 @@
     max-width: 350px;
   }
 
-  .toast-bwp {
+  .toast {
     display: flex;
     align-items: center;
     padding: 0.75rem 1rem;
     border-radius: 8px;
     box-shadow: 0 4px 12px var(--bw-shadow-color-medium, rgba(0,0,0,0.15));
-    color: var(--bw-text-on-contrast, #fff); /* Default text color for toasts */
+    color: var(--card-title-text); /* Default text color for toasts */
     font-size: 0.9rem;
     min-width: 280px;
   }
@@ -67,12 +67,13 @@
     margin: 0;
     line-height: 0.8;
     font-family: "Urbanist", sans-serif;
+    color: var(--card-title-text);
   }
 
   .toast-close-button {
     background: none;
     border: none;
-    color: inherit; /* Inherits from .toast-bwp */
+    color: inherit; /* Inherits from .toast */
     opacity: 0.7;
     font-size: 1.2rem;
     margin-left: 0.75rem;

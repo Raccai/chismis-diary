@@ -1,5 +1,7 @@
 <script>
   import { onDestroy, onMount } from 'svelte';
+  import NextSvelteIcon from '$lib/icons/NextIcon.svelte';
+  import PrevSvelteIcon from '$lib/icons/PrevIcon.svelte';
 
   export let moodStats = [];
   export let title = "Mood Stats";
@@ -52,8 +54,28 @@
   <div class="card-header-dynamic">
     <h2 class="card-title-dynamic">{title}</h2>
     <div class="nav-arrows-dynamic">
-      <button bind:this={scrollLeftButton} class="arrow-button-dynamic left" on:click={() => scrollContent(-1)} aria-label="Scroll left" disabled>⬅️</button>
-      <button bind:this={scrollRightButton} class="arrow-button-dynamic right" on:click={() => scrollContent(1)} aria-label="Scroll right" disabled>➡️</button>
+      <button 
+        bind:this={scrollLeftButton} 
+        class="arrow-button-dynamic left" 
+        on:click={() => scrollContent(-1)} 
+        aria-label="Scroll left" 
+        disabled
+      >
+        <div class="prev-next-icon">
+          <PrevSvelteIcon />
+        </div>
+      </button>
+      <button 
+        bind:this={scrollRightButton} 
+        class="arrow-button-dynamic right" 
+        on:click={() => scrollContent(1)} 
+        aria-label="Scroll right" 
+        disabled
+      >
+        <div class="prev-next-icon">
+          <NextSvelteIcon />
+        </div>
+      </button>
     </div>
   </div>
 
@@ -90,9 +112,6 @@
 </div>
 
 <style>
-  /* --- Styles for DataChart with dynamic colors --- */
-  /* These styles assume your BWP theme variables are set for fallback and general card look */
-
   .mood-stats-card-dynamic {
     background-color: var(--card-bg); /* From your dark theme for dataviz */
     color: var(--card-title-text);
@@ -112,10 +131,10 @@
   }
 
   .card-title-dynamic {
-    font-family: "Urbanist", sans-serif; /* Match EntryCard */
+    font-family: "Urbanist", sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--card-title-text); /* From your dataviz theme */
+    color: var(--card-title-text);
     margin: 0;
     display: flex;
     align-items: center;
@@ -127,8 +146,13 @@
     gap: 0.5rem;
   }
 
+  .prev-next-icon {
+    transform: scale(0.4);
+    color: var(--primary-btn-text);
+  }
+
   .arrow-button-dynamic {
-    background-color: var(--card-title-text); /* Match dataviz theme */
+    background-color: var(--card-title-text);
     border-radius: 50%;
     width: 32px;
     height: 32px;
@@ -142,7 +166,7 @@
     line-height: 1;
   }
   .arrow-button-dynamic:hover:not(:disabled) {
-    background-color: #4a5568; 
+    opacity: 0.8;
   }
   .arrow-button-dynamic:disabled {
     opacity: 0.4;

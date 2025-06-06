@@ -64,7 +64,7 @@
   }
 </script>
 
-<nav class="bottom-nav-bwp">
+<nav class="bottom-nav">
   <div class="main-nav">
 
     {#each navItems as item (item.text)}
@@ -83,7 +83,7 @@
         {@const iconToRender = active ? item.iconActive : item.iconInactive}
         <a
           href={item.href}
-          class="nav-item-bwp"
+          class="nav-item"
           class:active={active}
           aria-label={item.text}
           on:click={() => handleNavClick(item)}
@@ -106,8 +106,7 @@
 
 
 <style>
-  /* Base Bottom Nav Styling (using BWP theme variables) */
-  .bottom-nav-bwp {
+  .bottom-nav{
     position: fixed;
     bottom: 0;
     left: 0;
@@ -119,8 +118,9 @@
     z-index: 990;
     border-radius: 20px 20px 0 0;
   }
-  
+
   .main-nav {
+    position: relative;
     background-color: var(--navbar-bg);
     height: var(--navbar-height);
     display: flex;
@@ -129,9 +129,23 @@
     justify-content: space-around;
     width: 100%;
     border-radius: 24px;
+    box-shadow: 0 2px 12px 4px rgba(17, 16, 15, 0.6);
   }
 
-  .nav-item-bwp {
+  .main-nav::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/images/graffitiWall.png') no-repeat center/cover;
+    opacity: 0.03;         
+    pointer-events: none;  
+    z-index: 0;            
+  }
+
+  .nav-item{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -149,7 +163,7 @@
     position: relative;
   }
 
-  .nav-item-bwp:not(.active):not(.nav-add-button-override):hover { /* Exclude add button from this hover */
+  .nav-item:not(.active):not(.nav-add-button-override):hover { /* Exclude add button from this hover */
     opacity: 0.7;
   }
 
@@ -177,23 +191,4 @@
     left: 0;
     transform: scale(1.1);
   }
-
-  /* .nav-item-bwp .text {
-    font-size: 1rem;
-    line-height: 1;
-    color: var(--bw-navbar-text-inactive, #8e8e93);
-    transition: color 0.2s ease, font-weight 0.2s ease;
-    font-family: "Urbanist", sans-serif;
-  }
-
-  .nav-item-bwp.active .text {
-    color: var(--bw-navbar-text-active, #ff69b4);
-    font-weight: 600; 
-  }
-
-  .nav-item-bwp .text {
-    font-size: 0.6rem;
-    line-height: 1;
-    color: var(--menu-inactive);
-  } */
 </style>

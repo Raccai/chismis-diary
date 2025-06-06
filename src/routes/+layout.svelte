@@ -157,7 +157,6 @@
     right: 0;
     height: 100%;
     width: 100%;
-    max-width: 400px;
     background: #ffffff; /* Form background */
     z-index: 1060;
     box-shadow: -6px 0 16px var(--shadow-color); /* Softer shadow */

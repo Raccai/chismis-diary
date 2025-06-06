@@ -136,10 +136,10 @@
 
   .modal-title {
     margin: 0 0 0.75rem 0;
-    color: var(--bw-text-primary, var(--card-title-text)); /* Use BWP variable */
+    color: var(--card-title-text);
     text-align: center;
     font-size: 1.6rem;
-    font-weight: normal; /* Your style had normal, adjust if needed */
+    font-weight: normal; 
     line-height: 1.4;
     padding: 0 0.25rem;
   }
@@ -150,7 +150,7 @@
     font-size: 0.9rem;
     line-height: 1.4;
     font-family: "Urbanist", sans-serif;
-    color: var(--bw-text-secondary, var(--card-title-text)); /* Use BWP variable */
+    color: var(--card-title-text);
     text-align: center;
     overflow-y: auto;
     flex-shrink: 1;

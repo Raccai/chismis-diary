@@ -4,7 +4,8 @@
       Chart, LineController, LineElement, PointElement, CategoryScale,
       LinearScale, Tooltip, Filler
   } from 'chart.js';
-  import { theme } from '$lib/stores/themeStore.js'; // Import your theme store
+  import { theme } from '$lib/stores/themeStore.js'; 
+  import InfoIcon from '$lib/icons/InfoIcon.svelte';
 
   Chart.register(
       LineController, LineElement, PointElement, CategoryScale,
@@ -244,9 +245,9 @@
 
 <div class="chart-container">
   {#if chartStatusMessage}
-     <div class="status-message">{chartStatusMessage}</div>
+    <div class="status-message">{chartStatusMessage}</div>
   {/if}
-  <canvas bind:this={canvasElement}></canvas> <!-- Removed .chart-canvas-themed, style canvas directly -->
+  <canvas bind:this={canvasElement}></canvas> 
 </div>
 
 <style>
