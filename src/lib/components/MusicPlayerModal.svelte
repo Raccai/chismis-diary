@@ -3,19 +3,16 @@
   import { scale, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
   import { onMount, onDestroy } from 'svelte';
-  import Button from './Button.svelte'; // Your custom Button component
+  import Button from './Button.svelte';
 
-  // --- Import your Svelte SVG Icon Components ---
   import PlaySvelteIcon from '$lib/icons/PlayIcon.svelte';
   import PauseSvelteIcon from '$lib/icons/PauseIcon.svelte';
   import NextSvelteIcon from '$lib/icons/NextIcon.svelte';
   import PrevSvelteIcon from '$lib/icons/PrevIcon.svelte';
-  // Repeat/Loop icons are removed
   import VolumeHighSvelteIcon from '$lib/icons/VolumeHighIcon.svelte';
   import VolumeMidSvelteIcon from '$lib/icons/VolumeMidIcon.svelte';
   import VolumeLowSvelteIcon from '$lib/icons/VolumeLowIcon.svelte';
   import VolumeMuteSvelteIcon from '$lib/icons/VolumeMuteIcon.svelte';
-  // CloseSvelteIcon not used for the text button
 
   let modalElement;
 
@@ -52,7 +49,6 @@
       }
   }
 
-  // Reactive Icon Components
   $: playPauseIconComponent = $musicPlayer.isPlaying ? PauseSvelteIcon : PlaySvelteIcon;
 
   $: volumeIconComponent =
@@ -73,8 +69,8 @@
     aria-hidden="true"
     tabindex="-1"
   >
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
     <div class="music-player-modal-container" on:click|stopPropagation>
       <div
         class="music-player-modal"
@@ -94,8 +90,12 @@
             </div>
           {:else}
             <div class="track-info placeholder">
-              <p class="track-title">No track selected</p>
-              <p class="track-artist">Select a mood to play its theme</p>
+              <p class="track-title">No Track Selected</p>
+              {#if $musicPlayer.playableTracks.length > 0}
+                <p class="track-artist">Tap a song below to start</p>
+              {:else}
+                <p class="track-artist">Unlock mood music via achievements!</p>
+              {/if}
             </div>
           {/if}
 
@@ -108,6 +108,7 @@
               bind:value={$musicPlayer.currentTime}
               on:input={handleProgressChange}
               aria-label="Track progress"
+              disabled={!$musicPlayer.currentTrack}
             />
             <div class="time-display">
               <span>{formatTime($musicPlayer.currentTime)}</span>
@@ -116,20 +117,20 @@
           </div>
 
           <div class="controls-main">
-            <button class="control-button" on:click={musicPlayer.playPrevious} aria-label="Previous track">
+            <button class="control-button" on:click={musicPlayer.playPrevious} aria-label="Previous track" disabled={$musicPlayer.playableTracks.length < 2}>
               <svelte:component this={PrevSvelteIcon} />
             </button>
-            <button class="control-button play-pause" on:click={musicPlayer.togglePlay} aria-label={$musicPlayer.isPlaying ? 'Pause' : 'Play'}>
+            <button class="control-button play-pause" on:click={musicPlayer.togglePlay} aria-label={$musicPlayer.isPlaying ? 'Pause' : 'Play'} disabled={!$musicPlayer.currentTrack && $musicPlayer.playableTracks.length === 0}>
               <svelte:component this={playPauseIconComponent} />
             </button>
-            <button class="control-button" on:click={musicPlayer.playNext} aria-label="Next track">
+            <button class="control-button" on:click={musicPlayer.playNext} aria-label="Next track" disabled={$musicPlayer.playableTracks.length < 2}>
               <svelte:component this={NextSvelteIcon} />
             </button>
           </div>
 
           <div class="controls-extra">
-            <!-- Removed Repeat Button and its placeholder -->
-            <div class="volume-control full-width">
+            <div class="playback-mode-placeholder"></div>
+            <div class="volume-control">
               <button class="control-button small-button" on:click={musicPlayer.toggleMute} aria-label="Toggle mute">
                 <svelte:component this={volumeIconComponent} />
               </button>
@@ -148,16 +149,21 @@
           </div>
 
           <div class="track-list-container">
-            <ul class="track-list">
-                <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-                <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-                {#each $musicPlayer.tracks as track, index (track.src)}
-                    <li on:click={() => musicPlayer.loadTrack(index, true)} class:active={index === $musicPlayer.currentTrackIndex}>
-                        <span class="track-list-title">{track.title}</span>
-                        <span class="track-list-mood">({track.moodValue})</span>
-                    </li>
-                {/each}
-            </ul>
+            {#if $musicPlayer.playableTracks.length > 0}
+              <ul class="track-list">
+                  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+                  <!-- svelte-ignore a11y_click_events_have_key_events -->
+                  {#each $musicPlayer.playableTracks as track, index (track.src)}
+                      <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+                      <li on:click={() => musicPlayer.loadTrack(index, true)} class:active={index === $musicPlayer.currentTrackIndexInPlayable && $musicPlayer.currentTrack?.src === track.src}>
+                          <span class="track-list-title">{track.title}</span>
+                          <span class="track-list-mood">({track.moodValue})</span>
+                      </li>
+                  {/each}
+              </ul>
+            {:else}
+              <p class="no-tracks-message">No music tracks unlocked yet!</p>
+            {/if}
           </div>
         </div>
 
@@ -189,24 +195,22 @@
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
   }
-
   .music-player-modal-container {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: auto;
     height: auto;
     max-width: 100%;
     max-height: 100%;
   }
-
   .music-player-modal {
     background-color: var(--card-bg);
     color: var(--card-title-text);
     border-radius: 16px;
     padding: 1.25rem;
     border: 2px solid var(--card-border);
-    width: 100%;
-    max-width: 380px;
+    width: 100vw;
+    max-width: 100%;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
@@ -214,7 +218,6 @@
     overflow: hidden;
     position: relative;
   }
-
   .player-title {
     font-family: 'Graffiti Urban', sans-serif;
     font-size: 2rem;
@@ -225,29 +228,27 @@
     margin-bottom: 0.8rem;
     flex-shrink: 0;
   }
-
-  .modal-scrollable-body {
+  .modal-body-bwp {
     flex-grow: 1;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
     scrollbar-width: thin;
-    scrollbar-color: var(--card-title-text) var(--bw-bg-tertiary, #2c2c2c);
+    scrollbar-color: var(--bw-accent-pink, #ff69b4) var(--bw-bg-tertiary, #2c2c2c);
   }
-  .modal-scrollable-body::-webkit-scrollbar {
+  .modal-body-bwp::-webkit-scrollbar {
     width: 8px;
   }
-  .modal-scrollable-body::-webkit-scrollbar-track {
+  .modal-body-bwp::-webkit-scrollbar-track {
     background: var(--bw-bg-tertiary, #2c2c2c);
     border-radius: 4px;
   }
-  .modal-scrollable-body::-webkit-scrollbar-thumb {
-    background-color: var(--card-title-text);
+  .modal-body-bwp::-webkit-scrollbar-thumb {
+    background-color: var(--bw-accent-pink, #ff69b4);
     border-radius: 4px;
     border: 2px solid var(--bw-bg-tertiary, #2c2c2c);
   }
-
   .track-info {
     text-align: center;
     min-height: 3em;
@@ -270,7 +271,6 @@
     opacity: 0.8;
     margin:0;
   }
-
   .progress-bar-container {
     flex-shrink: 0;
   }
@@ -312,7 +312,6 @@
     padding: 0.2rem 0;
     flex-shrink: 0;
   }
-
   .controls-main {
     display: flex;
     justify-content: space-around;
@@ -322,7 +321,7 @@
   .control-button {
     background: none;
     border: none;
-    color: var(--card-title-text);
+    color: var(--card-mini-bg);
     cursor: pointer;
     padding: 0.5rem;
     line-height: 1;
@@ -341,7 +340,6 @@
    .control-button:active {
     transform: scale(0.9);
   }
-
   .control-button.play-pause {
     width: 60px;
     height: 60px;
@@ -354,33 +352,38 @@
   .control-button.play-pause:hover {
     background-color: var(--card-date-text);
   }
-
   .controls-extra {
     display: flex;
-    justify-content: flex-end; /* Align volume to the right */
+    justify-content: flex-end; /* Align volume to right */
     align-items: center;
     flex-shrink: 0;
+  }
+  .playback-mode-placeholder {
+    /* This can be removed if you don't need it to balance layout */
+     width: 40px; /* Ensure it takes up some space if kept */
+     height: 40px;
+     flex-shrink: 0;
   }
   .control-button.small-button {
     width: 40px;
     height: 40px;
     color: var(--card-title-text);
   }
+  /* Removed .active class for loop button as it's gone */
   .control-button.small-button :global(svg) {
      width: 20px;
      height: 20px;
   }
-
   .volume-control {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex-grow: 1;
+    flex-grow: 0; /* Don't let it grow if placeholder removed */
+    margin-left: 0; /* Remove if placeholder is gone */
   }
   input[type="range"].volume-slider {
     height: 6px;
-    width: 100%; /* Give it a fixed or max-width */
-    /* flex-grow: 1; /* Remove if you want it to be fixed width */
+    width: 100px;
   }
   input[type="range"].volume-slider::-webkit-slider-thumb {
     width: 12px;
@@ -390,7 +393,6 @@
     width: 10px;
     height: 10px;
   }
-
   .track-list-container {
       margin-top: 0.5rem;
       max-height: 150px;
@@ -403,8 +405,7 @@
   }
   .track-list-container::-webkit-scrollbar { width: 6px; }
   .track-list-container::-webkit-scrollbar-track { background: var(--bw-bg-tertiary, #2c2c2c); border-radius: 3px;}
-  .track-list-container::-webkit-scrollbar-thumb { background-color: var(--card-title-text); border-radius: 3px; border: 1px solid var(--bw-bg-tertiary, #2c2c2c);}
-
+  .track-list-container::-webkit-scrollbar-thumb { background-color: var(--bw-accent-pink, #ff69b4); border-radius: 3px; border: 1px solid var(--bw-bg-tertiary, #2c2c2c);}
   .track-list {
     list-style: none;
     padding: 0;
@@ -434,7 +435,13 @@
     opacity: 0.7;
     margin-left: 0.5rem;
   }
-
+  .no-tracks-message { /* Style for when no tracks are unlocked */
+    text-align: center;
+    padding: 1rem;
+    font-style: italic;
+    color: var(--bw-text-secondary);
+    font-size: 0.9rem;
+  }
   .modal-actions-player-bwp {
     display: flex;
     justify-content: center;
@@ -445,27 +452,25 @@
     box-sizing: border-box;
     flex-shrink: 0;
   }
-
   .player-ctrl-button-bwp :global(svg) {
       width: 60%;
       height: 60%;
       fill: currentColor;
   }
   .player-ctrl-button-bwp.play-pause :global(svg) {
-      fill: var(--card-bg);
+      fill: var(--card-bg); /* Ensure icon color on pink button */
       width: 50%;
       height: 50%;
   }
-
   :global(.player-close-button-override) {
     flex-grow: 0 !important;
     min-width: 100px !important;
     max-width: 180px !important;
   }
-  :global(.player-close-button-override .button-icon svg),
-  :global(.player-close-button-override > svg) {
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
+  :global(.player-close-button-override .button-icon svg), /* If Button uses slot */
+  :global(.player-close-button-override > svg) { /* If Button renders SVG directly */
+      /* This rule is for the <Button icon={null}>, so it won't apply as no SVG is rendered
+         If Button.svelte *always* renders an <svg> tag even for null icon, this might be needed
+         but ideally Button.svelte would conditionally render its icon part. */
   }
 </style>

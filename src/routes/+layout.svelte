@@ -17,9 +17,41 @@
   import "../app.css";
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { userProgress } from '$lib/stores/userProgressStore.js';
+  import { get } from 'svelte/store';
+  import { browser } from '$app/environment';
+  import { entriesStore } from '$lib/stores/entriesStore.js'
+  
+  let initialProgressProcessed = false;
 
   onMount(() => {
-    goto('/entry');
+    if ($page.url.pathname === '/') {
+      goto('/entry', { replaceState: true });
+    }
+
+    // Process existing entries for achievements (deferred and run once)
+    if (browser && !initialProgressProcessed) {
+      setTimeout(() => {
+        const allCurrentEntries = get(entriesStore);
+        if (allCurrentEntries && allCurrentEntries.length > 0) {
+          console.log("[Layout] Processing existing entries for achievements in background...");
+          userProgress.processExistingEntries(allCurrentEntries);
+          initialProgressProcessed = true;
+          // localStorage.setItem('achievements_processed_v1', 'true'); 
+        } else {
+          console.log("[Layout] No existing entries to process for achievements.");
+          initialProgressProcessed = true; // Still mark as "attempted"
+        }
+      }, 1000); // Increased delay slightly
+    }
+
+    return () => {
+      // Cleanup global listener if it was added by this instance
+      if (browser) {
+        window.removeEventListener('keydown', handleGlobalKeydown);
+        globalKeydownListenerAdded = false; // Reset flag if layout could remount
+      }
+    };
   });
 
   // --- Form and Global Key Logic ---

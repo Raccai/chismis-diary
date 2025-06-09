@@ -173,7 +173,7 @@
   --danger-btn-text:var(--main-white);
 }
 
-/* --- DARK MODE for B&W&Pink Theme --- */
+/* --- DARK MODE --- */
 body.dark { /* Toggled by themeStore.js */
   --main-black: #11100f;
   --main-white: #ffffff;  

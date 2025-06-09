@@ -1,18 +1,18 @@
-// src/lib/stores/musicPlayerStore.js
 import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import { musicTracks } from '$lib/stores/musicTracks.js';
+import { userProgress } from '$lib/stores/userProgressStore.js';
 
 const initialPlayerState = {
-  tracks: musicTracks,
-  currentTrackIndex: -1,
+  allTracks: musicTracks,
+  playableTracks: [],
+  currentTrackIndexInPlayable: -1,
   currentTrack: null,
   isPlaying: false,
   currentTime: 0,
   duration: 0,
   volume: 0.75,
   isMuted: false,
-  // isLooping and playbackMode REMOVED
   isModalOpen: false
 };
 
@@ -32,13 +32,10 @@ function createMusicPlayerStore() {
 
     audioElement.onended = () => {
       const state = get(store);
-      console.log("Track ended. Index:", state.currentTrackIndex, "Total tracks:", state.tracks.length);
-      if (state.currentTrackIndex < state.tracks.length - 1) {
-        methods.playNext(); // Play next track if not the last one
+      if (state.currentTrackIndexInPlayable < state.playableTracks.length - 1) {
+        methods.playNext();
       } else {
-        // Last track has finished, stop playback and reset time
         update(s => ({ ...s, isPlaying: false, currentTime: 0 }));
-        console.log("Playlist finished.");
       }
     };
   }
@@ -51,18 +48,45 @@ function createMusicPlayerStore() {
     closePlayerModal: () => update(s => ({ ...s, isModalOpen: false })),
     togglePlayerModal: () => update(s => ({ ...s, isModalOpen: !s.isModalOpen, isFormVisible: false, isSideMenuVisible: false })),
 
-    loadTrack: (trackIndex, autoPlay = true) => {
+    _updatePlayableTracks: (unlockedTrackMoods) => {
+      update(s => {
+        const newPlayableTracks = s.allTracks.filter(track => unlockedTrackMoods[track.moodValue]);
+        let newCurrentTrackIndexInPlayable = -1;
+        let newCurrentTrack = null;
+
+        if (s.currentTrack) {
+          newCurrentTrackIndexInPlayable = newPlayableTracks.findIndex(t => t.src === s.currentTrack.src);
+          if (newCurrentTrackIndexInPlayable !== -1) {
+            newCurrentTrack = s.currentTrack;
+          }
+        }
+        if (newPlayableTracks.length === 0) {
+            if (audioElement && s.isPlaying) audioElement.pause();
+            newCurrentTrack = null;
+            newCurrentTrackIndexInPlayable = -1;
+        }
+        return {
+          ...s,
+          playableTracks: newPlayableTracks,
+          currentTrack: newCurrentTrack,
+          currentTrackIndexInPlayable: newCurrentTrackIndexInPlayable,
+          isPlaying: newCurrentTrack ? s.isPlaying : false,
+        };
+      });
+    },
+
+    loadTrack: (indexInPlayableList, autoPlay = true) => {
       if (!browser || !audioElement) return;
       const state = get(store);
-      if (trackIndex < 0 || trackIndex >= state.tracks.length) return;
+      if (indexInPlayableList < 0 || indexInPlayableList >= state.playableTracks.length) return;
 
-      const trackToLoad = state.tracks[trackIndex];
+      const trackToLoad = state.playableTracks[indexInPlayableList];
       audioElement.src = trackToLoad.src;
       audioElement.load();
       update(s => ({
         ...s,
         currentTrack: trackToLoad,
-        currentTrackIndex: trackIndex,
+        currentTrackIndexInPlayable: indexInPlayableList,
         isPlaying: false,
         currentTime: 0,
         duration: 0
@@ -71,17 +95,15 @@ function createMusicPlayerStore() {
       if (autoPlay) {
         const playPromise = audioElement.play();
         if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.error("Error autoplaying track:", error);
-                update(s => ({ ...s, isPlaying: false }));
-            });
+            playPromise.catch(error => update(s => ({ ...s, isPlaying: false })));
         }
       }
     },
 
     play: () => {
-      if (!browser || !audioElement || !get(store).currentTrack) {
-        if (get(store).tracks.length > 0) methods.loadTrack(0, true);
+      const state = get(store);
+      if (!browser || !audioElement || !state.currentTrack) {
+        if (state.playableTracks.length > 0) methods.loadTrack(0, true);
         return;
       }
       const playPromise = audioElement.play();
@@ -95,7 +117,7 @@ function createMusicPlayerStore() {
     },
     togglePlay: () => {
       const state = get(store);
-      if (!state.currentTrack && state.tracks.length > 0) {
+      if (!state.currentTrack && state.playableTracks.length > 0) {
         methods.loadTrack(0, true);
       } else if (state.isPlaying) {
         methods.pause();
@@ -117,36 +139,46 @@ function createMusicPlayerStore() {
       if (!browser || !audioElement) return;
       audioElement.muted = !audioElement.muted;
     },
-
     playNext: () => {
       const state = get(store);
-      if (state.tracks.length === 0) return;
-      let nextIndex = state.currentTrackIndex + 1;
-      if (nextIndex >= state.tracks.length) {
-        nextIndex = 0; // Loop back to the first track
+      if (state.playableTracks.length === 0) return;
+      let nextIndex = state.currentTrackIndexInPlayable + 1;
+      if (nextIndex >= state.playableTracks.length) {
+        nextIndex = 0; // Loop to start of playable playlist
       }
       methods.loadTrack(nextIndex, true);
     },
     playPrevious: () => {
       const state = get(store);
-      if (state.tracks.length === 0) return;
-      let prevIndex = state.currentTrackIndex - 1;
+      if (state.playableTracks.length === 0) return;
+      let prevIndex = state.currentTrackIndexInPlayable - 1;
       if (prevIndex < 0) {
-        prevIndex = state.tracks.length - 1; // Loop to end
+        prevIndex = state.playableTracks.length - 1; // Loop to end
       }
       methods.loadTrack(prevIndex, true);
     },
     playTrackByMood: (moodValue) => {
       const state = get(store);
-      const trackIndex = state.tracks.findIndex(t => t.moodValue === moodValue);
-      if (trackIndex !== -1) {
-        methods.loadTrack(trackIndex, true);
+      const trackIndexInPlayable = state.playableTracks.findIndex(t => t.moodValue === moodValue);
+      if (trackIndexInPlayable !== -1) {
+        methods.loadTrack(trackIndexInPlayable, true);
       } else {
-        console.warn(`No track found for mood: ${moodValue}`);
+        console.warn(`Track for mood '${moodValue}' is not currently unlocked or available.`);
       }
     }
   };
+
+  if (browser) {
+    userProgress.subscribe(progress => {
+      if (progress && progress.unlockedTracks) {
+        methods._updatePlayableTracks(progress.unlockedTracks);
+      }
+    });
+    const initialUserProgress = get(userProgress);
+    if (initialUserProgress && initialUserProgress.unlockedTracks) {
+        methods._updatePlayableTracks(initialUserProgress.unlockedTracks);
+    }
+  }
   return methods;
 }
-
 export const musicPlayer = createMusicPlayerStore();
