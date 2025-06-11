@@ -4,10 +4,10 @@
   export let characterImageComponent = null;
 </script>
 
-<div class="music-popup-bwp">
+<div class="music-popup">
   {#if characterImageComponent}
     <div class="popup-char-icon">
-         <svelte:component this={characterImageComponent} />
+      <svelte:component this={characterImageComponent} />
     </div>
   {/if}
   <h4>🎵 Music Unlocked! 🎵</h4>
@@ -17,7 +17,7 @@
 </div>
 
 <style>
-  .music-popup-bwp { 
+  .music-popup { 
     text-align: center; 
   }
   .popup-char-icon { 
@@ -31,9 +31,9 @@
     height:100%; 
     object-fit:contain; 
   }
-  .music-popup-bwp h4 { 
+  .music-popup h4 { 
     font-size: 1.2rem; 
-    color: var(--bw-accent-pink); 
+    color: var(--card-title-text); 
     margin-bottom: 0.5rem; 
   }
   .track-title-popup { 

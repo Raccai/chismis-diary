@@ -2,6 +2,10 @@
   import { toasts } from '$lib/stores/toastStore.js';
   import { fly, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import InfoToastIcon from '$lib/icons/InfoToastIcon.svelte';
+  import SuccessIcon from '$lib/icons/SuccessIcon.svelte';
+  import FailIcon from '$lib/icons/FailIcon.svelte';
+  import WarningIcon from '$lib/icons/WarningIcon.svelte';
 
   // Emojis for now, will make icons later
   const icons = {

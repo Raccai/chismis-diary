@@ -5,7 +5,7 @@
   export let characterImageComponent = null; 
 </script>
 
-<div class="milestone-popup-bwp">
+<div class="milestone-popup">
   {#if characterImageComponent}
     <div class="popup-char-icon">
         <svelte:component this={characterImageComponent} />
@@ -20,7 +20,7 @@
 </div>
 
 <style>
-  .milestone-popup-bwp { 
+  .milestone-popup { 
     text-align: center; 
   }
   .popup-char-icon { 
@@ -34,9 +34,9 @@
     height:100%; 
     object-fit:contain; 
   }
-  .milestone-popup-bwp h4 { 
+  .milestone-popup h4 { 
     font-size: 1.1rem; 
-    color: var(--bw-accent-pink); 
+    color: var(--card-title-text); 
     margin-bottom: 0.5rem; 
   }
   .ms-text { 

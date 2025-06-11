@@ -266,7 +266,7 @@
      top: 50%;
      left: 50%;
      transform: translate(-50%, -50%);
-     color: var(--dataviz-card-subtle-text, #a0aec0); /* Use CSS var */
+     color: var(--card-title-text); /* Use CSS var */
      font-style: italic;
      font-size: 0.9rem;
      z-index: 5; /* Ensure it's visible if chart is transparent initially */

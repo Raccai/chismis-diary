@@ -7,6 +7,8 @@
   <h1 class="page-title-bwp">Mood Crew</h1>
   <p class="page-subtitle-bwp">Unlock music by using moods and hitting milestones!</p>
 
+  <div class="divider"></div>
+
   <div class="character-grid-bwp">
     {#each $moodStore as character (character.value)}
       <CharacterReveal moodCharacter={character} />
@@ -16,10 +18,11 @@
 
 <style>
   .achievements-page-bwp {
-    padding: 1rem 0 calc(var(--navbar-height, 65px) + 1rem) 0;
+    padding: 1rem 1rem calc(var(--navbar-height, 65px) + 1rem) 1rem;
   }
   .page-title-bwp {
     font-family: 'Graffiti Urban', sans-serif;
+    font-weight: normal;
     color: var(--card-title-text);
     font-size: 2.2rem;
     text-align: center;
@@ -30,6 +33,8 @@
     color: var(--card-title-text);
     text-align: center;
     margin-bottom: 2rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 2px solid var(--card-border);
     font-size: 0.95rem;
   }
   .character-grid-bwp {

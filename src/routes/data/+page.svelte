@@ -171,29 +171,28 @@
     display: flex;
     flex-direction: column;
   }
-
+  
   .trend-header {
-     margin-bottom: 0.5rem;
-     padding: 0 0.25rem;
+    margin-bottom: 0.5rem;
   }
   .trend-title {
-     font-size: 1.1rem;
-     font-weight: normal;
-     color: #FBF7EC;
-     margin: 0 0 0.25rem 0; /* Space below title */
+    font-size: 1.1rem;
+    font-weight: normal;
+    color: #FBF7EC;
+    margin: 0 0 0.25rem 0; /* Space below title */
   }
   .trend-score {
-     font-size: 2.5rem;
-     font-weight: normal;
-     color: #FBF7EC;
-     line-height: 1.1;
+    font-size: 2.5rem;
+    font-weight: normal;
+    color: #FBF7EC;
+    line-height: 1.1;
   }
-   .trend-score .pts {
-      font-size: 1rem;
-      font-weight: normal;
-      color: #FBF7EC; /* Lighter gray for 'pts' */
-      margin-left: 0.25rem;
-   }
+  .trend-score .pts {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #FBF7EC; /* Lighter gray for 'pts' */
+    margin-left: 0.25rem;
+  }
 
   .time-range-selector {
     display: flex;
@@ -234,16 +233,14 @@
     font-weight: 700;
   }
 
-   .info-button {
+  .info-button {
     background: none;
     border: none;
-    color: #FBF7EC; 
-    font-size: 1rem;
+    color: #FBF7EC;
     font-weight: bold;
     cursor: pointer;
-    padding: 0.1rem 0.2rem;
-    line-height: 1;
-    border-radius: 50%;
+    margin-top: -6px;
+    margin-bottom: -4px;
   }
   .info-button:hover {
     color: #a0aec0;
@@ -283,5 +280,16 @@
     padding: 0.5rem;
     border-radius: 8px;
     margin: 0.25rem 0 0.5rem 0;
+    transform: scale(0.8);
+  }
+
+  .title-with-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; 
+  }
+
+  .trend-title {
+    font-size: 1.5rem;
   }
 </style>

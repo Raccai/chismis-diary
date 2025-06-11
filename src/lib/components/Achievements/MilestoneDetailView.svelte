@@ -10,41 +10,41 @@
   }
 </script>
 
-<div class="milestone-details-bwp">
-  <div class="detail-header-bwp">
-    <div class="detail-char-image-container-bwp">
+<div class="milestone-details">
+  <div class="detail-header">
+    <div class="detail-char-image-container">
         <img
             src={characterData.emoji} 
             alt={characterData.label}
-            class="detail-char-image-actual-bwp"
+            class="detail-char-image-actual"
             class:silhouetted={!userProgressData.unlockedTracks?.[characterData.musicTrackMoodValue]}
         />
     </div>
-    <div class="detail-char-info-bwp">
-        <h4 class="detail-char-name-bwp">{characterData.label}</h4>
-        <p class="detail-char-desc-bwp">{characterData.characterDescription || 'More details to come!'}</p>
+    <div class="detail-char-info">
+        <h4 class="detail-char-name">{characterData.label}</h4>
+        <p class="detail-char-desc">{characterData.characterDescription || 'More details to come!'}</p>
     </div>
   </div>
 
-  <h5 class="milestones-title-bwp">Milestones to Unlock Music:</h5>
+  <h5 class="milestones-title">Milestones to Unlock Music:</h5>
   {#if characterData.milestones && characterData.milestones.length > 0}
-    <ul class="milestone-list-bwp">
+    <ul class="milestone-list">
       {#each characterData.milestones as milestone (milestone.id)}
         {@const completed = isMilestoneCompleted(milestone)}
         <li class:completed>
-          <span class="ms-icon-bwp">{completed ? '✅' : '⏳'}</span>
-          <div class="ms-text-bwp">
-            <span class="ms-desc-bwp">{milestone.text.replace(/\s*to unlock .*$/i, '')}</span>
+          <span class="ms-icon">{completed ? '✅' : '⏳'}</span>
+          <div class="ms-text">
+            <span class="ms-desc">{milestone.text.replace(/\s*to unlock .*$/i, '')}</span>
             {#if !completed}
-            <span class="ms-progress-bwp">
+            <span class="ms-progress">
               ({Math.min(getStatValue(milestone.statKey), milestone.target)}/{milestone.target})
             </span>
             {/if}
           </div>
           {#if completed && milestone.unlocksMusic}
-            <span class="ms-reward-bwp music">🎵 Track Unlocked!</span>
+            <span class="ms-reward music">🎵 Track Unlocked!</span>
           {:else if completed && milestone.rewardPreview}
-            <span class="ms-reward-bwp text">🎁 {milestone.rewardPreview.text}</span>
+            <span class="ms-reward text">🎁 {milestone.rewardPreview.text}</span>
           {/if}
         </li>
       {/each}
@@ -55,62 +55,62 @@
 </div>
 
 <style>
-  .milestone-details-bwp {
+  .milestone-details {
     font-size: 0.9rem;
-    color: var(--bw-text-primary);
+    color: var(--card-title-text);
   }
-  .detail-header-bwp {
+  .detail-header {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
     margin-bottom: 1.25rem;
   }
-  .detail-char-image-container-bwp {
+  .detail-char-image-container {
     width: 60px;
     height: 60px;
     border-radius: 12px;
-    background-color: var(--bw-bg-tertiary);
-    border: 2px solid var(--bw-border-primary);
+    background-color: var(--card-bg);
+    border: 2px solid var(--card-bg);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     overflow: hidden;
   }
-  .detail-char-image-actual-bwp {
+  .detail-char-image-actual {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
     transition: filter 0.3s ease;
   }
-  .detail-char-image-actual-bwp.silhouetted {
-      filter: brightness(0.2) grayscale(30%) opacity(0.8);
+  .detail-char-image-actual.silhouetted {
+    filter: brightness(0.2) grayscale(30%) opacity(0.8);
   }
-  .detail-char-info-bwp {
+  .detail-char-info {
     flex-grow: 1;
   }
-  .detail-char-name-bwp {
+  .detail-char-name {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--bw-accent-pink);
+    color: var(--card-title-text);
     margin: 0;
     margin-bottom: 0.2rem;
   }
-  .detail-char-desc-bwp {
+  .detail-char-desc {
     font-size: 0.85rem;
-    color: var(--bw-text-secondary);
+    color: var(--card-title-text);
     margin: 0;
     line-height: 1.4;
   }
-  .milestones-title-bwp {
+  .milestones-title {
     font-size: 1rem;
     font-weight: 600;
     margin: 0;
     margin-bottom: 0.75rem;
     padding-bottom: 0.25rem;
-    border-bottom: 1px solid var(--bw-border-secondary);
+    border-bottom: 1px solid var(--card-border);
   }
-  .milestone-list-bwp {
+  .milestone-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -118,48 +118,48 @@
     flex-direction: column;
     gap: 0.6rem;
   }
-  .milestone-list-bwp li {
+  .milestone-list li {
     padding: 0.6rem 0.75rem;
-    background-color: var(--bw-bg-tertiary);
+    background-color: var(--card-bg);
     border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    border: 1px solid var(--bw-border-secondary);
+    border: 1px solid var(--card-border);
   }
-  .milestone-list-bwp li.completed {
-    border-left: 4px solid var(--bw-accent-pink);
-    background-color: color-mix(in srgb, var(--bw-accent-pink) 8%, var(--bw-bg-tertiary));
+  .milestone-list li.completed {
+    border-left: 4px solid var(--card-border);
+    background-color: var(--card-bg);
   }
-  .ms-icon-bwp {
+  .ms-icon {
     font-size: 1.1em;
   }
-  .ms-text-bwp {
+  .ms-text {
     flex-grow: 1;
   }
-  .ms-desc-bwp {
+  .ms-desc {
     display: block;
     font-size: 0.9rem;
   }
-  .ms-progress-bwp {
+  .ms-progress {
     font-size: 0.75rem;
-    color: var(--bw-text-tertiary);
+    color: var(--card-title-text);
   }
-  .ms-reward-bwp {
+  .ms-reward {
     font-size: 0.75rem;
     font-style: italic;
-    color: var(--bw-text-secondary);
+    color: var(--card-title-text);
     margin-left: auto;
     text-align: right;
     white-space: nowrap;
   }
-  .ms-reward-bwp.music {
-    color: var(--bw-accent-pink);
+  .ms-reward.music {
+    color: var(--card-title-text);
     font-weight: 500;
   }
   .no-milestones-defined {
     font-style: italic;
-    color: var(--bw-text-secondary);
+    color: var(--card-title-text);
     padding: 0.5rem;
     text-align: center;
   }

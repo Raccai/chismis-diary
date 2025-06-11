@@ -100,25 +100,23 @@
 
 <style>
   .character-reveal-card-bwp {
-    background-color: var(--bw-bg-secondary);
-    border: 1px solid var(--bw-border-primary);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
     padding: 0.75rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 140px;
-    box-shadow: var(--bw-shadow-color-soft) 0px 2px 4px;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     font-family: 'Urbanist', sans-serif;
   }
   .character-reveal-card-bwp:hover {
     transform: translateY(-3px);
-    box-shadow: var(--bw-shadow-color-medium) 0px 4px 8px;
   }
   .character-reveal-card-bwp.unlocked {
-    border-color: var(--bw-accent-pink);
+    border-color: var(--card-border);
   }
   .image-container-bwp {
     width: 90px;
@@ -127,7 +125,7 @@
     margin-bottom: 0.5rem;
     border-radius: 8px;
     overflow: hidden;
-    background-color: var(--bw-bg-tertiary);
+    background-color: var(--card-bg);
   }
   .base-char-image-bwp {
     position: absolute;
@@ -149,7 +147,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    background-color: var(--bw-bg-contrast, #000000);
+    background-color: var(--card-bg);
     opacity: 0.60;
     z-index: 2;
     transition: height 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -162,7 +160,7 @@
   .name-bwp {
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--bw-text-primary);
+    color: var(--card-title-text);
     margin: 0;
     margin-bottom: 0.25rem;
     white-space: nowrap;
@@ -170,22 +168,22 @@
     text-overflow: ellipsis;
   }
   .progress-bar-bwp {
-    height: 5px;
-    background-color: var(--bw-bg-tertiary);
+    height: 2px;
+    background-color: var(--card-border);
     border-radius: 2.5px;
     overflow: hidden;
-    margin: 0.25rem auto;
+    margin: 0.4rem auto;
     width: 80%;
   }
   .progress-fill-bwp {
     height: 100%;
-    background-color: var(--bw-accent-pink);
+    background-color: var(--card-title-text);
     border-radius: 2.5px;
     transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
   }
   .milestone-count-bwp, .status-bwp {
-    font-size: 0.65rem;
-    color: var(--bw-text-secondary);
+    font-size: 0.7rem;
+    color: var(--card-title-text);
     min-height: 0.8em;
   }
   .no-milestones-text {
@@ -193,8 +191,10 @@
     opacity: 0.7;
   }
   .status-bwp.unlocked {
-    color: var(--bw-accent-pink);
-    font-weight: bold;
+    color: var(--card-title-text);
+    font-family: "Urbanist", sans-serif;
+    font-weight: normal;
+
   }
   .reward-icons-bwp {
     margin-top: 0.25rem;
@@ -209,6 +209,6 @@
   }
   .reward-icon.unlocked {
     opacity: 1;
-    color: var(--bw-accent-pink);
+    color: var(--card-title-text);
   }
 </style>
