@@ -9,10 +9,10 @@
 
   // Emojis for now, will make icons later
   const icons = {
-    info: 'ℹ️',
-    success: '✅',
-    error: '❌',
-    warning: '⚠️'
+    info: InfoToastIcon,
+    success: SuccessIcon,
+    error: FailIcon,
+    warning: WarningIcon
   };
 </script>
 
@@ -26,7 +26,9 @@
         role="alert"
         aria-live="assertive"
       >
-        <span class="toast-icon">{icons[toast.type] || '🔔'}</span>
+        <span class="toast-icon">
+          <svelte:component this={icons[toast.type] || InfoToastIcon} />
+        </span>
         <p class="toast-message">{toast.message}</p>
         <button class="toast-close-button" on:click={() => toasts.remove(toast.id)} aria-label="Dismiss notification">
           ×
@@ -61,9 +63,11 @@
   }
 
   .toast-icon {
-    font-size: 1.2em;
-    margin-right: 0.75rem;
-    line-height: 1;
+    width: 36px;
+    height: 36px;
+    transform: scale(0.4);
+    margin-right: 0.4rem;
+    margin-top: -0.4rem;
   }
 
   .toast-message {

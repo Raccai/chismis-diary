@@ -2,6 +2,9 @@
   import { userProgress } from '$lib/stores/userProgressStore.js';
   import { uiStore } from '$lib/stores/uiStore.js';
   import MilestoneDetailView from './MilestoneDetailView.svelte';
+  import SparklesIcon from '$lib/icons/SparklesIcon.svelte';
+  import MusicIcon from '$lib/icons/MusicIcon.svelte';
+  import DataInactive from '$lib/icons/Data-Inactive.svelte';
 
   export let moodCharacter;
 
@@ -10,8 +13,8 @@
   let progressPercent = 0;
   let isMusicUnlockedForThisMood = false;
 
-  const musicIcon = '🎵';
-  const graphIcon = '📊';
+  const musicIcon = MusicIcon;
+  const graphIcon = DataInactive;
 
   $: if (moodCharacter && $userProgress) {
     totalMilestones = moodCharacter.milestones ? moodCharacter.milestones.length : 0;
@@ -59,47 +62,52 @@
 </script>
 
 <div
-  class="character-reveal-card-bwp"
+  class="character-reveal-card"
   class:unlocked={isMusicUnlockedForThisMood}
   on:click={showMilestoneDetails}
   role="button" tabindex="0"
   on:keydown={(e) => {if(e.key==='Enter'||e.key===' ') showMilestoneDetails()}}
   aria-label={`View milestones for ${moodCharacter.label}`}
 >
-  <div class="image-container-bwp">
+  <div class="image-container">
     <img
       src={moodCharacter.emoji}
       alt={moodCharacter.label}
-      class="base-char-image-bwp"
+      class="base-char-image"
       class:is-silhouette={progressPercent < 100}
     />
     <div
-      class="color-reveal-veil-bwp"
+      class="color-reveal-veil"
       style="height: {100 - progressPercent}%;"
     ></div>
   </div>
-  <div class="info-bwp">
-    <p class="name-bwp">{moodCharacter.label}</p>
+  <div class="info">
+    <p class="name">{moodCharacter.label}</p>
     {#if totalMilestones > 0 && !isMusicUnlockedForThisMood}
-      <div class="progress-bar-bwp">
-        <div class="progress-fill-bwp" style="width: {progressPercent}%;"></div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: {progressPercent}%;"></div>
       </div>
-      <p class="milestone-count-bwp">{completedMilestoneCount} / {totalMilestones}</p>
+      <p class="milestone-count">{completedMilestoneCount} / {totalMilestones}</p>
     {:else if isMusicUnlockedForThisMood}
-      <p class="status-bwp unlocked">✨ Music Unlocked</p>
+      <p class="status unlocked">
+        <SparklesIcon className="unlocked-icon" /> 
+        Music Unlocked
+      </p>
     {:else}
-       <p class="milestone-count-bwp no-milestones-text">Always Vibing</p>
+       <p class="milestone-count no-milestones-text">Always Vibing</p>
     {/if}
-    <div class="reward-icons-bwp">
+    <div class="reward-icons">
       {#if moodCharacter.musicTrackMoodValue}
-        <span class="reward-icon" class:unlocked={isMusicUnlockedForThisMood} title="Unlocks Music">{musicIcon}</span>
+        <span class="reward-icon" class:unlocked={isMusicUnlockedForThisMood} title="Unlocks Music">
+          <svelte:component this={musicIcon} class="reward-icon" title="Unlocks Music" />
+        </span>
       {/if}
     </div>
   </div>
 </div>
 
 <style>
-  .character-reveal-card-bwp {
+  .character-reveal-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 16px;
@@ -112,13 +120,13 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     font-family: 'Urbanist', sans-serif;
   }
-  .character-reveal-card-bwp:hover {
+  .character-reveal-card:hover {
     transform: translateY(-3px);
   }
-  .character-reveal-card-bwp.unlocked {
+  .character-reveal-card.unlocked {
     border-color: var(--card-border);
   }
-  .image-container-bwp {
+  .image-container {
     width: 90px;
     height: 120px;
     position: relative;
@@ -127,7 +135,7 @@
     overflow: hidden;
     background-color: var(--card-bg);
   }
-  .base-char-image-bwp {
+  .base-char-image {
     position: absolute;
     top: 0;
     left: 0;
@@ -139,10 +147,10 @@
     transition: filter 0.6s ease-in-out;
     z-index: 1;
   }
-  .base-char-image-bwp.is-silhouette {
+  .base-char-image.is-silhouette {
     filter: brightness(0%) opacity(60%);
   }
-  .color-reveal-veil-bwp {
+  .color-reveal-veil {
     position: absolute;
     top: 0;
     left: 0;
@@ -153,11 +161,11 @@
     transition: height 0.6s cubic-bezier(0.25, 1, 0.5, 1);
     pointer-events: none;
   }
-  .info-bwp {
+  .info {
     text-align: center;
     width: 100%;
   }
-  .name-bwp {
+  .name {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--card-title-text);
@@ -167,7 +175,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .progress-bar-bwp {
+  .progress-bar {
     height: 2px;
     background-color: var(--card-border);
     border-radius: 2.5px;
@@ -175,13 +183,13 @@
     margin: 0.4rem auto;
     width: 80%;
   }
-  .progress-fill-bwp {
+  .progress-fill {
     height: 100%;
     background-color: var(--card-title-text);
     border-radius: 2.5px;
     transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
   }
-  .milestone-count-bwp, .status-bwp {
+  .milestone-count, .status {
     font-size: 0.7rem;
     color: var(--card-title-text);
     min-height: 0.8em;
@@ -190,19 +198,18 @@
     font-style: italic;
     opacity: 0.7;
   }
-  .status-bwp.unlocked {
+  .status.unlocked {
     color: var(--card-title-text);
     font-family: "Urbanist", sans-serif;
     font-weight: normal;
 
   }
-  .reward-icons-bwp {
-    margin-top: 0.25rem;
-    font-size: 0.9rem;
+  .reward-icons {
+    margin: -0.4rem 0 -0.8rem 0;
     display: flex;
     justify-content: center;
+    transform: scale(0.5);
     gap: 0.4rem;
-    min-height: 1em;
   }
   .reward-icon {
     opacity: 0.5;

@@ -97,6 +97,10 @@
     transform: scale(0.8);
   }
 
+  .music-button-topbar {
+    color: var(--main-white); 
+  }
+
   .music-button-topbar :global(svg) { 
     border: 3px solid var(--main-white);
     padding: 6px 8px;

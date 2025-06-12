@@ -8,26 +8,33 @@
   import Modal from '$lib/components/Notifications/Modal.svelte';
   import SortModal from '$lib/components/Entries/SortModal.svelte';
   import MusicPlayerModal from '$lib/components/MusicPlayerModal.svelte';
+  import LoadingScreen from '$lib/components/LoadingScreen.svelte';
+
   import { filterSortStore } from '$lib/stores/filterSortStore';
   import { uiStore } from '$lib/stores/uiStore.js';
   import { navigating, page } from '$app/stores';
   import { onDestroy } from 'svelte'; // Not strictly needed for this loader version anymore
   import { fly, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
-  import "../app.css";
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { userProgress } from '$lib/stores/userProgressStore.js';
   import { get } from 'svelte/store';
   import { browser } from '$app/environment';
   import { entriesStore } from '$lib/stores/entriesStore.js'
+  import "../app.css";
   
   let initialProgressProcessed = false;
+  let isAppLoading = true;
 
   onMount(() => {
     if ($page.url.pathname === '/') {
       goto('/entry', { replaceState: true });
     }
+
+    setTimeout(() => {
+      isAppLoading = false;
+    }, 1000);
 
     // Process existing entries for achievements (deferred and run once)
     if (browser && !initialProgressProcessed) {
@@ -108,6 +115,8 @@
 </script>
 
 <div class="app-container">
+  <LoadingScreen visible={isAppLoading} />
+
   <Topbar />
 
   {#if $uiStore.isSortModalVisible}
