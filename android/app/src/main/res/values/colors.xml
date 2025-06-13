@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="colorPrimary">#ffffff</color> 
+  <color name="colorPrimaryDark">#1d1c19</color> <!-- Status bar -->
+  <color name="colorAccent">#ffffff</color>
+  <color name="navigationBarColor">#1d1c19</color> <!-- Gesture bar bg -->
+  <color name="splash_bg">#1d1c19</color> 
+</resources>

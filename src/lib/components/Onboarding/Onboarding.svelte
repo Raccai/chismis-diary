@@ -123,7 +123,7 @@
   .slide-content {
     position: relative;
     z-index: 1;
-    color: var(--card-bg);
+    color: #ffffff;
     text-align: center;
     max-width: 500px;
     margin: auto;
@@ -166,14 +166,15 @@
   }
 
   .next-btn {
-    background-color: white;
-    color: black;
+    background-color: #ffffff;
+    border: 2px solid #ffffff;
+    color: #1d1c19;
     margin-bottom: 0.5rem;
   }
 
   .skip-btn {
     background: transparent;
-    color: #ccc;
+    color: #ffffff;
     text-decoration: underline;
   }
 </style>
