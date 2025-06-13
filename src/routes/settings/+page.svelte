@@ -9,85 +9,89 @@
 
   function handleExport() {
     exportData(); // This function will now handle toasts internally or we can add one here
-    toasts.success("Data export started!");
+    toasts.success("Sinimulan na ang pag-export!");
   }
 
   function handleFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
       importFile = file;
-      console.log("File selected for import:", importFile.name);
+      console.log("Piniling file para i-import:", importFile.name);
     }
   }
 
   function handleImport() {
     if (!importFile) {
-      toasts.error("No file selected for import.");
+      toasts.error("Wala kang napiling file para i-import.");
       return;
     }
     uiStore.showModalOnly({
-      title: 'Confirm Import',
-      message: 'Importing data will <strong>overwrite all current entries and progress</strong>. This cannot be undone. Are you sure you want to proceed?',
-      confirmText: 'Yes, Import',
-      cancelText: 'Cancel',
-      confirmClass: 'danger', // Make it look like a serious action
+      title: 'Sigurado ka ba?',
+      message: 'Ang pag-import ay <strong>papalit sa lahat ng kasalukuyang entries at progress mo</strong>. Hindi na ito mababalik. Tuloy ka ba?',
+      confirmText: 'Oo, I-import',
+      cancelText: 'Huwag na lang',
+      confirmClass: 'danger',
       onConfirm: () => {
         importData(
           importFile,
-          (successMessage) => { // onComplete callback
+          (successMessage) => {
             toasts.success(successMessage);
-            importFile = null; // Reset file input
+            importFile = null;
             const fileInput = document.getElementById('import-file-input');
-            if(fileInput) fileInput.value = ""; // Clear the file input field
+            if(fileInput) fileInput.value = "";
           },
-          (errorMessage) => { // onError callback
+          (errorMessage) => {
             toasts.error(errorMessage);
           }
         );
       },
       onCancel: () => {
-        toasts.info("Import cancelled.");
+        toasts.info("Hindi na-import. Chill lang.");
       }
     });
   }
 
   function handleClearData(e) {
     uiStore.showModalOnly({
-      title: 'Confirm Clear Data',
-      message: 'Are you sure you want to delete all your chismis entries and achievements progress? This action is permanent and cannot be undone!',
-      confirmText: 'Yes, Delete All',
-      cancelText: 'No, Keep My Data',
-      confirmClass: 'danger', // Destructive action
+      title: 'Burahin Lahat?',
+      message: 'Burahin lahat ng chismis entries at progress mo? Wala nang bawian \'to.',
+      confirmText: 'Oo, burahin lahat',
+      cancelText: 'Ay wag na lang',
+      confirmClass: 'danger',
       onConfirm: () => {
-        clearAllAppData(); // This function will handle store resets and toasts
+        clearAllAppData();
       },
       onCancel: () => {
-        toasts.info("Phew! Data not cleared.");
+        toasts.info("Saved pa rin ang data mo!");
       }
     });
   }
 </script>
 
 <div class="settings-page">
-  <h1 class="page-title">App Settings</h1>
+  <h1 class="page-title">Mga Setting</h1>
 
   <section class="settings-section data-management-section">
-    <h2 class="section-title">Data Management</h2>
+    <h2 class="section-title">Pamamahala ng Data</h2>
 
     <div class="setting-item">
-      <p class="setting-description">Export all your chismis entries and app data to a JSON file. Keep it safe!</p>
+      <p class="setting-description">
+        I-export lahat ng chismis entries at app data mo sa JSON file. Para may backup ka!
+      </p>
       <Button 
         type="secondary"
         addBtn={false}
         ariaLabel="Export Data"
         onClick={() => handleExport()}
         class="secondary"
-        text="Export Data"
+        text="I-export ang Data"
       />
     </div>
 
     <div class="setting-item">
-      <p class="setting-description">Import data from a previously exported JSON file. This will overwrite current data.</p>
+      <p class="setting-description">
+        Mag-import ng data mula sa dating na-export mong JSON file. Mapapalitan lahat ng laman ngayon.
+      </p>
       <div class="import-controls">
         <input
           type="file"
@@ -102,16 +106,18 @@
           ariaLabel="Import Data"
           onClick={() => handleImport()}
           class="secondary"
-          text="Import Data"
+          text="I-import ang Data"
         />
       </div>
       {#if importFile}
-        <p class="selected-file-info">Selected: {importFile.name}</p>
+        <p class="selected-file-info">Napiling file: {importFile.name}</p>
       {/if}
     </div>
 
     <div class="setting-item clear-data-item">
-      <p class="setting-description">Permanently delete all your chismis entries, achievements, and settings from this device.</p>
+      <p class="setting-description">
+        Burahin lahat ng chismis entries, achievements, at settings sa device na 'to. Permanenteng aksyon ‘to!
+      </p>
 
       <Button 
         type="danger"
@@ -119,11 +125,12 @@
         ariaLabel="Import Data"
         onClick={() => handleClearData()}
         class="danger"
-        text="Clear all app data"
+        text="Burahin Lahat ng Data"
       />
     </div>
   </section>
 </div>
+
 
 <style>
   .settings-page {
@@ -170,7 +177,7 @@
 
   .setting-description {
     font-family: "Urbanist", sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: var(--card-title-text);
     margin-bottom: 0.75rem;
     line-height: 1.5;

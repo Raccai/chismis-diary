@@ -24,9 +24,10 @@ const initialUiState = {
   entryToEdit: null,
   isSideMenuVisible: false,
   isModalVisible: false,
-  modalOptions: { ...initialModalOptions },
   isSortModalVisible: false,
-  sortOptions: { ...initialSortModalOptions }
+  isOnboardingVisible: false, // Set to false on release
+  modalOptions: { ...initialModalOptions },
+  sortOptions: { ...initialSortModalOptions },
 };
 
 function createUiStore() {
@@ -38,6 +39,28 @@ function createUiStore() {
     subscribe,
     set,
 
+    // --- Onboarding Methods ---
+    showOnboardingModal: () => {
+      update(s => {
+        console.log("uiStore: showOnboardingModal called.");
+        return {
+          ...s,
+          isOnboardingVisible: true,
+          isFormVisible: false,
+          isSideMenuVisible: false,
+          isModalVisible: false
+        };
+      });
+    },
+    hideOnboardingModal: () => {
+      update(s => {
+        console.log("uiStore: hideOnboardingModal called.");
+        return {
+          ...s,
+          isOnboardingVisible: false
+        };
+      });
+    },
     // --- Entry Form Methods ---
     showEntryForm: (entry = null) => {
       update(s => {

@@ -141,7 +141,7 @@
   }
 
   .date-display {
-    font-size: 0.75rem;
+    font-size: 0.84rem;
     color: var(--card-date-text);
     font-family: 'Urbanist', sans-serif;
     font-weight: 500;

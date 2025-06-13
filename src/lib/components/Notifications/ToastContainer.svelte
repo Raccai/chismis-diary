@@ -73,7 +73,7 @@
   .toast-message {
     flex-grow: 1;
     margin: 0;
-    line-height: 0.8;
+    line-height: 1.2rem;
     font-family: "Urbanist", sans-serif;
     color: var(--card-title-text);
   }

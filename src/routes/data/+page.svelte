@@ -40,9 +40,11 @@
   // --- State for Time Range Selection ---
   let selectedTimeRange = '1M';
   const timeRanges = [
-      { value: '1W', label: '1 Week' }, { value: '1M', label: '1 Month' },
-      { value: '6M', label: '6 Months' }, { value: '1Y', label: '1 Year' },
-      { value: 'ALL', label: 'All Time' }
+    { value: '1W', label: '1 Linggo' },
+    { value: '1M', label: '1 Buwan' },
+    { value: '6M', label: '6 Buwan' },
+    { value: '1Y', label: '1 Taon' },
+    { value: 'ALL', label: 'Lahat' }
   ];
 
   // --- State for Score Info Popup ---
@@ -65,15 +67,15 @@
 
 <div class="data-page-container">
   {#if totalEntries === 0}
-    <p class="no-data-message">Add some "chismis" first to see your mood data!</p>
+    <p class="no-data-message">Mag-log ka muna ng chismis para may mood/modo data tayo!</p>
   {:else}
     <WeeklyMoodSummary weeklySummaries={weeklySummaryData} />
     {#if dailyMoodData && dailyMoodData.length > 0}
-      <MoodCalendarHeatmap dailyData={dailyMoodData} title="Daily Mood Overview" />
+      <MoodCalendarHeatmap dailyData={dailyMoodData} title="Araw-araw na Modo" />
     {/if}
 
     {#if moodCountsData && moodCountsData.length > 0}
-      <DataChart moodStats={moodCountsData} title="Overall Mood Counts" />
+      <DataChart moodStats={moodCountsData} title="Pangkalahatan" />
     {/if}
 
     <section class="trend-chart-card">
@@ -112,8 +114,11 @@
   <!-- Score Info Modal -->
   <InfoModal bind:showModal={showScoreInfoModal} title="Mood Scoring Explained">
     <!-- Content for the modal goes into the slot -->
-    <h4>How Scores Work</h4>
-    <p>Each mood is assigned a score to help track overall well-being trends. Higher scores generally indicate more positive moods, while lower or negative scores suggest more challenging periods.</p>
+    <h4>Scores? Paano 'yun?</h4>
+    <p>
+      May score ang bawat mood para makita kung paangat o pababa ang vibes mo. 
+      Mas mataas na score = mas masaya. Mas mababa = baka medyo mahirap ang araw mo huhu, kaya mo yarn. 
+    </p>
     <ul>
       {#each moodDefinitions as mood}
          <li style="background-color: {mood.colorDark};">
@@ -127,7 +132,9 @@
         </li>
       {/each}
     </ul>
-    <p>The score shown in the chart for a day, week, or month is the average of all mood scores recorded during that period.</p>
+    <p>
+      Ang score sa chart ay average ng mga modong na-log mo sa araw, linggo, o buwan na 'yon.
+    </p>
   </InfoModal>
 
   <!-- Target Network -->
@@ -136,7 +143,7 @@
   {:else}
     <div class="stats-section-card">
       <h2>Chismis Connections</h2>
-      <p>Not enough tags used yet to show connections.</p>
+      <p>Kulang pa ang tags para may koneksyon na lumabas. Magchismisan na tayo, pls!</p>
     </div>
   {/if}
 </div>

@@ -9,6 +9,7 @@
   import SortModal from '$lib/components/Entries/SortModal.svelte';
   import MusicPlayerModal from '$lib/components/MusicPlayerModal.svelte';
   import LoadingScreen from '$lib/components/LoadingScreen.svelte';
+  import Onboarding from '$lib/components/Onboarding/Onboarding.svelte';
 
   import { filterSortStore } from '$lib/stores/filterSortStore';
   import { uiStore } from '$lib/stores/uiStore.js';
@@ -116,6 +117,8 @@
 
 <div class="app-container">
   <LoadingScreen visible={isAppLoading} />
+
+  <Onboarding visible={$uiStore.isOnboardingVisible} />
 
   <Topbar />
 

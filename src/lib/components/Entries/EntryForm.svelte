@@ -115,10 +115,10 @@
       if (selectedEntry && selectedEntry.id) {
         // UPDATE PATH: Show modal to confirm update
         uiStore.showModal({
-          title: 'Confirm Update', // Changed title
-          message: `Are you sure you want to update the chismis titled "<strong>${entryData.title}</strong>"?`,
-          confirmText: 'Update It!',
-          cancelText: 'Nvm',
+          title: 'Ayusin ang Chismis?',
+          message: `Sigurado ka bang aayusin mo ang chismis na "<strong>${entryData.title}</strong>"?`,
+          confirmText: 'Oo, ayusin!',
+          cancelText: 'Wag na nga',
           confirmClass: 'confirm-button', // Use a general confirm style, not 'danger'
           onConfirm: () => {
             console.log("EntryForm: Modal confirmed for UPDATE.");
@@ -128,32 +128,32 @@
           },
           onCancel: () => {
             console.log("EntryForm: Modal cancelled for UPDATE.");
-            toasts.info('Update cancelled.');
+            toasts.info('Kinansela ang pag-update huhu.');
           }
         });
       } else {
         // ADD PATH: Show modal to confirm save
         uiStore.showModal({
-          title: 'Confirm Save', // Changed title
-          message: `Do you want to save this new chismis titled "<strong>${entryData.title}</strong>"?`,
-          confirmText: 'Save It!',
-          cancelText: 'Not Yet',
+          title: 'I-save ang Chismis?',
+          message: `Isasave ba natin ang bagong chismis na "<strong>${entryData.title}</strong>"?`,
+          confirmText: 'Oo, go!',
+          cancelText: 'Mamaya na lang',
           confirmClass: 'confirm-button', // Use a general confirm style
           onConfirm: () => {
             console.log("EntryForm: Modal confirmed for ADD.");
             addEntry(entryData.title, entryData.text, entryData.mood, entryData.tags);
             dispatch("save"); // Close form AFTER successful action
-            toasts.success(`"${entryData.title}" saved!`);
+            toasts.success(`"Nasave na ang ${entryData.title}"!`);
           },
           onCancel: () => {
             console.log("EntryForm: Modal cancelled for ADD.");
-            toasts.info('Chismis not saved.');
+            toasts.info('Di nasave ang Chismis.');
           }
         });
       }
     } else {
       // Using toast for error message instead of alert
-      toasts.error("Chismis needs a title or some text!");
+      toasts.error("Lagyan mo muna ng kwento o title, bes!");
       // alert("Chismis needs a title or some text!"); // Old way
     }
   }
@@ -170,7 +170,7 @@
       type="text"
       class="form-title-input-bwp"
       bind:value={title}
-      placeholder="Catchy Headline (Optional)"
+      placeholder="Pamagat (optional lang)"
     />
   </div>
 
@@ -179,7 +179,7 @@
       class="description-textarea-bwp"
       bind:this={descriptionTextareaRef}
       bind:value={text}
-      placeholder="What's the latest chismis, besh? Spill it all here..."
+      placeholder="Anong latest, besh? Ikwento mo na lahat dito..."
       rows="10"
     ></textarea>
 
@@ -247,15 +247,15 @@
       ariaLabel="Discard"
       onClick={() => handleBack()}
       class="secondary"
-      text="Discard"
+      text="Balewalain"
     />
     <Button 
       type="primary"
       addBtn={false}
-      ariaLabel={selectedEntry ? "Update Story" : "Save Chismis"}
+      ariaLabel={selectedEntry ? "I-update ang Kwento" : "I-save ang Chismis"}
       onClick={() => saveEntry()}
       class="primary"
-      text={selectedEntry ? "Update Story" : "Save Chismis"}
+      text={selectedEntry ? "I-update" : "I-save"}
     />
   </div>
 </div>

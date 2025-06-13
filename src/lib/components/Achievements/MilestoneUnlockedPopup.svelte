@@ -11,11 +11,11 @@
         <svelte:component this={characterImageComponent} />
     </div>
   {/if}
-  <h4>Milestone Reached!</h4>
-  <p>For <strong>{characterName}</strong>, you completed:</p>
+  <h4>Nice one! May Milestone ka!</h4>
+  <p>Si <strong>{characterName}</strong> ay proud — natapos mo ang:</p>
   <p class="ms-text">"{milestoneText}"</p>
   {#if rewardText}
-    <p class="reward-text">Reward: <strong>{rewardText}</strong></p>
+    <p class="reward-text">Nakuha mo: <strong>{rewardText}</strong></p>
   {/if}
 </div>
 

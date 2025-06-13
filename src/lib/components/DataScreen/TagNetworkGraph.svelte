@@ -331,32 +331,32 @@
 
   function showGraphInfo() {
     uiStore.showModalOnly({
-      title: '🕸️ Chismis Connections Guide',
+      title: 'Gabay sa Chismis Connections',
       message: `
         <div style="text-align: left; line-height: 1.6;">
-          <p><strong>What is this?</strong><br>
-          This network shows how your tags connect to each other. When you use multiple tags in the same entry, they become "connected".</p>
+          <p><strong>Ano ’to?</strong><br>
+          Ipinapakita ng graph na ’to kung paano konektado ang mga tags mo. Kapag ginamit mo ang ilang tags sa isang entry, nagkakaroon sila ng "connection" — parang magkakachika!</p>
 
-          <p><strong>Reading the Graph:</strong></p>
+          <p><strong>Paano basahin:</strong></p>
           <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-            <li><strong>Circles:</strong> Each represents a tag. Bigger = used more often</li>
-            <li><strong>Lines:</strong> Show tags used together. Thicker = used together more often</li>
-            <li><strong>Colors:</strong> From the mood associated with each tag</li>
+            <li><strong>Bilogs:</strong> Bawat isa ay tag. Mas malaki = mas madalas ginagamit</li>
+            <li><strong>Lines:</strong> Ipinapakita kung aling tags ang ginamit nang magkasama. Mas makapal = mas madalas silang nakasabay</li>
+            <li><strong>Colors:</strong> Galing sa mood (o modo) na ka-link ng tag</li>
           </ul>
 
-          <p><strong>Controls:</strong></p>
+          <p><strong>Mga Pwede Mong Gawin:</strong></p>
           <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-            <li><strong>Search:</strong> Find specific tags</li>
-            <li><strong>Min Connections:</strong> Hide weak connections</li>
-            <li><strong>Focus Mood:</strong> Show only tags from one mood</li>
-            <li><strong>Drag nodes:</strong> Rearrange the layout</li>
-            <li><strong>Zoom/Pan:</strong> Use mouse wheel and drag background</li>
+            <li><strong>Search:</strong> Hanapin ang specific na tag</li>
+            <li><strong>Min Connections:</strong> Itago ’yung mga mahihinang connection (o 'yung wala talagang line o connection)</li>
+            <li><strong>Focus Mood:</strong> Ipakita lang ’yung tags sa isang mood</li>
+            <li><strong>Drag:</strong> Pwede mong ilipat-lipat ang mga bilog</li>
+            <li><strong>Zoom/Pan:</strong> Scroll at i-drag lang ang background</li>
           </ul>
 
-          <p><em>Tip: Start with "Min Connections" to see your strongest tag relationships!</em></p>
+          <p><em>Tip: I-adjust muna ang "Min Connections" para makita agad ’yung pinaka-close na tags mo!</em></p>
         </div>
       `,
-      confirmText: 'Got it!',
+      confirmText: 'Gets na!',
       hideCancelButton: true
     });
   }
@@ -494,7 +494,7 @@
           on:click={() => selectedMoodId = (selectedMoodId === mood.value ? 'all' : mood.value)}
           title="Click to focus on {mood.label} mood"
         >
-          {#if typeof mood.emoji === 'string' && (
+          <!-- {#if typeof mood.emoji === 'string' && (
             mood.emoji.endsWith('.png') ||
             mood.emoji.endsWith('.svg') ||
             mood.emoji.endsWith('.jpg') ||
@@ -504,7 +504,7 @@
             <img src={mood.emoji} alt={mood.label} class="legend-emoji-img" />
           {:else}
             <span class="legend-emoji">{mood.emoji}</span>
-          {/if}
+          {/if} -->
           <span class="legend-text">{mood.label}</span>
         </button>
       {/each}

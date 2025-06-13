@@ -6,7 +6,7 @@
     import { quintOut } from 'svelte/easing';
 
     export let dailyData = [];
-    export let title = "Daily Mood Overview";
+    export let title = "Daily Modo Overview";
 
     // --- Mood Definitions & Colors ---
     const moodDefinitions = get(moodStore) || [];
@@ -129,7 +129,7 @@
   </div>
 
   {#if !paddedDailyData || paddedDailyData.length === 0}
-    <p class="no-data-message">Not enough data for heatmap.</p>
+    <p class="no-data-message">Heatmap? Medto malamig pa dito — log ka muna.</p>
   {:else}
     <div class="heatmap-grid-container">
        <div class="heatmap-grid" style="--grid-rows: {numberOfRows};">

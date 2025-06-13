@@ -4,8 +4,8 @@
 </script>
 
 <div class="achievements-page-bwp">
-  <h1 class="page-title-bwp">Mood Crew</h1>
-  <p class="page-subtitle-bwp">Unlock music by using moods and hitting milestones!</p>
+  <h1 class="page-title-bwp">Modo Crew</h1>
+  <p class="page-subtitle-bwp">I-unlock ang music gamit ang modo mo at mga milestone na ma-achieve mo!</p>
 
   <div class="divider"></div>
 

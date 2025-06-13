@@ -10,10 +10,10 @@
       <svelte:component this={characterImageComponent} />
     </div>
   {/if}
-  <h4>🎵 Music Unlocked! 🎵</h4>
-  <p>For <strong>{characterName}</strong>, you've unlocked the track:</p>
+  <h4>🎵 May Na-unlock Kang Music! 🎵</h4>
+  <p>Para kay <strong>{characterName}</strong>, na-unlock mo ang track na:</p>
   <p class="track-title-popup">"{trackTitle}"</p>
-  <p>Listen in the Mood Player!</p>
+  <p>Pakinggan na sa Modo Player!</p>
 </div>
 
 <style>

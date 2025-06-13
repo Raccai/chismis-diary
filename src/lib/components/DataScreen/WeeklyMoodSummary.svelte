@@ -8,13 +8,15 @@
 
 <div class="weekly-summary-card">
   <div class="card-header">
-     <h2 class="card-title">Weekly Mood</h2>
+     <h2 class="card-title">Weekly Modo</h2>
      <!-- Optional: Add dropdown/controls, maybe in the future for future ideas -->
      <!-- <button class="view-all-button">See All</button> -->
   </div>
 
   {#if weeklySummaries.length === 0}
-    <p class="no-summary-message">Not enough data for weekly summaries yet.</p>
+    <p class="no-summary-message">
+      Wala pa masyadong chika para sa weekly summary. G lang, keep writing!
+    </p>
   {:else}
   <ul class="summary-list">
       {#each weeklySummaries as summary (summary.dateRangeString)}

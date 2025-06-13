@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  <h5 class="milestones-title">Milestones to Unlock Music:</h5>
+  <h5 class="milestones-title">Mga Milestone para Ma-unlock ang Music:</h5>
   {#if characterData.milestones && characterData.milestones.length > 0}
     <ul class="milestone-list">
       {#each characterData.milestones as milestone (milestone.id)}
@@ -61,7 +61,7 @@
                 <MusicIcon class="icon-size reward-icon" /> 
               </div>
               <p>
-                Track Unlocked!
+                Sayo na!
               </p>
             </div>
           {:else if completed && milestone.rewardPreview}
@@ -78,7 +78,9 @@
       {/each}
     </ul>
   {:else}
-    <p class="no-milestones-defined">This mood's music is readily available or unlocked through general progress!</p>
+    <p class="no-milestones-defined">
+      Available na agad ang music na ’to — o baka na-unlock mo na sa iba mong progress!
+    </p>
   {/if}
 </div>
 

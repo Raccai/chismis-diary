@@ -73,7 +73,7 @@
 
 @font-face {
   font-family: 'Graffiti Urban';
-  src: url('/fonts/GraffitiUrban-Regular.otf') format('opentype');
+  src: url('/fonts/ThuruBrush.otf') format('opentype');
   font-style: normal;
   font-display: normal;
 }
@@ -98,7 +98,7 @@
   --main-black: #1d1c19;
   --main-white: #ffffff;  
   --main-dark-white: #e9e9e9;  
-  --main-grey: #c4c4c4;
+  --main-grey: #7c7c7c;
   --main-dark-grey: #23262B;
   --main-placeholder: #c3beb5;
   --main-card-bg: #ded9ca;

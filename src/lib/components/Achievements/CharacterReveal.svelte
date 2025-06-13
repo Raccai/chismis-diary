@@ -94,7 +94,7 @@
         Music Unlocked
       </p>
     {:else}
-       <p class="milestone-count no-milestones-text">Always Vibing</p>
+       <p class="milestone-count no-milestones-text">Laging Good Vibes</p>
     {/if}
     <div class="reward-icons">
       {#if moodCharacter.musicTrackMoodValue}

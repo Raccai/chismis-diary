@@ -15,11 +15,11 @@
   const dispatch = createEventDispatcher();
 
   const sortOptions = [
-    { label: 'Newest First', value: 'date_desc', iconComponent: NewestFirst },
-    { label: 'Oldest First', value: 'date_asc', iconComponent: OldestFirst },
-    { label: 'Title (A-Z)', value: 'title_asc', iconComponent: AZ },
-    { label: 'Title (Z-A)', value: 'title_desc', iconComponent: ZA },
-    { label: 'Default Order', value: 'none', iconComponent: DefaultOrder }
+    { label: 'Pinakabago Muna', value: 'date_desc', iconComponent: NewestFirst },
+    { label: 'Pinakaluma Muna', value: 'date_asc', iconComponent: OldestFirst },
+    { label: 'Pamagat (A-Z)', value: 'title_asc', iconComponent: AZ },
+    { label: 'Pamagat (Z-A)', value: 'title_desc', iconComponent: ZA },
+    { label: 'Default na Ayos', value: 'none', iconComponent: DefaultOrder }
   ];
 
   let internalSortKey = currentSortKey;
@@ -68,7 +68,7 @@
       aria-labelledby="sort-modal-title"
       on:click|stopPropagation
     >
-      <h3 id="sort-modal-title" class="modal-title-graffiti">Sort Chismis By</h3>
+      <h3 id="sort-modal-title" class="modal-title-graffiti">Paano mo gustong ayusin ’to?</h3>
 
       <div class="options-list-graffiti">
         {#each sortOptions as option (option.value)}
@@ -99,7 +99,7 @@
           ariaLabel="Cancel"
           onClick={() => closeModal()}
           class="secondary"
-          text="Cancel"
+          text="Bawi Muna"
         />
         <Button 
           type="primary"
@@ -107,7 +107,7 @@
           ariaLabel="Apply Sort"
           onClick={() => applySort()}
           class="primary"
-          text="Apply Sort"
+          text="Sige, Ayusin"
         />
       </div>
     </div>
