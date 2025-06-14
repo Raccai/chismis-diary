@@ -1,8 +1,21 @@
 import { writable } from 'svelte/store';
-import { browser } from '$app/environment'; // To check if running in browser environment
+import { browser } from '$app/environment'; 
+import { Capacitor } from '@capacitor/core';
+import { StatusBar } from '@capacitor/status-bar';
 
 // --- Determine the initial theme ---
 let initialValue = 'light'; // Default theme
+
+async function configureStatusBar() {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      await StatusBar.setOverlaysWebView({ overlay: false }); // EXPLICITLY SET TO FALSE
+      console.log("StatusBar overlay set to false.");
+    } catch (e) {
+      console.error("Error configuring status bar overlay:", e);
+    }
+  }
+}
 
 if (browser) { // This code only runs in the browser
   // 1. Check localStorage for a saved theme preference

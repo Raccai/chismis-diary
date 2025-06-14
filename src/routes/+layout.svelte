@@ -10,6 +10,8 @@
   import MusicPlayerModal from '$lib/components/MusicPlayerModal.svelte';
   import LoadingScreen from '$lib/components/LoadingScreen.svelte';
   import Onboarding from '$lib/components/Onboarding/Onboarding.svelte';
+  import { Capacitor } from '@capacitor/core';
+  import { StatusBar } from '@capacitor/status-bar';
 
   import { filterSortStore } from '$lib/stores/filterSortStore';
   import { uiStore } from '$lib/stores/uiStore.js';
@@ -28,9 +30,22 @@
   let initialProgressProcessed = false;
   let isAppLoading = true;
 
-  onMount(() => {
+  onMount(async() => {
     if ($page.url.pathname === '/') {
       goto('/entry', { replaceState: true });
+    }
+
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await StatusBar.setOverlaysWebView({ overlay: false });
+        console.log('[Layout] StatusBar overlay explicitly set to false.');
+        await StatusBar.setStyle({ style: 'DARK' }); 
+        if (Capacitor.getPlatform() === 'android') {
+          await StatusBar.setBackgroundColor({ color: '#1d1c19' }); 
+        }
+      } catch (e) {
+        console.error("Error configuring StatusBar in Layout onMount:", e);
+      }
     }
 
     setTimeout(() => {

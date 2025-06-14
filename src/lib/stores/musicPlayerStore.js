@@ -2,6 +2,7 @@ import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import { musicTracks } from '$lib/stores/musicTracks.js';
 import { userProgress } from '$lib/stores/userProgressStore.js';
+import { App } from '@capacitor/app';
 
 const initialPlayerState = {
   allTracks: musicTracks,
@@ -13,7 +14,8 @@ const initialPlayerState = {
   duration: 0,
   volume: 0.75,
   isMuted: false,
-  isModalOpen: false
+  isModalOpen: false,
+  wasPlayingBeforeBackground: false
 };
 
 function createMusicPlayerStore() {
@@ -38,7 +40,35 @@ function createMusicPlayerStore() {
         update(s => ({ ...s, isPlaying: false, currentTime: 0 }));
       }
     };
+
+    // --- Capacitor App State Listener ---
+    App.addListener('appStateChange', ({ isActive }) => {
+      console.log('App state changed. Is active?', isActive);
+      const currentStoreState = get(store);
+
+      if (!isActive) { // App is going to background or becoming inactive
+        if (currentStoreState.isPlaying) {
+          update(s => ({ ...s, _wasPlayingBeforeBackground: true })); // Remember it was playing
+          audioElement.pause(); // Pause the audio
+          console.log('Music paused due to app backgrounding.');
+        } else {
+          update(s => ({ ...s, _wasPlayingBeforeBackground: false }));
+        }
+      } else { // App is returning to foreground / becoming active
+        if (currentStoreState._wasPlayingBeforeBackground) {
+          // Only resume if it was playing before, and user hasn't manually paused/stopped in meantime
+          // And if there's a current track
+          if (currentStoreState.currentTrack && !currentStoreState.isPlaying) {
+             audioElement.play().catch(e => console.error("Error resuming audio:", e));
+             console.log('Music resumed due to app foregrounding.');
+          }
+        }
+        update(s => ({ ...s, _wasPlayingBeforeBackground: false })); // Reset flag
+      }
+    });
   }
+
+  
 
   const methods = {
     subscribe,

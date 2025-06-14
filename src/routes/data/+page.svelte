@@ -16,9 +16,24 @@
    } from '$lib/utils/moodAnalysis.js'; // Assuming calculateMoodScoreTrend exists now
 
   const moodScoreMapping = {
-    love: 3, happy: 2, kilig: 1, anxious: -2,
-    sad: -1, angry: -2, betrayed: -3, default: 0
+    love: 3,
+    happy: 2,
+    kilig: 1,
+    chismis: 0,        
+    sad: -1,
+    inis: -2,
+    betrayed: -3,
+    tampo: -1,
+    gigil: 0,        
+    loka: 0,          
+    praning: -2,
+    bored: -1,
+    taray: 1,          
+    ganda: 2,          
+    sabog: -1, 
+    default: 0
   };
+
   function getMoodScoreDisplay(moodValue) {
     return moodScoreMapping.hasOwnProperty(moodValue) ? moodScoreMapping[moodValue] : moodScoreMapping.default;
   }
@@ -142,8 +157,8 @@
     <TagNetworkGraph graphData={tagGraphData} width={desiredWidth} height={desiredHeight} />
   {:else}
     <div class="stats-section-card">
-      <h2>Chismis Connections</h2>
-      <p>Kulang pa ang tags para may koneksyon na lumabas. Magchismisan na tayo, pls!</p>
+      <!-- <h2>Chismis Connections</h2>
+      <p>Kulang pa ang tags para may koneksyon na lumabas. Magchismisan na tayo, pls!</p> -->
     </div>
   {/if}
 </div>
@@ -160,10 +175,11 @@
     text-align: center;
     font-style: italic;
     color: var(--card-title-text); /* Lighter text on dark theme */
-    background-color: #2d3748; /* Darker background card */
+    background-color: var(--card-bg); /* Darker background card */
+    border: 1px solid var(--card-border);
     padding: 2rem;
     border-radius: 12px;
-    margin: 2rem auto; /* Center message */
+    margin: 1rem auto; /* Center message */
     max-width: 500px;
   }
 

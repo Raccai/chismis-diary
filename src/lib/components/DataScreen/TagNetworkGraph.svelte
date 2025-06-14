@@ -5,6 +5,7 @@
   import { get } from 'svelte/store';
   import { uiStore } from '$lib/stores/uiStore.js';
   import InfoIcon from '$lib/icons/InfoIcon.svelte';
+  import InfoModal from './InfoModal.svelte';
 
   export let graphData = null;
 
@@ -18,6 +19,7 @@
   let selectedMoodId = 'all';
   let showLabels = true;
   let searchTerm = '';
+  let showChismisInfoModal = false;
 
   const moodDefinitions = get(moodStore) || [];
 
@@ -330,35 +332,7 @@
   }
 
   function showGraphInfo() {
-    uiStore.showModalOnly({
-      title: 'Gabay sa Chismis Connections',
-      message: `
-        <div style="text-align: left; line-height: 1.6;">
-          <p><strong>Ano ’to?</strong><br>
-          Ipinapakita ng graph na ’to kung paano konektado ang mga tags mo. Kapag ginamit mo ang ilang tags sa isang entry, nagkakaroon sila ng "connection" — parang magkakachika!</p>
-
-          <p><strong>Paano basahin:</strong></p>
-          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-            <li><strong>Bilogs:</strong> Bawat isa ay tag. Mas malaki = mas madalas ginagamit</li>
-            <li><strong>Lines:</strong> Ipinapakita kung aling tags ang ginamit nang magkasama. Mas makapal = mas madalas silang nakasabay</li>
-            <li><strong>Colors:</strong> Galing sa mood (o modo) na ka-link ng tag</li>
-          </ul>
-
-          <p><strong>Mga Pwede Mong Gawin:</strong></p>
-          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-            <li><strong>Search:</strong> Hanapin ang specific na tag</li>
-            <li><strong>Min Connections:</strong> Itago ’yung mga mahihinang connection (o 'yung wala talagang line o connection)</li>
-            <li><strong>Focus Mood:</strong> Ipakita lang ’yung tags sa isang mood</li>
-            <li><strong>Drag:</strong> Pwede mong ilipat-lipat ang mga bilog</li>
-            <li><strong>Zoom/Pan:</strong> Scroll at i-drag lang ang background</li>
-          </ul>
-
-          <p><em>Tip: I-adjust muna ang "Min Connections" para makita agad ’yung pinaka-close na tags mo!</em></p>
-        </div>
-      `,
-      confirmText: 'Gets na!',
-      hideCancelButton: true
-    });
+    showChismisInfoModal = true;
   }
 
   function clearSearch() {
@@ -510,6 +484,32 @@
       {/each}
     </div>
   </div>
+
+  <InfoModal bind:showModal={showChismisInfoModal} title="Gabay sa Chismis Connections">
+    <div style="text-align: left; line-height: 1.6;">
+      <p><strong>Ano ’to?</strong><br>
+      Ipinapakita ng graph na ’to kung paano konektado ang mga tags mo. Kapag ginamit mo ang ilang tags sa isang entry, nagkakaroon sila ng "connection" — parang magkakachika!</p>
+
+      <p><strong>Paano basahin:</strong></p>
+      <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+        <li><strong>Bilogs:</strong> Bawat isa ay tag. Mas malaki = mas madalas ginagamit</li>
+        <li><strong>Lines:</strong> Ipinapakita kung aling tags ang ginamit nang magkasama. Mas makapal = mas madalas silang nakasabay</li>
+        <li><strong>Colors:</strong> Galing sa mood (o modo) na ka-link ng tag</li>
+      </ul>
+
+      <p><strong>Mga Pwede Mong Gawin:</strong></p>
+      <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+        <li><strong>Search:</strong> Hanapin ang specific na tag</li>
+        <li><strong>Min Connections:</strong> Itago ’yung mga mahihinang connection (o 'yung wala talagang line o connection)</li>
+        <li><strong>Focus Mood:</strong> Ipakita lang ’yung tags sa isang mood</li>
+        <li><strong>Drag:</strong> Pwede mong ilipat-lipat ang mga bilog</li>
+        <li><strong>Zoom/Pan:</strong> Scroll at i-drag lang ang background</li>
+      </ul>
+
+      <p><em>Tip: I-adjust muna ang "Min Connections" para makita agad ’yung pinaka-close na tags mo!</em></p>
+    </div>
+  </InfoModal>
+
 </div>
 
 <style>
