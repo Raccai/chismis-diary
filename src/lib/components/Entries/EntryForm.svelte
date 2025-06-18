@@ -16,6 +16,8 @@
   let tagInput = "";
   let tags = [];
   let _loadedEntryId = null;
+  let keyboardVisible = false;
+  let bottomInset = 0;
 
   let descriptionTextareaRef; // For autofocus on text area
 
@@ -45,6 +47,27 @@
       descriptionTextareaRef.focus();
     }
     document.addEventListener('click', handleClickOutsideDropdown, true);
+  });
+
+  
+  onMount(() => {
+    if (window.visualViewport) {
+      const updateInset = () => {
+        const viewport = window.visualViewport;
+        const diff = window.innerHeight - viewport.height;
+        keyboardVisible = diff > 150; // heuristically, >150px height reduction = keyboard
+        bottomInset = keyboardVisible ? diff : 0;
+      };
+
+      updateInset();
+      window.visualViewport.addEventListener('resize', updateInset);
+      window.visualViewport.addEventListener('scroll', updateInset);
+
+      return () => {
+        window.visualViewport.removeEventListener('resize', updateInset);
+        window.visualViewport.removeEventListener('scroll', updateInset);
+      };
+    }
   });
 
   onDestroy(() => {
@@ -115,10 +138,10 @@
       if (selectedEntry && selectedEntry.id) {
         // UPDATE PATH: Show modal to confirm update
         uiStore.showModal({
-          title: 'Ayusin ang Chismis?',
+          title: 'I-update na ba natin ang Chismis?',
           message: `Sigurado ka bang aayusin mo ang chismis na "<strong>${entryData.title}</strong>"?`,
-          confirmText: 'Oo, ayusin!',
-          cancelText: 'Wag na nga',
+          confirmText: 'Oo!',
+          cancelText: 'Wag muna',
           confirmClass: 'confirm-button', // Use a general confirm style, not 'danger'
           onConfirm: () => {
             console.log("EntryForm: Modal confirmed for UPDATE.");
@@ -164,27 +187,32 @@
   }
 </script>
 
-<div class="entry-form-bwp">
-  <div class="form-header-bwp">
+<div class="entry-form">
+  <div class="form-header">
     <input
       type="text"
-      class="form-title-input-bwp"
+      class="form-title-input"
       bind:value={title}
       placeholder="Pamagat (optional lang)"
     />
   </div>
 
-  <div class="form-content-area-bwp">
+  <div class="form-content-area">
     <textarea
-      class="description-textarea-bwp"
+      class="description-textarea"
       bind:this={descriptionTextareaRef}
       bind:value={text}
+      on:focus={() => {
+      setTimeout(() => {
+          descriptionTextareaRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }}
       placeholder="Anong latest, besh? Ikwento mo na lahat dito..."
       rows="10"
     ></textarea>
 
-    <div class="meta-controls-bwp">
-      <div class="mood-selector-bwp">
+    <div class="meta-controls">
+      <div class="mood-selector">
         <button
           type="button"
           class="mood-dropdown-trigger"
@@ -229,7 +257,7 @@
         {/if}
       </div>
 
-      <div class="tags-input-field-bwp">
+      <div class="tags-input-field">
         <input
           type="text"
           bind:value={tagInput}
@@ -240,14 +268,17 @@
     </div>
   </div>
 
-  <div class="form-actions-bwp">
+  <div 
+    class="form-actions"
+    style="padding-bottom: calc(1rem + env(safe-area-inset-bottom) + {keyboardVisible ? bottomInset + 'px' : '0px'})"
+  >
     <Button 
       type="secondary"
       addBtn={false}
       ariaLabel="Discard"
       onClick={() => handleBack()}
       class="secondary"
-      text="Balewalain"
+      text="I-Discard"
     />
     <Button 
       type="primary"
@@ -255,13 +286,13 @@
       ariaLabel={selectedEntry ? "I-update ang Kwento" : "I-save ang Chismis"}
       onClick={() => saveEntry()}
       class="primary"
-      text={selectedEntry ? "I-update" : "I-save"}
+      text={selectedEntry ? "I-Update" : "I-Save"}
     />
   </div>
 </div>
 
 <style>
-  .entry-form-bwp {
+  .entry-form {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -271,12 +302,12 @@
     font-family: 'Urbanist', sans-serif; /* Clean sans-serif */
   }
 
-  .form-header-bwp {
+  .form-header {
     padding: 1rem 1.25rem 0.4rem 1.25rem;
     border-bottom: 2px solid var(--card-border);
   }
 
-  .form-title-input-bwp {
+  .form-title-input {
     width: 100%;
     border: none;
     background: transparent;
@@ -284,15 +315,17 @@
     font-size: 1.8rem; /* Large title */
     color: var(--entry-form-title);
     padding: 0.5rem 0;
+    letter-spacing: -0.1rem;
+    font-weight: bold;
     outline: none;
     text-align: left; /* Or center */
   }
-  .form-title-input-bwp::placeholder {
+  .form-title-input::placeholder {
     color: var(--entry-form-placeholder);
     font-weight: normal;
   }
 
-  .form-content-area-bwp {
+  .form-content-area {
     flex-grow: 1; /* This area takes up most space */
     padding: 0rem 0rem 1rem 0rem;
     overflow-y: auto; /* Scroll only this area if content overflows */
@@ -300,7 +333,7 @@
     flex-direction: column;
   }
 
-  .description-textarea-bwp {
+  .description-textarea {
     flex-grow: 1; /* Textarea takes up available vertical space */
     width: 100%;
     border: none; /* No border for a cleaner look */
@@ -315,18 +348,18 @@
     margin-bottom: 1rem; /* Space before mood/tags */
     font-family: 'Urbanist', sans-serif;
   }
-  .description-textarea-bwp::placeholder {
+  .description-textarea::placeholder {
     color: var(--entry-form-placeholder);
   }
 
-  .meta-controls-bwp {
+  .meta-controls {
     display: flex;
     gap: 0.75rem;
     align-items: stretch;
     padding: 0 1rem;
   }
 
-  .mood-selector-bwp {
+  .mood-selector {
     position: relative; /* For dropdown positioning */
     flex-basis: 60%; /* Mood dropdown takes more space */
   }
@@ -412,11 +445,11 @@
     margin-right: 0.6rem;
   }
 
-  .tags-input-field-bwp {
+  .tags-input-field {
     flex-basis: 40%; /* Tag input takes less space */
     font-family: 'Urbanist', sans-serif;
   }
-  .tags-input-field-bwp input {
+  .tags-input-field input {
     width: 100%;
     padding: 0.6rem 0.8rem;
     background-color: var(--main-bg);
@@ -426,15 +459,15 @@
     color: var(--secondary-btn-text);
     outline: none;
   }
-  .tags-input-field-bwp input::placeholder { color: var(--bw-text-tertiary, #8e8e93); }
-  .tags-input-field-bwp input:focus {
+  .tags-input-field input::placeholder { color: var(--bw-text-tertiary, #8e8e93); }
+  .tags-input-field input:focus {
     background-color: var(--dropdown-text-color);
     border: 2px solid var(--dropdown-bg-color);
     color: var(--dropdown-bg-color);
   }
 
   /* Fixed Bottom Action Bar */
-  .form-actions-bwp {
+  .form-actions {
     display: flex;
     justify-content: space-between; /* Space out back and save */
     align-items: center;

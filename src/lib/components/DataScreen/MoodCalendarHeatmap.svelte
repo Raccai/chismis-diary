@@ -1,125 +1,152 @@
 <script>
-    import { moodStore } from '$lib/stores/moodStore.js';
-    import { get } from 'svelte/store';
-    import { onDestroy, onMount } from 'svelte';
-    import { scale } from 'svelte/transition';
-    import { quintOut } from 'svelte/easing';
+  import { moodStore } from '$lib/stores/moodStore.js';
+  import { get } from 'svelte/store';
+  import { onDestroy, onMount } from 'svelte';
+  import { scale } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
 
-    export let dailyData = [];
-    export let title = "Daily Modo Overview";
+  export let dailyData = [];
+  export let title = "Daily Modo Overview";
 
-    // --- Mood Definitions & Colors ---
-    const moodDefinitions = get(moodStore) || [];
-    const moodMap = new Map(moodDefinitions.map(m => [m.value, m]));
-    const moodBaseColors = {
-      happy: '#34d399', sad: '#60a5fa', excited: '#facc15', angry: '#f87171',
-      anxious: '#c084fc', okay: '#fb923c', default: '#94a3b8'
-    };
-    const defaultBgColor = '#23262B';
-    const paddingBgColor = 'transparent';
-    const borderColor = '#4a5568';
+  // --- Mood Definitions & Colors ---
+  const moodDefinitions = get(moodStore) || [];
+  const moodMap = new Map(moodDefinitions.map(m => [m.value, m]));
+  const moodBaseColors = {
+    happy: '#34d399', sad: '#60a5fa', excited: '#facc15', angry: '#f87171',
+    anxious: '#c084fc', okay: '#fb923c', default: '#94a3b8'
+  };
+  const defaultBgColor = '#23262B';
+  const paddingBgColor = 'transparent';
+  const borderColor = '#4a5568';
 
-    // --- State for Active Tooltip ---
-    // Now stores data AND position info
-    let activeTooltipData = null; // { data: { date, dayName, ... }, position: { top, left, width } } | null
-    let tooltipElement = null; // Still useful for click-outside
+  // --- State for Active Tooltip ---
+  // Now stores data AND position info
+  let activeTooltipData = null; // { data: { date, dayName, ... }, position: { top, left, width } } | null
+  let tooltipElement = null; // Still useful for click-outside
 
-    function isEmojiImage(emoji) {
-      return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
+  function isEmojiImage(emoji) {
+    return emoji && (emoji.includes('.png') || emoji.includes('.jpg') || emoji.includes('.jpeg') || emoji.includes('.gif') || emoji.includes('.svg'));
+  }
+
+  // --- Mood Styling Function ---
+  function getMoodStyling(moodValue) {
+      if (moodValue === 'padding') {
+          return { emoji: null, bgColor: paddingBgColor, label: '' };
+      }
+      const moodDef = moodMap.get(moodValue);
+      if (moodDef) {
+          const baseColor = moodBaseColors[moodDef.value] || moodBaseColors.default;
+          const bgColor = moodValue ? `${baseColor}33` : defaultBgColor;
+          return { emoji: moodDef.emoji, bgColor: bgColor, label: moodDef.label };
+      } else {
+          return { emoji: ' ', bgColor: defaultBgColor, label: 'No Entry' };
+      }
+  }
+
+  // --- Padding Logic ---
+  $: paddedDailyData = (() => {
+    if (!dailyData || dailyData.length === 0) return [];
+
+    const dataWithToday = [...dailyData];
+    const today = new Date().toLocaleDateString('sv-SE'); // "YYYY-MM-DD" - This is correct
+
+    // If today is missing, add a placeholder
+    const todayExists = dataWithToday.some(d => d.date === today);
+    if (!todayExists) {
+        dataWithToday.push({
+            date: today,
+            dominantMoodValue: null,
+            entryCount: 0
+        });
     }
 
-    // --- Mood Styling Function ---
-    function getMoodStyling(moodValue) {
-        if (moodValue === 'padding') {
-            return { emoji: null, bgColor: paddingBgColor, label: '' };
-        }
-        const moodDef = moodMap.get(moodValue);
-        if (moodDef) {
-            const baseColor = moodBaseColors[moodDef.value] || moodBaseColors.default;
-            const bgColor = moodValue ? `${baseColor}33` : defaultBgColor;
-            return { emoji: moodDef.emoji, bgColor: bgColor, label: moodDef.label };
-        } else {
-            return { emoji: ' ', bgColor: defaultBgColor, label: 'No Entry' };
-        }
-    }
+    // Sort chronologically
+    dataWithToday.sort((a, b) => a.date.localeCompare(b.date));
 
-    // --- Padding Logic ---
-    $: paddedDailyData = (() => {
-        if (!dailyData || dailyData.length === 0) return [];
-        const firstDate = new Date(dailyData[0].date + 'T00:00:00');
-        let dayOfWeek = firstDate.getDay();
-        const gridStartDay = 1;
-        let paddingNeeded = dayOfWeek - gridStartDay;
-        if (paddingNeeded < 0) paddingNeeded += 7;
-        const padding = Array.from({ length: paddingNeeded }).map((_, i) => ({
-            date: `padding-${i}`, dominantMoodValue: 'padding', entryCount: 0
-        }));
-        return [...padding, ...dailyData];
-    })();
+    // --- Padding logic (Refined) ---
+    // By appending 'T00:00:00', we tell new Date() to parse it in the local timezone,
+    // preventing shifts that can happen with just 'YYYY-MM-DD'.
+    const firstDate = new Date(dataWithToday[0].date + 'T00:00:00');
+    
+    // getDay() is correct here because firstDate is now a proper local date object.
+    let dayOfWeek = firstDate.getDay(); 
+    const gridStartDay = 1; // 0=Sun, 1=Mon, ...
+    let paddingNeeded = dayOfWeek - gridStartDay;
+    if (paddingNeeded < 0) paddingNeeded += 7;
 
-    // --- Helper Functions ---
-    function getDayName(dateString) {
-      const date = new Date(dateString + 'T00:00:00');
-      return date.toLocaleDateString(undefined, { weekday: 'long' });
-    }
+    const padding = Array.from({ length: paddingNeeded }).map((_, i) => ({
+        date: `padding-${i}`,
+        dominantMoodValue: 'padding',
+        entryCount: 0
+    }));
 
-    // --- Event Handlers ---
-    function handleCellClick(day, event) {
-        event.stopPropagation();
-        if (day.dominantMoodValue === 'padding') {
-            closeTooltip(); return;
-        }
+    return [...padding, ...dataWithToday];
+  })();
 
-        // Get position of the clicked cell relative to viewport
-        const rect = event.target.getBoundingClientRect();
 
-        // Toggle or set new tooltip data + position
-        if (activeTooltipData && activeTooltipData.data.date === day.date) {
+  // --- Helper Functions ---
+  function getDayName(dateString) {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString(undefined, { weekday: 'long' });
+  }
+
+  // --- Event Handlers ---
+  function handleCellClick(day, event) {
+      event.stopPropagation();
+      if (day.dominantMoodValue === 'padding') {
+          closeTooltip(); return;
+      }
+
+      // Get position of the clicked cell relative to viewport
+      const rect = event.target.getBoundingClientRect();
+
+      // Toggle or set new tooltip data + position
+      if (activeTooltipData && activeTooltipData.data.date === day.date) {
+          closeTooltip();
+      } else {
+          const styling = getMoodStyling(day.dominantMoodValue);
+          activeTooltipData = {
+              data: {
+                  date: day.date,
+                  dayName: getDayName(day.date),
+                  label: styling.label,
+                  emoji: styling.emoji,
+                  entryCount: day.entryCount,
+              },
+              position: {
+                  // Calculate position for tooltip (aiming above the cell)
+                  top: rect.top, // Position relative to cell top
+                  left: rect.left + rect.width / 2, // Center horizontally relative to cell center
+                  width: rect.width // Not strictly needed for positioning, but maybe useful
+              }
+          };
+          // console.log('Opening tooltip for:', activeTooltipData);
+      }
+  }
+
+  function closeTooltip() {
+      if (activeTooltipData) {
+          activeTooltipData = null;
+      }
+  }
+
+  // --- Global Click Listener ---
+  function handleWindowClick(event) {
+      if (tooltipElement && !tooltipElement.contains(event.target)) {
+          // Check if the click was on a cell - handleCellClick stops propagation,
+          // so if it reaches here and is outside tooltip, we can close.
+          closeTooltip();
+      } else if (!tooltipElement && activeTooltipData) {
+            // Fallback
             closeTooltip();
-        } else {
-            const styling = getMoodStyling(day.dominantMoodValue);
-            activeTooltipData = {
-                data: {
-                    date: day.date,
-                    dayName: getDayName(day.date),
-                    label: styling.label,
-                    emoji: styling.emoji,
-                    entryCount: day.entryCount,
-                },
-                position: {
-                    // Calculate position for tooltip (aiming above the cell)
-                    top: rect.top, // Position relative to cell top
-                    left: rect.left + rect.width / 2, // Center horizontally relative to cell center
-                    width: rect.width // Not strictly needed for positioning, but maybe useful
-                }
-            };
-            // console.log('Opening tooltip for:', activeTooltipData);
-        }
-    }
+      }
+  }
 
-    function closeTooltip() {
-        if (activeTooltipData) {
-            activeTooltipData = null;
-        }
-    }
+  onMount(() => { window.addEventListener('click', handleWindowClick); });
+  onDestroy(() => { window.removeEventListener('click', handleWindowClick); });
 
-    // --- Global Click Listener ---
-    function handleWindowClick(event) {
-        if (tooltipElement && !tooltipElement.contains(event.target)) {
-            // Check if the click was on a cell - handleCellClick stops propagation,
-            // so if it reaches here and is outside tooltip, we can close.
-            closeTooltip();
-        } else if (!tooltipElement && activeTooltipData) {
-             // Fallback
-             closeTooltip();
-        }
-    }
-
-    onMount(() => { window.addEventListener('click', handleWindowClick); });
-    onDestroy(() => { window.removeEventListener('click', handleWindowClick); });
-
-    // --- Calculate number of rows ---
-    $: numberOfRows = Math.ceil(paddedDailyData.length / 7) || 1;
+  // --- Calculate number of rows ---
+  $: numberOfRows = Math.ceil(paddedDailyData.length / 7) || 1;
 
 </script>
 
@@ -129,7 +156,7 @@
   </div>
 
   {#if !paddedDailyData || paddedDailyData.length === 0}
-    <p class="no-data-message">Heatmap? Medto malamig pa dito — log ka muna.</p>
+    <p class="no-data-message">Heatmap? Medyo malamig pa dito — log ka muna ng entry.</p>
   {:else}
     <div class="heatmap-grid-container">
        <div class="heatmap-grid" style="--grid-rows: {numberOfRows};">
@@ -137,8 +164,8 @@
             {@const isPadding = day.dominantMoodValue === 'padding'}
             {@const styling = getMoodStyling(day.dominantMoodValue)}
             {@const moodObj = day.dominantMoodValue && day.dominantMoodValue !== 'padding' 
-                ? moodMap.get(day.dominantMoodValue) 
-                : null
+              ? moodMap.get(day.dominantMoodValue) 
+              : null
             }
             {@const cellBg = isPadding 
                 ? 'transparent' 
@@ -240,7 +267,7 @@
     grid-auto-rows: minmax(16px, 1fr);
     gap: 2px;
     aspect-ratio: 7 / var(--grid-rows);
-    max-width: 250px;
+    max-width: 320px;
     margin: 0 auto 1rem auto;
   }
 
@@ -271,8 +298,8 @@
     pointer-events: none;
   }
   .mood-emoji-img {
-    width: 25px;
-    height: 25px;
+    width: 32px;
+    height: 32px;
   }
 
   /* --- Tooltip Styles --- */
@@ -324,8 +351,8 @@
     pointer-events: none;
   }
   .mood-emoji-img-tooltip {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
   }
 
   .tooltip-label {

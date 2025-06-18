@@ -221,33 +221,13 @@
   .player-title {
     font-family: 'Graffiti Urban', sans-serif;
     font-size: 2rem;
-    font-weight: normal;
+    font-weight: bold;
+    letter-spacing: -0.12rem;
     text-align: center;
     color: var(--card-title-text);
     margin: 0;
     margin-bottom: 0.8rem;
     flex-shrink: 0;
-  }
-  .modal-body-bwp {
-    flex-grow: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    scrollbar-width: thin;
-    scrollbar-color: var(--bw-accent-pink, #ff69b4) var(--bw-bg-tertiary, #2c2c2c);
-  }
-  .modal-body-bwp::-webkit-scrollbar {
-    width: 8px;
-  }
-  .modal-body-bwp::-webkit-scrollbar-track {
-    background: var(--bw-bg-tertiary, #2c2c2c);
-    border-radius: 4px;
-  }
-  .modal-body-bwp::-webkit-scrollbar-thumb {
-    background-color: var(--bw-accent-pink, #ff69b4);
-    border-radius: 4px;
-    border: 2px solid var(--bw-bg-tertiary, #2c2c2c);
   }
   .track-info {
     text-align: center;
@@ -452,25 +432,19 @@
     box-sizing: border-box;
     flex-shrink: 0;
   }
-  .player-ctrl-button-bwp :global(svg) {
-      width: 60%;
-      height: 60%;
-      fill: currentColor;
+  /* .player-ctrl-button-bwp :global(svg) {
+    width: 60%;
+    height: 60%;
+    fill: currentColor;
   }
   .player-ctrl-button-bwp.play-pause :global(svg) {
-      fill: var(--card-bg); /* Ensure icon color on pink button */
-      width: 50%;
-      height: 50%;
-  }
+    fill: var(--card-bg); 
+    width: 50%;
+    height: 50%;
+  } */
   :global(.player-close-button-override) {
     flex-grow: 0 !important;
     min-width: 100px !important;
     max-width: 180px !important;
-  }
-  :global(.player-close-button-override .button-icon svg), /* If Button uses slot */
-  :global(.player-close-button-override > svg) { /* If Button renders SVG directly */
-      /* This rule is for the <Button icon={null}>, so it won't apply as no SVG is rendered
-         If Button.svelte *always* renders an <svg> tag even for null icon, this might be needed
-         but ideally Button.svelte would conditionally render its icon part. */
   }
 </style>

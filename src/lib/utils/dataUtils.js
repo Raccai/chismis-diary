@@ -97,3 +97,9 @@ export function clearAllAppData() {
     toasts.error("Failed to clear all data. See console.");
   }
 }
+
+export function getLocalDateString(isoDateString) {
+  if (!isoDateString) return null;
+  const date = new Date(isoDateString);
+  return date.toLocaleDateString('sv-SE');
+}

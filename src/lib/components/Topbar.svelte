@@ -24,9 +24,9 @@
     <a href="/entry" class="logo">
       <TakeNoteTopbar />
     </a>
-    <span>
+    <!-- <span>
       CD
-    </span>
+    </span> -->
   </div>
 
   <div class="top-bar-actions">
@@ -63,50 +63,44 @@
     right: 0;
     z-index: 1000;
   }
-
+  
   .logo-container {
     display: flex;
     justify-content: center;
     align-items: center;
   }
-
-  .logo-container span {
-    font-size: 2.4rem;
-    letter-spacing: 0.16rem;
-    margin-left: -0.2rem;
-  }
-
+  
   .logo-container .logo {
     transform: scale(0.8);
   }
-
+  
   .top-bar-actions {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
   }
-
+  
   .sort-button-topbar {
     border: 2px solid var(--main-white);
-    padding: 4px 6px;
+    padding: 4px 6px 2px 6px;
     border-radius: 8px;
   }
-
+  
   .sort-icon {
     transform: scale(0.8);
   }
-
+  
   .music-button-topbar {
     color: var(--main-white); 
   }
-
+  
   .music-button-topbar :global(svg) { 
     border: 3px solid var(--main-white);
     padding: 6px 8px;
     border-radius: 12px;
   }
-
+  
   .music-icon {
     transform: scale(0.72);
   }

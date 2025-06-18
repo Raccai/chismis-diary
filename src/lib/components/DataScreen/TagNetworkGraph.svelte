@@ -488,25 +488,25 @@
   <InfoModal bind:showModal={showChismisInfoModal} title="Gabay sa Chismis Connections">
     <div style="text-align: left; line-height: 1.6;">
       <p><strong>Ano ’to?</strong><br>
-      Ipinapakita ng graph na ’to kung paano konektado ang mga tags mo. Kapag ginamit mo ang ilang tags sa isang entry, nagkakaroon sila ng "connection" — parang magkakachika!</p>
+      Ipinapakita ng graph na ’to kung paano konektado ang mga tags mo. Kapag ginamit mo ang ilang tags sa isang entry, nagkakaroon sila ng "connection"!</p>
 
       <p><strong>Paano basahin:</strong></p>
       <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-        <li><strong>Bilogs:</strong> Bawat isa ay tag. Mas malaki = mas madalas ginagamit</li>
+        <li><strong>Bilogs:</strong> Each one is a tag. Mas malaki = mas madalas ginagamit</li>
         <li><strong>Lines:</strong> Ipinapakita kung aling tags ang ginamit nang magkasama. Mas makapal = mas madalas silang nakasabay</li>
-        <li><strong>Colors:</strong> Galing sa mood (o modo) na ka-link ng tag</li>
+        <li><strong>Colors:</strong> Galing sa mood na ka-link ng tag</li>
       </ul>
 
       <p><strong>Mga Pwede Mong Gawin:</strong></p>
       <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-        <li><strong>Search:</strong> Hanapin ang specific na tag</li>
-        <li><strong>Min Connections:</strong> Itago ’yung mga mahihinang connection (o 'yung wala talagang line o connection)</li>
-        <li><strong>Focus Mood:</strong> Ipakita lang ’yung tags sa isang mood</li>
+        <li><strong>Search:</strong> Find a specific tag</li>
+        <li><strong>Min Connections:</strong> Itago yung mga mahihinang connection (o 'yung wala talagang line o connection)</li>
+        <li><strong>Focus Mood:</strong> Ipakita lang yung tags ng isang mood</li>
         <li><strong>Drag:</strong> Pwede mong ilipat-lipat ang mga bilog</li>
-        <li><strong>Zoom/Pan:</strong> Scroll at i-drag lang ang background</li>
+        <li><strong>Zoom/Pan:</strong> Just scroll and drag the background</li>
       </ul>
 
-      <p><em>Tip: I-adjust muna ang "Min Connections" para makita agad ’yung pinaka-close na tags mo!</em></p>
+      <p><em>Tip: I-adjust mo muna ang "Min Connections" para makita mo agad yung strongest connections mo!</em></p>
     </div>
   </InfoModal>
 
@@ -539,7 +539,8 @@
   .card-title {
     font-family: 'Graffiti Urban', sans-serif;
     font-size: 1.5rem;
-    font-weight: normal;
+    font-weight: bold;
+    letter-spacing: -0.05rem;
     color: var(--main-white);
     margin: 0 0 0.5rem 0;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
@@ -688,7 +689,7 @@
   }
 
   .range-container input[type="range"] {
-    -webkit-appearance: none;
+    /* -webkit-appearance: none; */
     width: 120px;
     height: 4px;
     background: #394766;
@@ -802,11 +803,6 @@
     margin-left: 0.25rem;
   }
 
-  .filters-section .toggle-group {
-    display: flex;
-    justify-content: flex-start;
-  }
-
   /* ── GRAPH CONTAINER ─────────────────────────────────────────────── */
   .graph-container {
     flex: 1;
@@ -895,16 +891,6 @@
 
   .legend-item.active {
     background: #1e2a46;
-  }
-
-  .legend-emoji-img {
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
-  }
-
-  .legend-emoji {
-    font-size: 0.9em;
   }
 
   .legend-text {

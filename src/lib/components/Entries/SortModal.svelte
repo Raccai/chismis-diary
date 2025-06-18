@@ -99,7 +99,7 @@
           ariaLabel="Cancel"
           onClick={() => closeModal()}
           class="secondary"
-          text="Bawi Muna"
+          text="Cancel"
         />
         <Button 
           type="primary"
@@ -107,7 +107,7 @@
           ariaLabel="Apply Sort"
           onClick={() => applySort()}
           class="primary"
-          text="Sige, Ayusin"
+          text="Sort"
         />
       </div>
     </div>
@@ -140,7 +140,8 @@
   /* Title & buttons */
   .modal-title-graffiti {
     font-family: 'Graffiti Urban', sans-serif;
-    font-weight: normal;
+    font-weight: bold;
+    letter-spacing: -0.12rem;
     font-size: 1.8rem;
     text-align: center;
     margin-bottom: 1.25rem;

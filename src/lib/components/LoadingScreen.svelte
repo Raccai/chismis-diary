@@ -4,7 +4,7 @@
   import TakeNote from '$lib/icons/TakeNote.svelte';
 
   export let visible = false;
-  export let version = 'v1.0.0'; // Pass in app version if dynamic
+  export let version = 'v1.1'; // Pass in app version if dynamic
 
   let progress = 0;
   let interval;
@@ -89,10 +89,11 @@
 
   .app-title {
     font-family: "Graffiti Urban", sans-serif;
+    letter-spacing: -0.12rem;
     font-size: 3rem;
     color: var(--main-white);
     margin-bottom: 0.4rem;
-    font-weight: normal;
+    font-weight: bold;
   }
 
   .loading-bar {

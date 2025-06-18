@@ -47,6 +47,40 @@
   function handleEdit() {
     dispatch("edit", entry);
   }
+
+  function formatFullTimestamp(isoString) {
+    if (!isoString) return '';
+    const dateObj = new Date(isoString);
+    return dateObj.toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone // Add this line
+    });
+  }
+
+  function formatShortTime(isoString) {
+    if (!isoString) return '';
+    const dateObj = new Date(isoString);
+    return dateObj.toLocaleTimeString(undefined, {
+      hour: '2-digit', minute: '2-digit', hour12: true
+    });
+  }
+
+  // Determine if the entry has been edited
+  // (assuming lastEdited is only present if edited AFTER the feature was added)
+  $: wasEdited = !!entry.lastEdited;
+  $: displayDate = new Date(entry.date); // Main date for formatting
+  $: editedDate = entry.lastEdited ? new Date(entry.lastEdited) : null;
+
+  // Check if created and edited on the same day (for simpler display)
+  $: sameDayEdit = wasEdited &&
+                   displayDate.getFullYear() === editedDate.getFullYear() &&
+                   displayDate.getMonth() === editedDate.getMonth() &&
+                   displayDate.getDate() === editedDate.getDate();
 </script>
 
 <!-- Entire card is clickable for editing -->
@@ -61,7 +95,17 @@
 >
   <h2 class="entry-title">{entry.title || "Chismis Update"}</h2>
 
-  <div class="date-display">{formatDate(entry.date)}</div>
+  <!-- Timestamp Info -->
+  <div class="timestamp-info">
+    <time class="date-main" datetime={entry.date}>
+      {formatFullTimestamp(entry.date)}
+    </time>
+    {#if wasEdited}
+      <span class="edited-pill" title="Last edited: {formatFullTimestamp(entry.lastEdited)}">
+        edited {formatFullTimestamp(entry.lastEdited)}
+      </span>
+    {/if}
+  </div>
 
   <div class="mood-display" style="background-color: {moodDetails.colorDark}; border-color: {moodDetails.colorDark};">
     <!-- Conditional rendering for emoji vs image -->
@@ -130,8 +174,8 @@
   .entry-title {
     font-family: 'Graffiti Urban', sans-serif;
     font-size: 1.8rem;
-    font-weight: normal;
-    letter-spacing: 0.08rem;
+    font-weight: bold;
+    letter-spacing: -0.1rem;
     color: var(--card-title-text);
     margin: 0;
     line-height: 1.2;
@@ -140,11 +184,35 @@
     text-overflow: ellipsis;
   }
 
-  .date-display {
+  /* .date-main {
     font-size: 0.84rem;
     color: var(--card-date-text);
     font-family: 'Urbanist', sans-serif;
     font-weight: 500;
+  } */
+
+  .timestamp-info {
+    display: flex;
+    align-items: center; 
+    gap: 0.5rem; 
+    font-size: 0.84rem; 
+    color: var(--card-date-text, var(--bw-text-tertiary, #8e8e93)); 
+    font-family: 'Urbanist', sans-serif;
+    margin-top: -0.25rem; 
+  }
+  .date-main { /* Class for the main date part */
+    font-weight: 500;
+  }
+  .edited-pill {
+    background-color: var(--card-title-text); /* Subtle background for the pill */
+    color: var(--card-bg); /* Text color for the pill */
+    padding: 0.4rem 0.8rem;
+    border-radius: 10px; /* Pill shape */
+    font-size: 0.6rem; /* Very small */
+    font-style: italic;
+    line-height: 1;
+    white-space: nowrap;
+    font-size: 0.7rem; 
   }
 
   .mood-display {
@@ -163,7 +231,7 @@
     color: var(--card-border);
     font-family: 'Graffiti Urban', sans-serif;
     font-weight: lighter;
-    letter-spacing: 0.08rem;
+    letter-spacing: -0.1rem;
     transform: rotate(-2deg);
   }
 
@@ -214,7 +282,7 @@
   .mood-label {
     font-family: 'Graffiti Urban', sans-serif;
     font-size: 1rem;
-    letter-spacing: 0.08rem;
+    letter-spacing: -0.02rem;
     font-weight: normal;
   }
 
@@ -230,7 +298,7 @@
     padding: 0.3rem 0.7rem;
     border-radius: 12px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     font-family: 'Urbanist', sans-serif;
     line-height: 1.2;
   }

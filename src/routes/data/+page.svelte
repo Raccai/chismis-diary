@@ -4,6 +4,7 @@
   import { get } from 'svelte/store'; // To read moodStore non-reactively
   import { onMount, onDestroy } from 'svelte'; // For click outside listener
   import { analyzeTagConnections } from '$lib/utils/tagAnalysis.js';
+  import { getLocalDateString } from '$lib/utils/dataUtils';
   import InfoIcon from '$lib/icons/InfoIcon.svelte';
 
   // Import analysis functions
@@ -33,6 +34,66 @@
     sabog: -1, 
     default: 0
   };
+
+  $: dailyData = (() => {
+    const entries = $entriesStore;
+    if (!entries || entries.length === 0) return [];
+
+    // Step 1: Group all existing entries by their local date for quick lookup.
+    // This is much more efficient than searching the whole entries array for every single day.
+    const entriesByLocalDate = entries.reduce((acc, entry) => {
+        const dateKey = getLocalDateString(entry.date);
+        if (!acc[dateKey]) {
+            acc[dateKey] = { moods: [], entryCount: 0 };
+        }
+        acc[dateKey].moods.push(entry.mood);
+        acc[dateKey].entryCount++;
+        return acc;
+    }, {});
+
+    // Step 2: Determine the full date range we need to display.
+    // Sort entries chronologically to find the absolute first day.
+    const sortedEntries = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const firstEntryDate = new Date(sortedEntries[0].date);
+    const lastDate = new Date(); // Always go up to today.
+
+    // Step 3: Create a complete array for every single day in the range.
+    const allDaysData = [];
+    // Start the loop from the date of the first entry, ignoring the time.
+    let currentDate = new Date(firstEntryDate.getFullYear(), firstEntryDate.getMonth(), firstEntryDate.getDate());
+
+    while (currentDate <= lastDate) {
+        const dateKey = getLocalDateString(currentDate.toISOString()); // Get 'YYYY-MM-DD' for the current day in the loop.
+        const dayWithEntry = entriesByLocalDate[dateKey];
+
+        if (dayWithEntry) {
+            // This day has entries. Calculate the dominant mood.
+            const moodCounts = dayWithEntry.moods.reduce((counts, mood) => {
+                counts[mood] = (counts[mood] || 0) + 1;
+                return counts;
+            }, {});
+            const dominantMoodValue = Object.keys(moodCounts).reduce((a, b) => moodCounts[a] > moodCounts[b] ? a : b, null);
+            
+            allDaysData.push({
+                date: dateKey,
+                entryCount: dayWithEntry.entryCount,
+                dominantMoodValue: dominantMoodValue
+            });
+        } else {
+            // This day has NO entries. Push a placeholder object for the heatmap.
+            allDaysData.push({
+                date: dateKey,
+                entryCount: 0,
+                dominantMoodValue: null
+            });
+        }
+
+        // Move to the next day for the next iteration of the loop.
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return allDaysData;
+  })();
 
   function getMoodScoreDisplay(moodValue) {
     return moodScoreMapping.hasOwnProperty(moodValue) ? moodScoreMapping[moodValue] : moodScoreMapping.default;
@@ -82,15 +143,15 @@
 
 <div class="data-page-container">
   {#if totalEntries === 0}
-    <p class="no-data-message">Mag-log ka muna ng chismis para may mood/modo data tayo!</p>
+    <p class="no-data-message">Mag-log ka muna ng chismis para may mood data tayo!</p>
   {:else}
     <WeeklyMoodSummary weeklySummaries={weeklySummaryData} />
     {#if dailyMoodData && dailyMoodData.length > 0}
-      <MoodCalendarHeatmap dailyData={dailyMoodData} title="Araw-araw na Modo" />
+      <MoodCalendarHeatmap dailyData={dailyData} title="Daily Mood" />
     {/if}
 
     {#if moodCountsData && moodCountsData.length > 0}
-      <DataChart moodStats={moodCountsData} title="Pangkalahatan" />
+      <DataChart moodStats={moodCountsData} title="Overall Mood Count" />
     {/if}
 
     <section class="trend-chart-card">
@@ -129,10 +190,10 @@
   <!-- Score Info Modal -->
   <InfoModal bind:showModal={showScoreInfoModal} title="Mood Scoring Explained">
     <!-- Content for the modal goes into the slot -->
-    <h4>Scores? Paano 'yun?</h4>
+    <h4>Scores? Paano yun?</h4>
     <p>
       May score ang bawat mood para makita kung paangat o pababa ang vibes mo. 
-      Mas mataas na score = mas masaya. Mas mababa = baka medyo mahirap ang araw mo huhu, kaya mo yarn. 
+      Mas mataas na score = mas masaya. Mas mababa = baka medyo mahirap yung araw mo huhu, kaya mo yarn. 
     </p>
     <ul>
       {#each moodDefinitions as mood}
@@ -148,7 +209,7 @@
       {/each}
     </ul>
     <p>
-      Ang score sa chart ay average ng mga modong na-log mo sa araw, linggo, o buwan na 'yon.
+      Ang score sa chart ay average ng mga mood na na-log mo sa araw, linggo, o buwan na 'yon.
     </p>
   </InfoModal>
 
@@ -200,9 +261,9 @@
   }
   .trend-title {
     font-size: 1.1rem;
-    font-weight: normal;
+    font-weight: bold;
+    letter-spacing: -0.05rem;
     color: #FBF7EC;
-    margin: 0 0 0.25rem 0; /* Space below title */
   }
   .trend-score {
     font-size: 2.5rem;
@@ -213,8 +274,8 @@
   .trend-score .pts {
     font-size: 1rem;
     font-weight: normal;
-    color: #FBF7EC; /* Lighter gray for 'pts' */
-    margin-left: 0.25rem;
+    color: #FBF7EC;
+    margin-left: -0.5rem;
   }
 
   .time-range-selector {

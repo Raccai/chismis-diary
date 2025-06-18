@@ -90,7 +90,7 @@
 
     <div class="setting-item">
       <p class="setting-description">
-        Mag-import ng data mula sa dating na-export mong JSON file. Mapapalitan lahat ng laman ngayon.
+        Mag-import ng data mula sa dating na-export mong JSON file. Pero mapapalitan lahat ng mga entries mo!
       </p>
       <div class="import-controls">
         <input
@@ -140,10 +140,12 @@
   .page-title {
     font-family: 'Graffiti Urban', sans-serif; /* Your graffiti font */
     color: var(--card-title-text);
-    font-weight: normal;
+    font-weight: bold;
     font-size: 2.2rem;
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
+    margin-top: 0.5rem;
+    letter-spacing: -0.12rem;
   }
 
   .settings-section {

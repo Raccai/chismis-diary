@@ -89,15 +89,15 @@
           on:click={() => handleNavClick(item)}
         >
           <div class="icon-container-animated">
-            <!-- Keyed block for transitions -->
-            {#key iconToRender} <!-- When iconToRender changes, this block is destroyed and recreated -->
+            {#key iconToRender}
               <div class="icon-wrapper"
-                   in:fade="{{ duration: 150, delay: active ? 100 : 0 }}"
-                   out:fade="{{ duration: 100 }}">
-                <svelte:component this={iconToRender} /> <!-- Renders the actual SVG component -->
+                  in:fade="{{ duration: 150, delay: active ? 100 : 0 }}"
+                  out:fade="{{ duration: 100 }}">
+                <svelte:component this={iconToRender} />
               </div>
             {/key}
           </div>
+          <div class="nav-label">{item.text}</div>
         </a>
       {/if}
     {/each}
@@ -161,6 +161,26 @@
     transition: opacity 0.2s ease; /* For hover on non-active items */
     -webkit-tap-highlight-color: transparent;
     position: relative;
+  }
+
+  .nav-label {
+    font-size: 0.65rem;
+    line-height: 1;
+    margin-top: 0.4rem;
+    text-align: center;
+    color: var(--navbar-icon-label, #fff);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .nav-item.active .nav-label {
+    font-weight: bold;
+    color: var(--navbar-icon-label-active, #fff);
+  }
+
+  .nav-item:not(.active) .nav-label {
+    opacity: 0.7;
   }
 
   .nav-item:not(.active):not(.nav-add-button-override):hover { /* Exclude add button from this hover */

@@ -38,7 +38,8 @@ export function updateEntry(id, newTitle, newText, newMood, newTags = []) {
           title: newTitle,
           text: newText,
           mood: newMood,
-          tags: newTags || []
+          tags: newTags || [],
+          lastEdited: new Date().toISOString()
         };
       }
       return entry;

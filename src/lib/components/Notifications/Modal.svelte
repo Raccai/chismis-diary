@@ -139,7 +139,8 @@
     color: var(--card-title-text);
     text-align: center;
     font-size: 1.6rem;
-    font-weight: normal; 
+    font-weight: bold;
+    letter-spacing: -0.1rem; 
     line-height: 1.4;
     padding: 0 0.25rem;
   }
@@ -147,7 +148,7 @@
   .modal-message,
   .modal-custom-content {
     margin: 0 0 1.25rem 0;
-    font-size: 0.9rem;
+    font-size: 1rem;
     line-height: 1.4;
     font-family: "Urbanist", sans-serif;
     color: var(--card-title-text);

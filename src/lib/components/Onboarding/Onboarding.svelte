@@ -9,7 +9,7 @@
 
   const slides = [
     {
-      title: 'Lihim Mong Pader.',
+      title: 'Your Wall of Chismis.',
       tagline: 'Pwede kang maglabas ng sama ng loob o kwento — walang judgement, pramis.',
       showcaseImage: '/images/onboarding/pic1.png',
       stickers: ['🔒', '💌', '👀']
@@ -77,7 +77,7 @@
         <button class="next-btn" on:click={nextSlide}>
           {currentSlide === slides.length - 1 ? 'Tara, Chismis Na!' : 'Ano Pa?'}
         </button>
-        <button class="skip-btn" on:click={skipOnboarding}>Lakdawan</button>
+        <button class="skip-btn" on:click={skipOnboarding}>Skip</button>
       </div>
     </div>
   </div>
@@ -140,7 +140,8 @@
     font-family: 'Graffiti Urban', sans-serif;
     font-size: 2rem;
     margin-bottom: 0.4rem;
-    font-weight: normal;
+    font-weight: bold;
+    letter-spacing: -0.1rem;
   }
 
   .tagline {

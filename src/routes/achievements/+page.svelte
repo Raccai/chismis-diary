@@ -3,13 +3,13 @@
   import CharacterReveal from '$lib/components/Achievements/CharacterReveal.svelte';
 </script>
 
-<div class="achievements-page-bwp">
-  <h1 class="page-title-bwp">Modo Crew</h1>
-  <p class="page-subtitle-bwp">I-unlock ang music gamit ang modo mo at mga milestone na ma-achieve mo!</p>
+<div class="achievements-page">
+  <h1 class="page-title">Mood Crew</h1>
+  <p class="page-subtitle">Unlock music gamit ang mga mood mo!</p>
 
   <div class="divider"></div>
 
-  <div class="character-grid-bwp">
+  <div class="character-grid">
     {#each $moodStore as character (character.value)}
       <CharacterReveal moodCharacter={character} />
     {/each}
@@ -17,18 +17,20 @@
 </div>
 
 <style>
-  .achievements-page-bwp {
+  .achievements-page {
     padding: 1rem 1rem calc(var(--navbar-height, 65px) + 1rem) 1rem;
   }
-  .page-title-bwp {
+  .page-title {
     font-family: 'Graffiti Urban', sans-serif;
-    font-weight: normal;
+    font-weight: bold;
+    letter-spacing: -0.12rem;
     color: var(--card-title-text);
     font-size: 2.2rem;
     text-align: center;
     margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
   }
-  .page-subtitle-bwp {
+  .page-subtitle {
     font-family: 'Urbanist', sans-serif;
     color: var(--card-title-text);
     text-align: center;
@@ -37,7 +39,7 @@
     border-bottom: 2px solid var(--card-border);
     font-size: 0.95rem;
   }
-  .character-grid-bwp {
+  .character-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 1rem;
