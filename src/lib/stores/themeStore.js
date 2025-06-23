@@ -1,83 +1,44 @@
-import { writable } from 'svelte/store';
-import { browser } from '$app/environment'; 
-import { Capacitor } from '@capacitor/core';
-import { StatusBar } from '@capacitor/status-bar';
+import { browser } from '$app/environment';
+import { createPersistentStore } from './persistentStore.js';
 
-// --- Determine the initial theme ---
-let initialValue = 'light'; // Default theme
+// --- Step 1: Calculate the initial theme value, just like before ---
+let initialValue = 'light';
 
-async function configureStatusBar() {
-  if (Capacitor.isNativePlatform()) {
-    try {
-      await StatusBar.setOverlaysWebView({ overlay: false }); // EXPLICITLY SET TO FALSE
-      console.log("StatusBar overlay set to false.");
-    } catch (e) {
-      console.error("Error configuring status bar overlay:", e);
-    }
-  }
-}
-
-if (browser) { // This code only runs in the browser
-  // 1. Check localStorage for a saved theme preference
+if (browser) {
   const storedTheme = localStorage.getItem('theme');
-
-  if (storedTheme && (storedTheme === 'light' || storedTheme === 'dark')) {
+  if (storedTheme) {
     initialValue = storedTheme;
-    console.log('ThemeStore: Loaded theme from localStorage:', initialValue);
   } else {
-    // 2. If no stored theme, check system preference
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (prefersDark) {
       initialValue = 'dark';
-      console.log('ThemeStore: Using system preference for dark theme.');
-    } else {
-      console.log('ThemeStore: Using default light theme (no preference found).');
     }
   }
-} else {
-  // For SSR or environments without `browser`, default to 'light'
-  // This value won't persist to the client directly for the first paint without the app.html script
-  console.log('ThemeStore: Initializing outside browser, defaulting to light.');
 }
 
-// --- Create the writable store ---
-export const theme = writable(initialValue);
+// --- Step 2: Create the store using our new utility ---
+// It will now handle saving to localStorage automatically.
+export const theme = createPersistentStore('theme', initialValue);
 
-// --- Subscribe to theme changes to update body class and localStorage (only in browser) ---
+// --- Step 3: Subscribe ONLY to handle side-effects (updating the body class) ---
 if (browser) {
   theme.subscribe(currentTheme => {
-    console.log(`ThemeStore: Theme is now '${currentTheme}'. Updating body class and localStorage.`);
-
-    // Remove any existing theme classes to prevent conflicts
+    // This part is the side-effect we still need
     document.body.classList.remove('light', 'dark');
-
-    // Add the current theme class to the body
     document.body.classList.add(currentTheme);
 
-    // Save the current theme to localStorage
-    try {
-      localStorage.setItem('theme', currentTheme);
-    } catch (e) {
-      console.error('ThemeStore: Failed to save theme to localStorage.', e);
-    }
+    // We no longer need to manually save to localStorage here,
+    // because createPersistentStore does it for us.
   });
 }
 
-// --- Helper function to toggle the theme ---
+// --- Helper functions remain the same ---
 export function toggleTheme() {
-  theme.update(currentTheme => {
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    console.log(`ThemeStore: Toggling theme from '${currentTheme}' to '${newTheme}'.`);
-    return newTheme;
-  });
+  theme.update(currentTheme => (currentTheme === 'light' ? 'dark' : 'light'));
 }
 
-// --- Function to set a specific theme ---
 export function setTheme(newTheme) {
   if (newTheme === 'light' || newTheme === 'dark') {
     theme.set(newTheme);
-    console.log(`ThemeStore: Setting theme explicitly to '${newTheme}'.`);
-  } else {
-    console.warn(`ThemeStore: Invalid theme value '${newTheme}' passed to setTheme.`);
   }
 }

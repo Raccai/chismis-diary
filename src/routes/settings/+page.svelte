@@ -3,13 +3,13 @@
   import { uiStore } from '$lib/stores/uiStore.js'; 
   import { toasts } from '$lib/stores/toastStore.js';
   import Button from '$lib/components/Button.svelte';
-  import { exportData, importData, clearAllAppData } from '$lib/utils/dataUtils.js'; // We'll create/update this file
+  import { exportData, importData, clearAllAppData } from '$lib/utils/dataUtils.js'; 
+  import NotificationSettings from '$lib/components/Settings/NotificationSettings.svelte';
 
   let importFile = null;
 
-  function handleExport() {
-    exportData(); // This function will now handle toasts internally or we can add one here
-    toasts.success("Sinimulan na ang pag-export!");
+  async function handleExport() {
+    await exportData(); 
   }
 
   function handleFileSelect(event) {
@@ -72,8 +72,10 @@
   <h1 class="page-title">Mga Setting</h1>
 
   <section class="settings-section data-management-section">
-    <h2 class="section-title">Pamamahala ng Data</h2>
+    <h2 class="section-title">Mga Notipikasyon</h2>
+    <NotificationSettings />
 
+    <h2 class="section-title">Pamamahala ng Data</h2>
     <div class="setting-item">
       <p class="setting-description">
         I-export lahat ng chismis entries at app data mo sa JSON file. Para may backup ka!

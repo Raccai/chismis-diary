@@ -67,29 +67,32 @@
     }
 
     $: filteredAndSortedEntries = (() => {
-        const sortKeyToUse = $filterSortStore.currentSortKey;
-        let processedEntries = [...$entriesStore];
+      if (!$entriesStore) {
+        return [];
+      }
+      
+      const sortKeyToUse = $filterSortStore.currentSortKey;
+      let processedEntries = [...$entriesStore]; // Now this is safe
 
-        processedEntries = processedEntries.filter(entry => {
-            const moodMatch = !selectedMoodFilter || entry.mood === selectedMoodFilter;
-            const term = searchTerm.trim().toLowerCase();
-            const searchMatch = !term ||
-                                (entry.title && entry.title.toLowerCase().includes(term)) ||
-                                (entry.text && entry.text.toLowerCase().includes(term));
-            return moodMatch && searchMatch;
-        });
+      processedEntries = processedEntries.filter(entry => {
+        const moodMatch = !selectedMoodFilter || entry.mood === selectedMoodFilter;
+        const term = searchTerm.trim().toLowerCase();
+        const searchMatch = !term ||
+                            (entry.title && entry.title.toLowerCase().includes(term)) ||
+                            (entry.text && entry.text.toLowerCase().includes(term));
+        return moodMatch && searchMatch;
+      });
 
-        if (sortKeyToUse === 'date_desc') {
-            processedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-        } else if (sortKeyToUse === 'date_asc') {
-            processedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-        } else if (sortKeyToUse === 'title_asc') {
-            processedEntries.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-        } else if (sortKeyToUse === 'title_desc') {
-            processedEntries.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
-        }
-        // 'none' or other unhandled sort keys will result in the filtered order
-        return processedEntries;
+      if (sortKeyToUse === 'date_desc') {
+          processedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+      } else if (sortKeyToUse === 'date_asc') {
+          processedEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+      } else if (sortKeyToUse === 'title_asc') {
+          processedEntries.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+      } else if (sortKeyToUse === 'title_desc') {
+          processedEntries.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
+      }
+      return processedEntries;
     })();
 </script>
 

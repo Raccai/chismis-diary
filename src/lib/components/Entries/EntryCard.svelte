@@ -2,6 +2,7 @@
   import { moodStore } from '$lib/stores/moodStore.js';
   import { get } from 'svelte/store';
   import { createEventDispatcher, onMount, tick } from 'svelte';
+  import DOMPurify from 'dompurify';
 
   export let entry;
   const dispatch = createEventDispatcher();
@@ -10,6 +11,14 @@
   const DEFAULT_COLOR_LIGHT = '#F1F1F1';
   const DEFAULT_COLOR_MEDIUM = '#C7C7C7';
   const DEFAULT_COLOR_DARK = '#3C3C3C';
+
+  // Function to safely sanitize the HTML from the entry due to rich text editing
+  function sanitize(html) {
+    if (typeof window !== 'undefined') {
+      return DOMPurify.sanitize(html);
+    }
+    return html; 
+  }
 
   function deriveMoodDetails(currentMoodValue, storeData) {
     if (!currentMoodValue || !storeData) {

@@ -19,7 +19,7 @@
     { href: '/entry', text: 'Entries', iconInactive: NotesInactive, iconActive: NotesActive, matchPaths: ['/entry', '/'] },
     { href: '/data', text: 'Data', iconInactive: DataInactive, iconActive: DataActive, matchPaths: ['/data'] },
     { type: 'add_button', text: 'Add'}, // Or a specific "add" icon component
-    { href: '/achievements', text: 'Medals', iconInactive: RewardsInactive, iconActive: RewardsActive, matchPaths: ['/achievements'] },
+    { href: '/achievements', text: 'Crew', iconInactive: RewardsInactive, iconActive: RewardsActive, matchPaths: ['/achievements'] },
     { href: '/settings', text: 'Settings', iconInactive: SettingsInactive, iconActive: SettingsActive, matchPaths: ['/settings'] },
   ];
 
