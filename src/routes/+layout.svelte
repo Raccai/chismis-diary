@@ -10,9 +10,7 @@
   import MusicPlayerModal from '$lib/components/MusicPlayerModal.svelte';
   import LoadingScreen from '$lib/components/LoadingScreen.svelte';
   import Onboarding from '$lib/components/Onboarding/Onboarding.svelte';
-  import { Capacitor } from '@capacitor/core';
-  import { StatusBar } from '@capacitor/status-bar';
-
+  
   import { filterSortStore } from '$lib/stores/filterSortStore';
   import { uiStore } from '$lib/stores/uiStore.js';
   import { navigating, page } from '$app/stores';
@@ -25,12 +23,31 @@
   import { get } from 'svelte/store';
   import { browser } from '$app/environment';
   import { entriesStore } from '$lib/stores/entriesStore.js'
+  import { theme, toggleTheme } from '$lib/stores/themeStore.js';
+  import { authStore } from '$lib/stores/authStore.js';
+  import LockScreen from '$lib/components/LockScreen.svelte'; 
   import "../app.css";
   
+  import { StatusBar, Style } from '@capacitor/status-bar';
+  import { Capacitor } from '@capacitor/core';
+  import { NavigationBar } from '@capgo/capacitor-navigation-bar';
+  import { App } from '@capacitor/app';
+  
+  $: isDark = $theme === 'dark';
   let initialProgressProcessed = false;
   let isAppLoading = true;
-
+  
   onMount(async() => {
+    // --- AUTH INITIALIZATION ---
+    authStore.initialize();
+    // Listener to re-lock the app when it becomes active again
+    App.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) {
+        // App has come to the foreground
+        authStore.lockApp();
+      }
+    });
+    
     if ($page.url.pathname === '/') {
       goto('/entry', { replaceState: true });
     }
@@ -39,10 +56,6 @@
       try {
         await StatusBar.setOverlaysWebView({ overlay: false });
         console.log('[Layout] StatusBar overlay explicitly set to false.');
-        await StatusBar.setStyle({ style: 'DARK' }); 
-        if (Capacitor.getPlatform() === 'android') {
-          await StatusBar.setBackgroundColor({ color: '#1d1c19' }); 
-        }
       } catch (e) {
         console.error("Error configuring StatusBar in Layout onMount:", e);
       }
@@ -76,6 +89,27 @@
       }
     };
   });
+
+  $: {
+    if (browser && Capacitor.isNativePlatform()) {
+      // Use an async IIFE to call the async StatusBar API
+      (async () => {
+        try {
+          if (isDark) {
+            await StatusBar.setBackgroundColor({ color: '#11100f' });
+            await NavigationBar.setNavigationBarColor({ color: '#11100f' });
+            console.log('[Layout] StatusBar style changed to Dark.');
+          } else {
+            await StatusBar.setBackgroundColor({ color: '#1d1c19' });
+            await NavigationBar.setNavigationBarColor({ color: '#1d1c19' });
+            console.log('[Layout] StatusBar style changed to Light.');
+          }
+        } catch (e) {
+          console.error("Error updating StatusBar style:", e);
+        }
+      })();
+    }
+  }
 
   // --- Form and Global Key Logic ---
   function handleFormSaveOrClose() {
@@ -132,6 +166,10 @@
 
 <div class="app-container">
   <LoadingScreen visible={isAppLoading} />
+
+  {#if $authStore.isLocked}
+    <LockScreen />
+  {/if}
 
   <Onboarding visible={$uiStore.isOnboardingVisible} />
 

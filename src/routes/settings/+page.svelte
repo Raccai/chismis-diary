@@ -6,7 +6,31 @@
   import { exportData, importData, clearAllAppData } from '$lib/utils/dataUtils.js'; 
   import NotificationSettings from '$lib/components/Settings/NotificationSettings.svelte';
 
+  import { NativeBiometric } from 'capacitor-native-biometric';
+  import { authStore } from '$lib/stores/authStore.js';
+  import PinSetup from '$lib/components/Settings/PinSetup.svelte';
+
   let importFile = null;
+  let showPinSetup = false;
+
+  async function enableBiometrics() {
+    try {
+      // First check if biometrics are even available on the device.
+      const result = await NativeBiometric.isAvailable();
+      if (!result.isAvailable) {
+        toasts.error("Biometrics not available or not configured on this device.");
+        return;
+      }
+      
+      // If available, mark it as enabled in our store.
+      authStore.enableBiometrics();
+      toasts.success("Biometrics enabled!");
+
+    } catch(error) {
+      toasts.error("An error occurred while checking for biometrics.");
+      console.error("Biometric check failed", error);
+    }
+  }
 
   async function handleExport() {
     await exportData(); 
@@ -68,8 +92,50 @@
   }
 </script>
 
+{#if showPinSetup}
+  <PinSetup on:close={() => showPinSetup = false} />
+{/if}
+
 <div class="settings-page">
   <h1 class="page-title">Mga Setting</h1>
+
+  <section class="settings-section security-section">
+    <h2 class="section-title">Seguridad</h2>
+    
+    <div class="setting-item">
+      <p class="setting-description">
+        {#if !$authStore.hasPinSetup}
+          Mag-set up ng 4-digit PIN para i-lock ang app.
+        {:else}
+          Palitan ang iyong 4-digit PIN.
+        {/if}
+      </p>
+      <Button 
+        type="secondary"
+        ariaLabel="Setup PIN"
+        onClick={() => showPinSetup = true}
+        text={$authStore.hasPinSetup ? 'Palitan ang PIN' : 'Mag-set up ng PIN'}
+      />
+    </div>
+
+    {#if $authStore.hasPinSetup}
+      <div class="setting-item">
+        <p class="setting-description">
+          Gamitin ang Face ID o fingerprint para mas mabilis na ma-unlock ang app.
+        </p>
+        <Button 
+          type="secondary"
+          ariaLabel="Enable Biometrics"
+          onClick={enableBiometrics}
+          text="Payagan ang Biometrics"
+          disabled={$authStore.isBiometricsEnabled}
+        />
+        {#if $authStore.isBiometricsEnabled}
+          <p class="enabled-text">✓ Biometrics is already enabled</p>
+        {/if}
+      </div>
+    {/if}
+  </section>
 
   <section class="settings-section data-management-section">
     <h2 class="section-title">Mga Notipikasyon</h2>
@@ -148,6 +214,21 @@
     margin-bottom: 0.6rem;
     margin-top: 0.5rem;
     letter-spacing: -0.12rem;
+  }
+
+  .security-section {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  .setting-item {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .enabled-text {
+    font-size: 0.8rem;
+    margin-top: 0.75rem;
+    font-style: italic;
+    color: var(--success-color, green);
   }
 
   .settings-section {

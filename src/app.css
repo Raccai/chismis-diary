@@ -258,6 +258,8 @@ body {
   margin: 0;
   overscroll-behavior-y: contain;
   transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out; /* Smooth theme transition */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Global Button Reset */

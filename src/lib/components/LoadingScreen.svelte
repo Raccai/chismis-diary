@@ -4,7 +4,7 @@
   import TakeNote from '$lib/icons/TakeNote.svelte';
 
   export let visible = false;
-  export let version = 'v1.2'; 
+  export let version = 'v1.3'; 
 
   let progress = 0;
   let interval;

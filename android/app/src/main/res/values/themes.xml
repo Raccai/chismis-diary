@@ -2,15 +2,8 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:statusBarColor">@color/app_system_bar_color</item> 
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
-
         <item name="android:navigationBarColor">@color/app_system_bar_color</item> 
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
-        <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
-        <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
-
         <item name="android:windowBackground">@color/app_main_background_color</item>
-
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
