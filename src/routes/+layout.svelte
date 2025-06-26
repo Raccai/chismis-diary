@@ -3,7 +3,7 @@
   import SideMenu from '$lib/components/SideMenu.svelte';
   import EntryForm from '$lib/components/Entries/EntryForm.svelte';
   import LoadingIndicator from '$lib/components/LoadingIndicator.svelte';
-  import Navbar from '$lib/components/Navbar.svelte'; // Assuming this is your bottom tab bar
+  import Navbar from '$lib/components/Navbar.svelte'; 
   import ToastContainer from '$lib/components/Notifications/ToastContainer.svelte';
   import Modal from '$lib/components/Notifications/Modal.svelte';
   import SortModal from '$lib/components/Entries/SortModal.svelte';
@@ -14,7 +14,7 @@
   import { filterSortStore } from '$lib/stores/filterSortStore';
   import { uiStore } from '$lib/stores/uiStore.js';
   import { navigating, page } from '$app/stores';
-  import { onDestroy } from 'svelte'; // Not strictly needed for this loader version anymore
+  import { onDestroy } from 'svelte'; 
   import { fly, fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
   import { onMount } from 'svelte';
@@ -39,11 +39,26 @@
   
   onMount(async() => {
     // --- AUTH INITIALIZATION ---
+    async function performInitialAuthCheck() {
+      // 1. Initialize the store AND WAIT for it to finish loading.
+      await authStore.initialize();
+      // 2. NOW it's safe to get the fully loaded settings.
+      const settings = get(authStore);
+      // 3. If biometrics are enabled, try them first.
+      if (settings.isBiometricsEnabled && settings.isLocked) {
+        // We need to import promptBiometricAuth here if it's not already
+        const { promptBiometricAuth } = await import('$lib/services/authService.js');
+        const authenticated = await promptBiometricAuth();
+        if (authenticated) {
+          authStore.unlockApp();
+        }
+      }
+    }
+    performInitialAuthCheck();
     authStore.initialize();
     // Listener to re-lock the app when it becomes active again
     App.addListener('appStateChange', ({ isActive }) => {
       if (isActive) {
-        // App has come to the foreground
         authStore.lockApp();
       }
     });

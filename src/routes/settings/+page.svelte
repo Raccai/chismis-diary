@@ -1,17 +1,65 @@
 <script>
-  import { entriesStore } from '$lib/stores/entriesStore.js';
+  import { onMount } from 'svelte';
   import { uiStore } from '$lib/stores/uiStore.js'; 
   import { toasts } from '$lib/stores/toastStore.js';
   import Button from '$lib/components/Button.svelte';
   import { exportData, importData, clearAllAppData } from '$lib/utils/dataUtils.js'; 
   import NotificationSettings from '$lib/components/Settings/NotificationSettings.svelte';
-
-  import { NativeBiometric } from 'capacitor-native-biometric';
-  import { authStore } from '$lib/stores/authStore.js';
   import PinSetup from '$lib/components/Settings/PinSetup.svelte';
+  import { authStore } from '$lib/stores/authStore.js';
+  import { Capacitor } from '@capacitor/core';
+
+  // We load the plugin dynamically to prevent SSR crashes
+  let NativeBiometric = null;
+
+  onMount(() => {
+    if (Capacitor.isNativePlatform()) {
+      import('capacitor-native-biometric').then(module => {
+        NativeBiometric = module.NativeBiometric;
+      }).catch(err => console.error("Failed to load biometrics plugin", err));
+    }
+  });
 
   let importFile = null;
   let showPinSetup = false;
+
+  async function handleBiometricsToggle() {
+    if ($authStore.isBiometricsEnabled) {
+      // Logic to DISABLE biometrics
+      authStore.disableBiometrics();
+      toasts.info("Biometrics disabled.");
+    } else {
+      // Logic to ENABLE biometrics
+      if (!NativeBiometric) {
+        toasts.error("Biometrics feature is not ready yet.");
+        return;
+      }
+      try {
+        const result = await NativeBiometric.isAvailable();
+        if (!result.isAvailable) {
+          toasts.error("Biometrics not available on this device.");
+          return;
+        }
+        authStore.enableBiometrics();
+        toasts.success("Biometrics enabled!");
+      } catch(error) {
+        toasts.error("Error checking for biometrics.");
+      }
+    }
+  }
+
+  function handleRemovePin() {
+    uiStore.showModalOnly({
+      title: 'Remove PIN?',
+      message: 'This will remove your PIN and disable app lock. Are you sure?',
+      confirmText: 'Yes, Remove PIN',
+      confirmClass: 'danger',
+      onConfirm: () => {
+        authStore.removePin();
+        toasts.success("PIN and app lock have been removed.");
+      }
+    });
+  }
 
   async function enableBiometrics() {
     try {
@@ -107,7 +155,7 @@
         {#if !$authStore.hasPinSetup}
           Mag-set up ng 4-digit PIN para i-lock ang app.
         {:else}
-          Palitan ang iyong 4-digit PIN.
+          Change your 4-digit PIN.
         {/if}
       </p>
       <Button 
@@ -121,18 +169,32 @@
     {#if $authStore.hasPinSetup}
       <div class="setting-item">
         <p class="setting-description">
-          Gamitin ang Face ID o fingerprint para mas mabilis na ma-unlock ang app.
+          {#if $authStore.isBiometricsEnabled}
+            Disable biometrics (Face ID/Fingerprint).
+          {:else}
+            Use biometrics for faster app unlock.
+          {/if}
         </p>
+        <!-- This is now a toggle button -->
         <Button 
           type="secondary"
-          ariaLabel="Enable Biometrics"
-          onClick={enableBiometrics}
-          text="Payagan ang Biometrics"
-          disabled={$authStore.isBiometricsEnabled}
+          ariaLabel="Toggle Biometrics"
+          onClick={handleBiometricsToggle}
+          text={$authStore.isBiometricsEnabled ? 'Huwag Payagan' : 'Payagan ang Biometrics'}
         />
-        {#if $authStore.isBiometricsEnabled}
-          <p class="enabled-text">✓ Biometrics is already enabled</p>
-        {/if}
+      </div>
+
+      <!-- New setting to remove the PIN completely -->
+      <div class="setting-item">
+        <p class="setting-description">
+          Completely remove the PIN and disable the app lock feature.
+        </p>
+        <Button 
+          type="danger"
+          ariaLabel="Remove PIN"
+          onClick={handleRemovePin}
+          text="Tanggalin ang App Lock"
+        />
       </div>
     {/if}
   </section>

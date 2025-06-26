@@ -1,10 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { NativeBiometric } from 'capacitor-native-biometric';
 
-/**
- * Prompts the user for biometric authentication (FaceID, TouchID, Fingerprint).
- * @returns {Promise<boolean>} A promise that resolves to true if successful, false otherwise.
- */
 export async function promptBiometricAuth() {
   // Don't run on web/desktop
   if (!Capacitor.isNativePlatform()) {

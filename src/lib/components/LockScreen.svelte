@@ -1,28 +1,11 @@
 <script>
-  import { onMount } from 'svelte';
   import { authStore } from '$lib/stores/authStore.js';
   import { promptBiometricAuth } from '$lib/services/authService.js';
   import { fade } from 'svelte/transition';
 
-  let view = 'verifying'; // 'verifying', 'pin', 'error'
   let enteredPin = '';
   let errorMessage = '';
-
-  onMount(async () => {
-    // If the user has biometrics enabled, try that first.
-    if ($authStore.isBiometricsEnabled) {
-      const authenticated = await promptBiometricAuth();
-      if (authenticated) {
-        authStore.unlockApp();
-      } else {
-        // If biometrics fail or are cancelled, fall back to PIN
-        view = 'pin';
-      }
-    } else {
-      // If biometrics are not enabled, go straight to PIN
-      view = 'pin';
-    }
-  });
+  let isCheckingPin = false;
 
   function handleKey(key) {
     if (enteredPin.length < 4) {
@@ -35,59 +18,70 @@
   }
 
   async function handleSubmitPin() {
-    if (enteredPin.length !== 4) return;
-
+    if (enteredPin.length !== 4 || isCheckingPin) return;
+    isCheckingPin = true;
     const isCorrect = authStore.checkPin(enteredPin);
     if (isCorrect) {
       authStore.unlockApp();
     } else {
       errorMessage = 'Incorrect PIN. Please try again.';
       enteredPin = '';
-      view = 'error';
-      setTimeout(() => {
-        view = 'pin'; // Return to PIN view after showing error
-      }, 2000);
+    }
+    isCheckingPin = false;
+  }
+  
+  // This button gives the user a second chance to use biometrics.
+  async function handleBiometricsButton() {
+    const authenticated = await promptBiometricAuth();
+    if (authenticated) {
+      authStore.unlockApp();
     }
   }
 
-  // Auto-submit when 4 digits are entered
   $: if (enteredPin.length === 4) {
     handleSubmitPin();
+  }
+
+  $: if (enteredPin.length > 0 && errorMessage) {
+    errorMessage = '';
   }
 </script>
 
 <div class="lock-screen-overlay" transition:fade>
   <div class="lock-screen-content">
     <h2>App Locked</h2>
+    <p>Enter your 4-digit PIN</p>
 
-    {#if view === 'verifying'}
-      <p>Verifying your identity...</p>
-      <!-- You could add a spinner here -->
-    {/if}
+    <div class="pin-display">
+      {#each { length: 4 } as _, i}
+        <span class="dot" class:filled={i < enteredPin.length}></span>
+      {/each}
+    </div>
 
-    {#if view === 'pin' || view === 'error'}
-      <p>Enter your 4-digit PIN</p>
-      <div class="pin-display">
-        <!-- Display dots for entered PIN -->
-        {#each { length: 4 } as _, i}
-          <span class="dot" class:filled={i < enteredPin.length}></span>
-        {/each}
-      </div>
-      {#if view === 'error'}
-        <p class="error-message">{errorMessage}</p>
-      {/if}
-    {/if}
+    <!-- The error message now has a placeholder to prevent layout shifts -->
+    <p class="error-message">{errorMessage || ' '}</p>
 
-    {#if view === 'pin'}
-      <div class="keypad">
-        {#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as key}
-          <button on:click={() => handleKey(key)}>{key}</button>
-        {/each}
-        <button class="control" aria-label="Placeholder"></button> <!-- Placeholder only -->
-        <button on:click={() => handleKey(0)}>0</button>
-        <button on:click={handleDelete} class="control">⌫</button>
-      </div>
-    {/if}
+    <!-- The keypad is now always visible with the PIN entry -->
+    <div class="keypad" class:disabled={isCheckingPin}>
+      {#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as key}
+        <button on:click={() => handleKey(key)} disabled={isCheckingPin}>{key}</button>
+      {/each}
+      
+      <button 
+        on:click={handleBiometricsButton} 
+        class="control" 
+        aria-label="Use Biometrics" 
+        disabled={!$authStore.isBiometricsEnabled}
+      >
+        {#if $authStore.isBiometricsEnabled}
+          <!-- Fingerprint Icon SVG -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        {/if}
+      </button>
+
+      <button on:click={() => handleKey(0)} disabled={isCheckingPin}>0</button>
+      <button on:click={handleDelete} class="control" disabled={isCheckingPin}>⌫</button>
+    </div>
   </div>
 </div>
 
@@ -95,7 +89,7 @@
   .lock-screen-overlay {
     position: fixed;
     inset: 0;
-    background: var(--card-bg); /* Use CSS variables from your theme */
+    background: var(--card-bg);
     z-index: 99999;
     display: flex;
     flex-direction: column;
@@ -140,8 +134,12 @@
   .keypad button.control {
     background: transparent;
   }
+  .keypad.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
   .error-message {
-      color: var(--main-red-light);
-      min-height: 1.2em;
+    color: var(--main-red-light);
+    min-height: 1.2em;
   }
 </style>

@@ -15,18 +15,21 @@ function createAuthStore() {
 
   // Method to run on app startup
   function initialize() {
-    if (!browser) return;
-
-    const biometricsEnabled = localStorage.getItem(BIOMETRICS_ENABLED_KEY) === 'true';
-    const pinIsSet = !!localStorage.getItem(PIN_STORAGE_KEY);
-    
-    update(store => ({
-        ...store,
-        isBiometricsEnabled: biometricsEnabled,
-        hasPinSetup: pinIsSet,
-        // The app is only locked if the user has actually set up a PIN/biometrics
-        isLocked: pinIsSet 
-    }));
+    return new Promise((resolve) => {
+      if (!browser) {
+        resolve(); 
+        return;
+      }
+      const biometricsEnabled = localStorage.getItem(BIOMETRICS_ENABLED_KEY) === 'true';
+      const pinIsSet = !!localStorage.getItem(PIN_STORAGE_KEY);
+      update(store => ({
+          ...store,
+          isBiometricsEnabled: biometricsEnabled,
+          hasPinSetup: pinIsSet,
+          isLocked: pinIsSet 
+      }));
+      resolve();
+    });
   }
 
   function unlockApp() {
@@ -60,6 +63,23 @@ function createAuthStore() {
       update(store => ({...store, isBiometricsEnabled: true }));
   }
 
+  function disableBiometrics() {
+    if (!browser) return;
+    localStorage.removeItem(BIOMETRICS_ENABLED_KEY);
+    update(store => ({ ...store, isBiometricsEnabled: false }));
+  }
+
+  function removePin() {
+    if (!browser) return;
+    localStorage.removeItem(PIN_STORAGE_KEY);
+    localStorage.removeItem(BIOMETRICS_ENABLED_KEY); 
+    update(store => ({
+      ...store,
+      hasPinSetup: false,
+      isBiometricsEnabled: false,
+      isLocked: false 
+    }));
+  }
 
   return {
     subscribe,
@@ -68,7 +88,9 @@ function createAuthStore() {
     lockApp,
     setPin,
     checkPin,
-    enableBiometrics
+    enableBiometrics,
+    disableBiometrics, 
+    removePin,         
   };
 }
 
