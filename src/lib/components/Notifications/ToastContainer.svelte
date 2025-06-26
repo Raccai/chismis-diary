@@ -43,7 +43,7 @@
     position: fixed;
     top: calc(var(--topbar-height, 60px) + 1rem); /* Below topbar */
     right: 1rem;
-    z-index: 99999; /* Highest z-index */
+    z-index: 99998; /* Highest z-index */
     display: flex;
     flex-direction: column;
     gap: 0.75rem;

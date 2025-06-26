@@ -83,7 +83,7 @@
         {#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as key}
           <button on:click={() => handleKey(key)}>{key}</button>
         {/each}
-        <button class="control"></button> <!-- Placeholder only -->
+        <button class="control" aria-label="Placeholder"></button> <!-- Placeholder only -->
         <button on:click={() => handleKey(0)}>0</button>
         <button on:click={handleDelete} class="control">⌫</button>
       </div>
@@ -95,13 +95,13 @@
   .lock-screen-overlay {
     position: fixed;
     inset: 0;
-    background: var(--background-color, #fff); /* Use CSS variables from your theme */
-    z-index: 2000;
+    background: var(--card-bg); /* Use CSS variables from your theme */
+    z-index: 99999;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: var(--text-color, #000);
+    color: var(--card-title-text);
   }
   .lock-screen-content {
     text-align: center;
@@ -116,10 +116,10 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    border: 2px solid var(--primary-color, #333);
+    border: 2px solid var(--card-title-text);
   }
   .dot.filled {
-    background: var(--primary-color, #333);
+    background: var(--card-title-text);
   }
   .keypad {
     display: grid;
@@ -133,15 +133,15 @@
     border-radius: 50%;
     border: none;
     font-size: 2rem;
-    background: var(--keypad-bg, #f0f0f0);
-    color: var(--text-color, #000);
+    background: var(--card-title-text);
+    color: var(--card-bg);
     cursor: pointer;
   }
   .keypad button.control {
     background: transparent;
   }
   .error-message {
-      color: var(--error-color, red);
+      color: var(--main-red-light);
       min-height: 1.2em;
   }
 </style>

@@ -89,25 +89,68 @@
 <style>
   /* Styles are similar to LockScreen for consistency */
   .pin-setup-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    z-index: 2100; display: flex; justify-content: center; align-items: center;
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,0.7);
+    z-index: 2100; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
   }
   .pin-setup-content {
-    background: var(--card-bg); color: var(--text-color);
-    padding: 2rem; border-radius: 12px; text-align: center;
+    background: var(--card-bg); 
+    color: var(--card-title-text);
+    padding: 2rem; 
+    border-radius: 12px; 
+    text-align: center;
     width: clamp(300px, 90vw, 350px);
   }
-  h2 { margin: 0 0 0.5rem 0; }
-  p { margin: 0 0 1rem 0; opacity: 0.8; }
-  .error-message { color: var(--danger-color, red); min-height: 1.2em; }
-  .pin-display { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
-  .dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--primary-color, #333); }
-  .dot.filled { background: var(--primary-color, #333); }
-  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 1.5rem; }
-  .keypad button {
-    width: 65px; height: 65px; border-radius: 50%; border: none; font-size: 1.8rem;
-    background: var(--keypad-bg, #f0f0f0); color: var(--text-color, #000); cursor: pointer;
+  h2 { 
+    margin: 0 0 0.5rem 0; }
+  p { 
+    margin: 0 0 1rem 0; 
+    opacity: 0.8; 
   }
-  .keypad button.control { background: transparent; font-size: 1.2rem; }
-  .keypad button.text-btn { font-size: 1rem; }
+  .error-message { 
+    color: var(--main-red-light); 
+    min-height: 1.2em; 
+  }
+  .pin-display { 
+    display: flex; 
+    justify-content: center; 
+    gap: 15px; 
+    margin: 20px 0; 
+  }
+  .dot { 
+    width: 18px; 
+    height: 18px; 
+    border-radius: 50%; 
+    border: 2px solid var(--card-title-text); 
+  }
+  .dot.filled { 
+    background: var(--card-title-text); 
+  }
+  .keypad { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 15px; 
+    margin-top: 1.5rem; 
+  }
+  .keypad button {
+    width: 65px; 
+    height: 65px; 
+    border-radius: 50%; 
+    border: none; 
+    font-size: 1.8rem;
+    background: var(--card-title-text); 
+    color: var(--card-bg); 
+    cursor: pointer;
+  }
+  .keypad button.control { 
+    background: transparent; 
+    font-size: 1.2rem; 
+  }
+  .keypad button.text-btn { 
+    font-size: 1rem; 
+    }
 </style>
